@@ -26,8 +26,7 @@ public class Couple : MonoBehaviour {
             {
                 HingeJoint2D jointCar = gameObject.AddComponent<HingeJoint2D>();
                 jointCar.connectedBody = passiveCouple;
-                jointCar.anchor = new Vector2(10, 0); //hardcoded joint point
-                //jointCar.connectedAnchor = new Vector2(10, 0); //hardcoded joint point 
+                jointCar.anchor = new Vector2(10, 0); //hardcoded joint point                
                 jointCar.autoConfigureConnectedAnchor = true;
 
             }

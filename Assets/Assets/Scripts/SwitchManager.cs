@@ -3,9 +3,14 @@
 public class SwitchManager : Singleton<GameManager>
 {
 
-    private GameObject switchObject;    
-    // Use this for initialization
-    void Start () {        
+    private GameObject switchObject;
+    private GameObject[] ind;
+    private Renderer renderer;
+    private bool isShowIndicators;
+
+    void Start () {
+        isShowIndicators = true;
+        showIndicators(isShowIndicators);
 
     }
 	
@@ -15,7 +20,7 @@ public class SwitchManager : Singleton<GameManager>
         {
             Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-            Debug.Log(hit.collider);            
+                     
             if (hit.collider.tag == "Lever")
             {
                
@@ -26,6 +31,22 @@ public class SwitchManager : Singleton<GameManager>
             }               
             
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            isShowIndicators = isShowIndicators ? false : true;
+        }
+        showIndicators(isShowIndicators);
     }
-    
+
+    void showIndicators(bool isShow)
+    {
+        ind = GameObject.FindGameObjectsWithTag("Lever");
+        foreach (GameObject item in ind)
+        {
+            renderer = item.GetComponent<Renderer>();
+            renderer.enabled = isShow ? true : false;
+        }
+    }
+
 }
