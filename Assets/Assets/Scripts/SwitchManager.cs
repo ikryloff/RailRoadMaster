@@ -4,13 +4,13 @@ public class SwitchManager : Singleton<GameManager>
 {
 
     private GameObject switchObject;
-    private GameObject[] ind;
-    private Renderer renderer;
-    private bool isShowIndicators;
+    private GameObject[] indicators;
+    private Renderer rend;
+    private bool isSwitchModeOn;
 
     void Start () {
-        isShowIndicators = true;
-        showIndicators(isShowIndicators);
+        isSwitchModeOn = false;
+        switchMode(isSwitchModeOn);
 
     }
 	
@@ -21,7 +21,7 @@ public class SwitchManager : Singleton<GameManager>
             Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
                      
-            if (hit.collider.tag == "Lever")
+            if (hit.collider.tag == "Lever" && isSwitchModeOn)
             {
                
                 switchObject = hit.collider.transform.parent.parent.gameObject;
@@ -34,18 +34,18 @@ public class SwitchManager : Singleton<GameManager>
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            isShowIndicators = isShowIndicators ? false : true;
+            isSwitchModeOn = isSwitchModeOn ? false : true;
         }
-        showIndicators(isShowIndicators);
+        switchMode(isSwitchModeOn);
     }
 
-    void showIndicators(bool isShow)
+    void switchMode(bool isShow)
     {
-        ind = GameObject.FindGameObjectsWithTag("Lever");
-        foreach (GameObject item in ind)
+        indicators = GameObject.FindGameObjectsWithTag("Lever");
+        foreach (GameObject item in indicators)
         {
-            renderer = item.GetComponent<Renderer>();
-            renderer.enabled = isShow ? true : false;
+            rend = item.GetComponent<Renderer>();
+            rend.enabled = isShow ? true : false;
         }
     }
 
