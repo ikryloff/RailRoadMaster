@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
 
 public class Switch : MonoBehaviour {
-    private GameObject SwitchPhysicsTurn;
-    private GameObject SwitchPhysicsStraight;    
-    private bool isSwitchStraight = true;
+    [SerializeField]
+    private GameObject switchPhysicsTurn;
+    [SerializeField]
+    private GameObject switchPhysicsStraight;
+    [SerializeField]
+    private GameObject turnIndicatorObj;
+    [SerializeField]
+    private GameObject straightIndicatorObj;
+    private Renderer turnIndicator;
+    private Renderer straightIndicator;
+    private string HIDE_INDICATION_LAYER = "HideIndication";
+    private string INDICATION_LAYER = "Indication";    
+
+    private bool isSwitchStraight;
         
 
     // Use this for initialization
     void Start () {
-        SwitchPhysicsTurn = transform.Find("curveTrackPhysics").gameObject;
-        SwitchPhysicsStraight = transform.Find("straightTrackPhysicsSwitch").gameObject;       
+        turnIndicator = turnIndicatorObj.GetComponent<Renderer>();
+        straightIndicator = straightIndicatorObj.GetComponent<Renderer>();
+        isSwitchStraight = true;
         directionStraight();
 
     }
@@ -24,21 +36,25 @@ public class Switch : MonoBehaviour {
         {
             directionStraight();
         }
-    }
-
+    } 
+    
+    
     void directionStraight()
     {
-        SwitchPhysicsTurn.SetActive(false);
-        SwitchPhysicsStraight.SetActive(true);        
+        switchPhysicsTurn.SetActive(false);
+        switchPhysicsStraight.SetActive(true);
+        turnIndicator.sortingLayerName = HIDE_INDICATION_LAYER;
+        straightIndicator.sortingLayerName = INDICATION_LAYER;
         isSwitchStraight = true;
     }
     void directionTurn()
     {
-        SwitchPhysicsStraight.SetActive(false);
-        SwitchPhysicsTurn.SetActive(true);
+        switchPhysicsStraight.SetActive(false);
+        switchPhysicsTurn.SetActive(true);
+        turnIndicator.sortingLayerName = INDICATION_LAYER;
+        straightIndicator.sortingLayerName = HIDE_INDICATION_LAYER;
         isSwitchStraight = false;        
     }
-    
-    
 
+    
 }
