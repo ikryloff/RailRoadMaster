@@ -12,14 +12,14 @@ public class Engine : RollingStock {
 	
 	// Update is called once per frame
 	void Update () {
-        engine.AddForce(new Vector2(400 * controllerPosition, 0), ForceMode2D.Force);        
+        engine.AddRelativeForce(new Vector2(400 * controllerPosition, 0), ForceMode2D.Force);        
 
         if (brakes)
         {
             if (engine.velocity.x > 0.5f)
-                engine.AddForce(new Vector2(-1000, 0), ForceMode2D.Force);
+                engine.AddRelativeForce(new Vector2(-1000, 0), ForceMode2D.Force);
             else if (engine.velocity.x < -0.5f)
-                engine.AddForce(new Vector2(1000, 0), ForceMode2D.Force);
+                engine.AddRelativeForce(new Vector2(1000, 0), ForceMode2D.Force);
             else
                 engine.velocity = new Vector2(0, 0);
         }        
