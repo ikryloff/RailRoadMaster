@@ -10,13 +10,13 @@ public class RollingStock : MonoBehaviour
         
     }
 
-    private void Update()
+    void FixedUpdate()
     {
         //railstock friction
         if (rollingStock.velocity.x > 0)
-            rollingStock.AddRelativeForce(new Vector2(-0.2f, 0), ForceMode2D.Force);
+            rollingStock.AddRelativeForce(new Vector2(-100f, 0), ForceMode2D.Force);
         else if (rollingStock.velocity.x < 0)
-            rollingStock.AddRelativeForce(new Vector2(0.2f, 0), ForceMode2D.Force);
+            rollingStock.AddRelativeForce(new Vector2(100, 0), ForceMode2D.Force);
 
     } 
    

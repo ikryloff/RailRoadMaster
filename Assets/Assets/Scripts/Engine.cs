@@ -11,15 +11,15 @@ public class Engine : RollingStock {
     }
 	
 	// Update is called once per frame
-	void Update () {
-        engine.AddRelativeForce(new Vector2(400 * controllerPosition, 0), ForceMode2D.Force);        
+	void FixedUpdate () {
+        engine.AddRelativeForce(new Vector2(500 * controllerPosition, 0), ForceMode2D.Force);        
 
         if (brakes)
         {
-            if (engine.velocity.x > 0.5f)
-                engine.AddRelativeForce(new Vector2(-1000, 0), ForceMode2D.Force);
-            else if (engine.velocity.x < -0.5f)
-                engine.AddRelativeForce(new Vector2(1000, 0), ForceMode2D.Force);
+            if (engine.velocity.x > 2f)
+                engine.AddRelativeForce(new Vector2(-2000, 0), ForceMode2D.Force);
+            else if (engine.velocity.x < -2f)
+                engine.AddRelativeForce(new Vector2(2000, 0), ForceMode2D.Force);
             else
                 engine.velocity = new Vector2(0, 0);
         }        
@@ -27,7 +27,7 @@ public class Engine : RollingStock {
 
     public void engineControllerForward()    {
         
-        if (((controllerPosition >= 0 && engine.velocity.x >= 0) || (controllerPosition < 0 && engine.velocity.x < 0)) && controllerPosition < 8)
+        if (controllerPosition < 8)
         {
             brakes = false;
             controllerPosition++;
@@ -36,7 +36,7 @@ public class Engine : RollingStock {
 
     public void engineControllerBackwards()
     {
-        if (((controllerPosition <= 0 && engine.velocity.x <= 0) || (controllerPosition > 0 && engine.velocity.x > 0)) && controllerPosition > -8)
+        if (controllerPosition > -8)
         {
             brakes = false;
             controllerPosition--;

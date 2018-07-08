@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class SwitchManager : Singleton<GameManager>
+public class SwitchManager : Singleton<SwitchManager>
 {
 
     private GameObject switchObject;
@@ -19,7 +19,7 @@ public class SwitchManager : Singleton<GameManager>
         {
             Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-            Debug.Log(hit.collider.tag);
+            //Debug.Log(hit.collider.tag);
             if (hit.collider.tag == "Lever")
             {
                
