@@ -8,7 +8,7 @@ public class Couple : MonoBehaviour {
     private Texture2D cursor;
     Rigidbody2D passiveCouple;
     private HingeJoint2D jointCar;
-    private void Awake()
+    void Awake()
     {
         if (passiveCoupleObj)
         {
@@ -20,21 +20,22 @@ public class Couple : MonoBehaviour {
         }
         
     }
+    /*
 
     void OnMouseOver()
     {
-
         if (passiveCoupleObj)
         {
-            Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
-        }
-        
+            Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);            
+        }        
+
     }
 
-    void OnMouseExit()
+    public void OnMouseExit()
     {
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);        
     }
+    */
 
     void OnCollisionEnter2D(Collision2D collision)
     {

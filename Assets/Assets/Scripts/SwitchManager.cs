@@ -20,7 +20,7 @@ public class SwitchManager : Singleton<SwitchManager>
             Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
             //Debug.Log(hit.collider.tag);
-            if (hit.collider.tag == "Lever")
+            if (hit.collider != null && hit.collider.tag == "Lever")
             {
                
                 switchObject = hit.collider.transform.parent.gameObject;
