@@ -20,22 +20,7 @@ public class Couple : MonoBehaviour {
         }
         
     }
-    /*
-
-    void OnMouseOver()
-    {
-        if (passiveCoupleObj)
-        {
-            Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);            
-        }        
-
-    }
-
-    public void OnMouseExit()
-    {
-        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);        
-    }
-    */
+   
 
     void OnCollisionEnter2D(Collision2D collision)
     {
