@@ -17,7 +17,7 @@ public class TrafficLights : MonoBehaviour {
     [SerializeField]
     private string trafficLightName;
     private SpriteRenderer light;    
-    public int color;
+    private int color = 0;
     TrafficLights tl;
     const float flashTime = 1f;
    
@@ -25,14 +25,12 @@ public class TrafficLights : MonoBehaviour {
     private void Start()
     {
         light = GetComponent<SpriteRenderer>();
-        tl = gameObject.GetComponent<TrafficLights>();        
-
-    }
-
-    private void Update()
-    {        
+        tl = gameObject.GetComponent<TrafficLights>();
         tl.SetLightColor(color);
+
     }
+
+    
     public TrafficLights trafficLight
     {
         get
@@ -96,6 +94,7 @@ public class TrafficLights : MonoBehaviour {
 
     public void SetLightColor(int color)
     {
+        Debug.Log(color);
         switch (color)
         {
 
@@ -110,6 +109,7 @@ public class TrafficLights : MonoBehaviour {
                 break;
             case 3:
                 light.sprite = white;
+                
                 break;
             case 4:
                 light.sprite = yellow;

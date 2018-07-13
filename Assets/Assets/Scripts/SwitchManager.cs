@@ -18,8 +18,7 @@ public class SwitchManager : Singleton<SwitchManager>
         if (Input.GetMouseButtonDown(0) && isSwitchModeOn)
         {
             Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-            //Debug.Log(hit.collider.tag);
+            RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);            
             if (hit.collider != null && hit.collider.tag == "Lever")
             {
                
