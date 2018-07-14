@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Switch : MonoBehaviour {
     [SerializeField]
@@ -55,6 +56,7 @@ public class Switch : MonoBehaviour {
                 directionStraight();
             }
         }
+        else Debug.Log("Locked");
     } 
     
     public bool SwitchLock
@@ -63,9 +65,14 @@ public class Switch : MonoBehaviour {
         {
             isLocked = value;
         }
+        get
+        {
+            return isLocked;
+        }
     }
 
-    
+    public Exception Exception { get; private set; }
+
     public void directionStraight()
     {
         switchPhysicsTurn.SetActive(false);

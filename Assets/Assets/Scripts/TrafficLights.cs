@@ -16,28 +16,20 @@ public class TrafficLights : MonoBehaviour {
     Sprite yellowFlashing;
     [SerializeField]
     private string trafficLightName;
-    private SpriteRenderer light;    
-    private int color = 0;
-    TrafficLights tl;
+    private SpriteRenderer lightColor;
+    private int intColor;
+    
     const float flashTime = 1f;
+    private string lightInRoute;
    
 
     private void Start()
     {
-        light = GetComponent<SpriteRenderer>();
-        tl = gameObject.GetComponent<TrafficLights>();
-        tl.SetLightColor(color);
+        lightColor = GetComponent<SpriteRenderer>();
+        SetLightColor(IntColor);
+    }    
 
-    }
 
-    
-    public TrafficLights trafficLight
-    {
-        get
-        {
-            return trafficLight;
-        }
-    }
 
     public string Name
     {
@@ -47,72 +39,98 @@ public class TrafficLights : MonoBehaviour {
         }
     }
 
+    public string LightInRoute
+    {
+        get
+        {
+            return lightInRoute;
+        }
+
+        set
+        {
+            lightInRoute = value;
+        }
+    }
+
+    public int IntColor
+    {
+        get
+        {
+            return intColor;
+        }
+
+        set
+        {
+            intColor = value;
+        }
+    }
+
     private IEnumerator YellowFlashing()
     {
         
-        while (color == 5)
+        while (IntColor == 5)
         {            
             float temp = 0f;
             while (temp < flashTime)
             {
                 temp += Time.deltaTime;
-                light.sprite = yellowFlashing;
+                lightColor.sprite = yellowFlashing;
                 yield return null;
             }
             temp = 0f;
             while (temp < flashTime)
             {
                 temp += Time.deltaTime;
-                light.sprite = null;
+                lightColor.sprite = null;
                 yield return null;
             }
 
         }
+        lightColor.sprite = red;
     }
     private IEnumerator YellowTopFlashing()
     {
         const float flashTime = 1f;
-        while (color == 6)
+        while (IntColor == 6)
         {
             float temp = 0f;
             while (temp < flashTime)
             {
                 temp += Time.deltaTime;
-                light.sprite = yellowFlashing;
+                lightColor.sprite = yellowFlashing;
                 yield return null;
             }
             temp = 0f;
             while (temp < flashTime)
             {
                 temp += Time.deltaTime;
-                light.sprite = yellow;
+                lightColor.sprite = yellow;
                 yield return null;
             }
         }
+        lightColor.sprite = red;
     }
 
 
     public void SetLightColor(int color)
     {
-        Debug.Log(color);
+        IntColor = color;
         switch (color)
         {
-
             case 0:
-                light.sprite = red;
+                lightColor.sprite = red;
                 break;
             case 1:
-                light.sprite = green;
+                lightColor.sprite = green;
                 break;
             case 2:
-                light.sprite = blue;
+                lightColor.sprite = blue;
                 break;
             case 3:
-                light.sprite = white;
-                
+                lightColor.sprite = white;                
                 break;
             case 4:
-                light.sprite = yellow;
+                lightColor.sprite = yellow;
                 break;
             case 5:
                 StartCoroutine("YellowFlashing");            
@@ -121,7 +139,7 @@ public class TrafficLights : MonoBehaviour {
                 StartCoroutine("YellowTopFlashing");
                 break;
             default:
-                light.sprite = red;
+                lightColor.sprite = red;
                 break;
         }           
     }

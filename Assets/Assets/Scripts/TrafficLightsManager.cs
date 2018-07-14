@@ -8,6 +8,8 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private bool isStart = true;
     private string startRoute;
     private string endRoute;
+    private TrafficLights startLight;
+    private TrafficLights endLight;
     [SerializeField]
     private Route route;
     // Use this for initialization
@@ -25,23 +27,22 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
             {
                 if(isStart)
                 {
-                    startRoute = hit.collider.GetComponent<TrafficLights>().Name;
+                    startLight = hit.collider.GetComponent<TrafficLights>();
                     hit.collider.tag = "TrafficLightInRoute";
-                    Debug.Log(startRoute);
                     isStart = false;
                 }
                 else
                 {
-                    endRoute = hit.collider.GetComponent<TrafficLights>().Name;
+                    endLight = hit.collider.GetComponent<TrafficLights>();
                     hit.collider.tag = "TrafficLightInRoute";
-                    Debug.Log(endRoute);
-                    if(endRoute != startRoute)
+                    if (endLight != startLight)
                     {
-                        route.MakeRoute(startRoute, endRoute);
+                        route.MakeRoute(startLight, endLight);
                         isStart = true;                        
                     }                    
                 }
             }
+            Debug.Log(hit.collider.name);
         }
 
         if (Input.GetMouseButton(1))
@@ -50,27 +51,8 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
             RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
             if (hit.collider != null && hit.collider.tag == "TrafficLightInRoute")
             {
-                if (isStart)
-                {
-                    TrafficLights light = hit.collider.GetComponent<TrafficLights>();
-                    startRoute = light.Name;                    
-                    light.SetLightColor(0);
-                    Debug.Log(startRoute);
-                    hit.collider.tag = "TrafficLight";
-                    isStart = false;
-                }
-                else
-                {
-                    endRoute = hit.collider.GetComponent<TrafficLights>().Name;
-                    hit.collider.tag = "TrafficLight";
-                    Debug.Log(endRoute);
-                    if (endRoute != startRoute)
-                    {
-                        route.DestroyRoute(startRoute, endRoute);
-                        isStart = true;
-                    }
-                }
-                
+                startLight = hit.collider.GetComponent<TrafficLights>(); 
+                route.DestroyRoute(startLight);
             }
 
         }
