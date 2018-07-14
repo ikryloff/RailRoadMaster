@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TrafficLights : MonoBehaviour {
     [SerializeField]
-    Sprite red;
+    Sprite closed;
     [SerializeField]
     Sprite green;
     [SerializeField]
@@ -16,7 +16,7 @@ public class TrafficLights : MonoBehaviour {
     Sprite yellowFlashing;
     [SerializeField]
     private string trafficLightName;
-    private SpriteRenderer lightColor;
+    private SpriteRenderer lightColor;    
     private int intColor;
     
     const float flashTime = 1f;
@@ -86,7 +86,7 @@ public class TrafficLights : MonoBehaviour {
             }
 
         }
-        lightColor.sprite = red;
+        lightColor.sprite = closed;
     }
     private IEnumerator YellowTopFlashing()
     {
@@ -108,7 +108,7 @@ public class TrafficLights : MonoBehaviour {
                 yield return null;
             }
         }
-        lightColor.sprite = red;
+        lightColor.sprite = closed;
     }
 
 
@@ -118,7 +118,7 @@ public class TrafficLights : MonoBehaviour {
         switch (color)
         {
             case 0:
-                lightColor.sprite = red;
+                lightColor.sprite = closed;
                 break;
             case 1:
                 lightColor.sprite = green;
@@ -139,7 +139,7 @@ public class TrafficLights : MonoBehaviour {
                 StartCoroutine("YellowTopFlashing");
                 break;
             default:
-                lightColor.sprite = red;
+                lightColor.sprite = closed;
                 break;
         }           
     }

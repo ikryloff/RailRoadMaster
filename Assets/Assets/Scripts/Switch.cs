@@ -14,7 +14,7 @@ public class Switch : MonoBehaviour {
     private SpriteRenderer straightIndicator;
     private string HIDE_INDICATION_LAYER = "HideIndication";
     private string INDICATION_LAYER = "Indication";
-    private bool isLocked = false;
+    private int timesLocked = 0;
     
 
     private bool isSwitchStraight;
@@ -30,12 +30,12 @@ public class Switch : MonoBehaviour {
 
     private void OnGUI()
     {
-        if (isLocked)
+        if (timesLocked > 0)
         {
             turnIndicator.color = new Color32(255, 0, 0, 160);
             straightIndicator.color = new Color32(255, 0, 0, 160);            
         }
-        else if(!isLocked)
+        else if(timesLocked == 0)
         {
             turnIndicator.color = new Color32(255, 255, 255, 160);
             straightIndicator.color = new Color32(255, 255, 255, 160);
@@ -45,7 +45,7 @@ public class Switch : MonoBehaviour {
 
     public void changeDirection()
     {
-        if (!isLocked)
+        if (timesLocked == 0)
         {
             if (isSwitchStraight == true)
             {
@@ -59,15 +59,15 @@ public class Switch : MonoBehaviour {
         else Debug.Log("Locked");
     } 
     
-    public bool SwitchLock
+    public int SwitchLockCount
     {
         set
         {
-            isLocked = value;
+            timesLocked = value;
         }
         get
         {
-            return isLocked;
+            return timesLocked;
         }
     }
 

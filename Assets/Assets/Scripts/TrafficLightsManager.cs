@@ -12,44 +12,50 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private TrafficLights endLight;
     [SerializeField]
     private Route route;
-    // Use this for initialization
-    void Start () {        
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    const string LIGHTS_FREE = "TrafficLight";
+    const string LIGHTS_IN_ROUTE = "TrafficLightInRoute";
+
+
+    void Update () {
         if (Input.GetMouseButtonDown(0))
         {
             Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
 
-            if (hit.collider != null && hit.collider.tag == "TrafficLight")
+            if (hit.collider != null && hit.collider.tag == LIGHTS_FREE)
             {
                 if(isStart)
                 {
                     startLight = hit.collider.GetComponent<TrafficLights>();
-                    hit.collider.tag = "TrafficLightInRoute";
+                    startLight.tag = LIGHTS_IN_ROUTE;
                     isStart = false;
                 }
                 else
                 {
                     endLight = hit.collider.GetComponent<TrafficLights>();
-                    hit.collider.tag = "TrafficLightInRoute";
+                    endLight.tag = LIGHTS_IN_ROUTE;
                     if (endLight != startLight)
                     {
                         route.MakeRoute(startLight, endLight);
                         isStart = true;                        
                     }                    
                 }
+                Debug.Log(hit.collider.name);
             }
-            Debug.Log(hit.collider.name);
+            else if (hit.collider != null && hit.collider.tag == LIGHTS_IN_ROUTE && !isStart)
+            {
+                startLight.tag = LIGHTS_FREE;
+                isStart = true;
+                Debug.Log("Locked in route");
+            }
+            
         }
 
         if (Input.GetMouseButton(1))
         {
             Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-            if (hit.collider != null && hit.collider.tag == "TrafficLightInRoute")
+            if (hit.collider != null && hit.collider.tag == LIGHTS_IN_ROUTE)
             {
                 startLight = hit.collider.GetComponent<TrafficLights>(); 
                 route.DestroyRoute(startLight);

@@ -47,48 +47,61 @@ public class Route : Singleton<Route> {
     private TrafficLights m3;
     ArrayList routes;
     private RouteObj route;
-   
+
+    const string DIR_TURN = "turn";
+    const string DIR_STR = "straight";
+    const string LIGHTS_FREE = "TrafficLight";
+    const string LIGHTS_IN_ROUTE = "TrafficLightInRoute";
+    private bool isRoute;
 
     void Start()
     {
         routes = new ArrayList();        
     }
-       
+     
+    /// <summary>
+    /// Make and Destroy routes
+    /// </summary>
 
     private void Make12to5()
     {
-        sw12.directionTurn();        
-        sw12.SwitchLock = true;
-        sw10.directionTurn();
-        sw10.SwitchLock = true;
-        sw2_4.directionStraight();
-        sw2_4.SwitchLock = true;
-        sw6_8.directionStraight();
-        sw6_8.SwitchLock = true;
+        Switch[] switchesStr = new Switch[] { sw2_4, sw6_8 };
+        RouteDirection(switchesStr, DIR_STR);
+        Switch[] switchesTurn = new Switch[] { sw12, sw10 };
+        RouteDirection(switchesTurn, DIR_TURN);
+      
     }
     private void Destroy12to5()
     {
-        sw12.SwitchLock = false;
-        sw10.SwitchLock = false;
-        sw2_4.SwitchLock = false;
-        sw6_8.SwitchLock = false;
+        Switch[] switches = new Switch[] { sw2_4, sw6_8, sw10, sw12};
+        RouteDestroy(switches);        
     }
 
     private void Make3toI()
     {
-        sw16.directionTurn();
-        sw16.SwitchLock = true;       
-        sw2_4.directionStraight();
-        sw2_4.SwitchLock = true;
-        sw6_8.directionStraight();
-        sw6_8.SwitchLock = true;
+        Switch[] switchesStr = new Switch[] { sw2_4, sw6_8 };
+        RouteDirection(switchesStr, DIR_STR);
+        Switch[] switchesTurn = new Switch[] { sw16 };
+        RouteDirection(switchesTurn, DIR_TURN);
     }
     private void Destroy3toI()
     {
-        sw16.SwitchLock = false;        
-        sw2_4.SwitchLock = false;
-        sw6_8.SwitchLock = false;
+        Switch[] switches = new Switch[] { sw2_4, sw6_8, sw16 };
+        RouteDestroy(switches);        
     }
+
+    private void MakeItoICH()
+    {
+        Switch[] switchesStr = new Switch[] { sw2_4, sw6_8, sw16 };
+        RouteDirection(switchesStr, DIR_STR);        
+    }
+    private void DestroyItoICH()
+    {
+        Switch[] switches = new Switch[] { sw2_4, sw6_8, sw16 };
+        RouteDestroy(switches);
+    }
+
+
 
 
 
@@ -98,123 +111,154 @@ public class Route : Singleton<Route> {
         route = gameObject.AddComponent<RouteObj>();
         if (startLight.Name == n5.Name && endLight.Name == m2.Name)
         {
+            TrafficLights[] tl = new TrafficLights[] {startLight, endLight};
             route.RouteName = "n5m2";         
-            routes.Add(route);
-            
+            routes.Add(route);            
             startLight.SetLightColor(3);
-
-            m2.tag = "TrafficLightInRoute";
-            n5.tag = "TrafficLightInRoute";
-
-            n5.LightInRoute = route.RouteName;
-            m2.LightInRoute = route.RouteName;
-            
+            RouteLightsManage( tl, true);
             Make12to5();
             
         }
 
         if (startLight.Name == m2.Name && endLight.Name == n5.Name)
         {
+            TrafficLights[] tl = new TrafficLights[] { startLight, endLight };
             route.RouteName = "m2n5";
             routes.Add(route);
-
             startLight.SetLightColor(3);
-            
-            m2.tag = "TrafficLightInRoute";
-            n5.tag = "TrafficLightInRoute";
-
-            n5.LightInRoute = route.RouteName;
-            m2.LightInRoute = route.RouteName;
-
+            endLight.SetLightColor(2);
+            RouteLightsManage(tl, true);
             Make12to5();           
         }
 
         if (startLight.Name == n3.Name && endLight.Name == ch.Name)
         {
-            Debug.Log("Hello!");
+            TrafficLights[] tl = new TrafficLights[] { startLight, endLight };
             route.RouteName = "n3ch";
             routes.Add(route);
-
-            startLight.SetLightColor(6);            
-
-            n3.tag = "TrafficLightInRoute";
-            ch.tag = "TrafficLightInRoute";
-
-            n3.LightInRoute = route.RouteName;
-            ch.LightInRoute = route.RouteName;
-
+            startLight.SetLightColor(6);
+            RouteLightsManage(tl, true);
             Make3toI();
+        }
 
+        if (startLight.Name == nI.Name && endLight.Name == ch.Name)
+        {
+            TrafficLights[] tl = new TrafficLights[] { startLight, endLight };
+            route.RouteName = "nIch";
+            routes.Add(route);
+            startLight.SetLightColor(1);
+            RouteLightsManage(tl, true);
+            MakeItoICH();
         }
 
     }
 
+
+    /// <summary>
+    /// Destroy Route function
+    /// </summary>
+    
     public void DestroyRoute(TrafficLights startLight)
     {
-        Debug.Log(startLight.LightInRoute);
-        if (startLight.LightInRoute == "n5m2")
-        {
-            m2.SetLightColor(0);
-            n5.SetLightColor(0);
-
-            m2.tag = "TrafficLight";
-            n5.tag = "TrafficLight";
-
-            m2.LightInRoute = "";
-            n5.LightInRoute = "";
-
-            Destroy12to5();
-        }
-
-        if (startLight.LightInRoute == "m2n5")
-        {
-            
-            m2.SetLightColor(0);
-            n5.SetLightColor(0);
-            m2.tag = "TrafficLight";
-            n5.tag = "TrafficLight";
-
-            m2.LightInRoute = "";
-            n5.LightInRoute = "";
-
-            Destroy12to5();
-        }
-
-        if (startLight.LightInRoute == "n3ch")
-        {
-            n3.SetLightColor(0);
-            Debug.Log(n3.IntColor);
-            ch.SetLightColor(0);
-            n3.tag = "TrafficLight";
-            ch.tag = "TrafficLight";
-
-            n3.LightInRoute = "";
-            ch.LightInRoute = "";
-
-            Destroy3toI();
-        }
-
-
+        // Remove route object
         foreach (RouteObj item in routes)
         {
+            Debug.Log(item.RouteName);
+
             if (item.RouteName == startLight.LightInRoute)
             {
                 routes.Remove(item);
                 Destroy(item);
                 break;
             }
-                
         }
 
 
+        if (startLight.LightInRoute == "n5m2")
+        {
+            TrafficLights[] tl = new TrafficLights[] { m2, n5};
+            RouteLightsManage(tl, false);
+            Destroy12to5();
+        }
+
+        if (startLight.LightInRoute == "m2n5")
+        {
+            TrafficLights[] tl = new TrafficLights[] { m2, n5 };
+            RouteLightsManage(tl, false);
+            Destroy12to5();
+        }
+
+        if (startLight.LightInRoute == "n3ch")
+        {
+            TrafficLights[] tl = new TrafficLights[] { n3, ch };
+            RouteLightsManage(tl, false);
+            Destroy3toI();
+        }
+
+        if (startLight.LightInRoute == "nIch")
+        {
+            TrafficLights[] tl = new TrafficLights[] { nI, ch };
+            RouteLightsManage(tl, false);
+            DestroyItoICH();
+        }
+
+        Debug.Log(startLight.LightInRoute);
+
+       
+    }
+    void RouteDirection(Switch[] arr, string dir)
+    {
+        if (dir == DIR_STR)
+        {
+            foreach (Switch sw in arr)
+            {
+                sw.directionStraight();
+                sw.SwitchLockCount += 1;
+            }
+        }
+        else
+        {
+            foreach (Switch sw in arr)
+            {
+                sw.directionTurn();
+                sw.SwitchLockCount += 1;
+            }
+
+        }
+    }
+    void RouteDestroy(Switch[] arr)
+    {
+        foreach (Switch sw in arr)
+        {
+            sw.SwitchLockCount -= 1;
+        }
     }
 
+    void RouteLightsManage (TrafficLights [] arr, bool isRoute)
+    {
+        if (isRoute)
+        {
+            foreach (TrafficLights tl in arr)
+            {
+                tl.tag = LIGHTS_IN_ROUTE;
+                tl.LightInRoute = route.RouteName;                
+            }
+        }
+        else
+        {
+            foreach (TrafficLights tl in arr)
+            {
+                tl.SetLightColor(0);
+                tl.tag = LIGHTS_FREE;
+                tl.LightInRoute = "";
+            }
+        }
+    }
 }
 
 class RouteObj : MonoBehaviour
 {
-    private string routeName;
-    
+    private string routeName;    
 
     public string RouteName
     {
