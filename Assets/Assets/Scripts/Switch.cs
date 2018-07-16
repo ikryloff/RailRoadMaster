@@ -24,7 +24,7 @@ public class Switch : MonoBehaviour {
     void Start () {
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();
-        isSwitchStraight = true;
+        IsSwitchStraight = true;
         directionStraight();       
     }
 
@@ -47,7 +47,7 @@ public class Switch : MonoBehaviour {
     {
         if (timesLocked == 0)
         {
-            if (isSwitchStraight == true)
+            if (IsSwitchStraight == true)
             {
                 directionTurn();
             }
@@ -73,13 +73,26 @@ public class Switch : MonoBehaviour {
 
     public Exception Exception { get; private set; }
 
+    public bool IsSwitchStraight
+    {
+        get
+        {
+            return isSwitchStraight;
+        }
+
+        set
+        {
+            isSwitchStraight = value;
+        }
+    }
+
     public void directionStraight()
     {
         switchPhysicsTurn.SetActive(false);
         switchPhysicsStraight.SetActive(true);
         turnIndicator.sortingLayerName = HIDE_INDICATION_LAYER;
         straightIndicator.sortingLayerName = INDICATION_LAYER;
-        isSwitchStraight = true;
+        IsSwitchStraight = true;
     }
     public void directionTurn()
     {
@@ -87,7 +100,7 @@ public class Switch : MonoBehaviour {
         switchPhysicsTurn.SetActive(true);
         turnIndicator.sortingLayerName = INDICATION_LAYER;
         straightIndicator.sortingLayerName = HIDE_INDICATION_LAYER;
-        isSwitchStraight = false;        
+        IsSwitchStraight = false;        
     }
 
     
