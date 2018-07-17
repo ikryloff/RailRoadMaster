@@ -35,15 +35,17 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         {
             Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-
-            if (hit.collider != null && hit.collider.tag == LIGHTS_FREE)
+            // if you hit a free traffic light
+            if (hit.collider != null && hit.collider.tag == LIGHTS_FREE) 
             {
+                // its your first light
                 if(isStart)
                 {
                     startLight = hit.collider.GetComponent<TrafficLights>();
                     startLight.tag = LIGHTS_IN_ROUTE;
                     isStart = false;
                 }
+                //its your second light
                 else
                 {
                     endLight = hit.collider.GetComponent<TrafficLights>();                    
@@ -78,7 +80,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
             if (hit.collider != null && hit.collider.tag == LIGHTS_IN_ROUTE)
             {
                 startLight = hit.collider.GetComponent<TrafficLights>();                
-                route.DestroyRoute(startLight);
+                route.DestroyRouteByLight(startLight);
                 isStart = true;
             }
 

@@ -20,7 +20,6 @@ public class Switch : MonoBehaviour {
     private bool isSwitchStraight;
         
 
-    // Use this for initialization
     void Start () {
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();
@@ -70,8 +69,6 @@ public class Switch : MonoBehaviour {
             return timesLocked;
         }
     }
-
-    public Exception Exception { get; private set; }
 
     public bool IsSwitchStraight
     {
