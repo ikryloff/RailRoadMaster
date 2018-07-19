@@ -80,7 +80,7 @@ public class Route : Singleton<Route> {
         route.TrafficLights = tl;
         routes.Add(route);
         route.RouteName = _routeName;
-        RouteLightsManage(tl, true);
+        RouteLightsManage(startLight, true);
         Debug.Log(_routeName);
         RouteManage(route, _routeName);     
            
@@ -89,18 +89,120 @@ public class Route : Singleton<Route> {
 
     private void RouteManage(RouteObject ro,  string routeName)
     {
+
+        // Routes NI 
         if (routeName == "NIM2")
         {
             ro.SwitchesStr = new Switch[] { sw2_4, sw16 };
             ro.SwitchesTurn = new Switch[] { sw6_8 };
             ro.StartLight.SetLightColor(3);
         }
-        else if(routeName == "N5M2")
+        else if (routeName == "NICH")
+        {
+            ro.SwitchesStr = new Switch[] { sw2_4, sw6_8, sw16 };
+            ro.StartLight.SetLightColor(1);
+        }
+
+        // Routes N3
+        else if (routeName == "N3CH")
         {
             ro.SwitchesStr = new Switch[] { sw2_4, sw6_8 };
+            ro.SwitchesTurn = new Switch[] { sw16 };
+            ro.StartLight.SetLightColor(6);
+        }
+        else if (routeName == "N3M2")
+        {
+            ro.SwitchesStr = new Switch[] { sw2_4 };
+            ro.SwitchesTurn = new Switch[] { sw16, sw6_8 };
+            ro.StartLight.SetLightColor(3);
+        }
+
+        // Routes N4
+        else if (routeName == "N4CH")
+        {
+            ro.SwitchesStr = new Switch[] { sw10 , sw6_8 };
+            ro.SwitchesTurn = new Switch[] { sw2_4 };
+            ro.StartLight.SetLightColor(6);
+        }
+        else if (routeName == "N4M2")
+        {
+            ro.SwitchesStr = new Switch[] { sw2_4, sw10, sw6_8 };
+            ro.StartLight.SetLightColor(3);
+        }
+
+        // Routes N5
+        else if (routeName == "N5CH")
+        {
+            ro.SwitchesStr = new Switch[] { sw6_8 };
+            ro.SwitchesTurn = new Switch[] { sw12, sw10, sw2_4 };
+            ro.StartLight.SetLightColor(6);
+        }
+        else if (routeName == "N5M2")
+        {
+            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4 };
             ro.SwitchesTurn = new Switch[] { sw12, sw10 };
             ro.StartLight.SetLightColor(3);
         }
+
+        // Routes N6
+        else if (routeName == "N6CH")
+        {
+            ro.SwitchesStr = new Switch[] { sw6_8, sw12 };
+            ro.SwitchesTurn = new Switch[] { sw14, sw10, sw2_4 };
+            ro.StartLight.SetLightColor(6);
+        }
+        else if (routeName == "N6M2")
+        {
+            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4, sw12 };
+            ro.SwitchesTurn = new Switch[] { sw14, sw10 };
+            ro.StartLight.SetLightColor(3);
+        }
+
+        // Routes M3
+        else if (routeName == "M3M2")
+        {
+            ro.SwitchesStr = new Switch[] { sw14, sw6_8, sw12, sw2_4 };
+            ro.SwitchesTurn = new Switch[] { sw10 };
+            ro.StartLight.SetLightColor(3);
+        }
+
+        // Routes CH
+        else if (routeName == "CHCH3")
+        {
+            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4 };
+            ro.SwitchesTurn = new Switch[] { sw16 };
+            ro.StartLight.SetLightColor(4);
+        }       
+       
+        else if (routeName == "CHCHI")
+        {
+            ro.SwitchesStr = new Switch[] { sw2_4, sw6_8, sw16 };
+            ro.StartLight.SetLightColor(4);
+        }
+
+        else if (routeName == "CHCH4")
+        {
+            ro.SwitchesStr = new Switch[] { sw10, sw6_8 };
+            ro.SwitchesTurn = new Switch[] { sw2_4 };
+            ro.StartLight.SetLightColor(4);
+        }
+
+        else if(routeName == "CHCH5")
+        {
+            ro.SwitchesStr = new Switch[] { sw6_8 };
+            ro.SwitchesTurn = new Switch[] { sw12, sw10, sw2_4 };
+            ro.StartLight.SetLightColor(4);
+        }
+
+        else if (routeName == "CHCH6")
+        {
+            ro.SwitchesStr = new Switch[] { sw6_8, sw12 };
+            ro.SwitchesTurn = new Switch[] { sw14, sw10, sw2_4 };
+            ro.StartLight.SetLightColor(4);
+        }
+
+        // Routes M2
+
         else if (routeName == "M2N5")
         {
             ro.SwitchesStr = new Switch[] { sw2_4, sw6_8 };
@@ -108,17 +210,14 @@ public class Route : Singleton<Route> {
             ro.StartLight.SetLightColor(3);
             ro.EndtLight.SetLightColor(2);
         }
-        else if (routeName == "N3CH")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw6_8 };
-            ro.SwitchesTurn = new Switch[] { sw16 };
-            ro.StartLight.SetLightColor(6);
-        }
-        else if (routeName == "NICH")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw6_8, sw16 };            
-            ro.StartLight.SetLightColor(1);
-        }
+       
+        
+
+
+
+
+
+        ///////
         else DestroyRoute(ro);
 
         if (ro)
@@ -131,7 +230,7 @@ public class Route : Singleton<Route> {
             else
             {
                 Debug.Log("Danger route");
-                RouteLightsManage(ro.TrafficLights, false);
+                RouteLightsManage(ro.StartLight, false);
                 routes.Remove(ro);
                 Destroy(ro);
             }            
@@ -142,44 +241,31 @@ public class Route : Singleton<Route> {
 
     private void DestroyRoute(RouteObject ro)
     {
-        RouteLightsManage(ro.TrafficLights, false);
+        RouteLightsManage(ro.StartLight, false);
         RouteSwitchesUnlock(ro.SwitchesStr);
         RouteSwitchesUnlock(ro.SwitchesTurn);
         routes.Remove(ro);
         Destroy(ro);
     }
 
-    public void DestroyRouteByLight(TrafficLights anyLight)
+    public void DestroyRouteByLight(TrafficLights hitLight)
     {
-        if (String.IsNullOrEmpty(anyLight.LightInRoute))
+        if (String.IsNullOrEmpty(hitLight.LightInRoute))
         {
-            anyLight.tag = LIGHTS_FREE;            
+            hitLight.tag = LIGHTS_FREE;            
         }
         else
         {
             // Remove route object
             foreach (RouteObject routeObject in routes)
             {
-                if (routeObject.RouteName == anyLight.LightInRoute)
+                if (routeObject.RouteName == hitLight.LightInRoute)
                 {
                     DestroyRoute(routeObject);
                     break;
                 }
             }
         } 
-    }
-
-    private bool CheckRouteByName(ArrayList arr, string name)
-    {
-        if(arr.Count > 0)
-        {
-            foreach (RouteObject route in arr)
-            {
-                if (route.RouteName == name)
-                    return true;
-            }
-        }        
-        return false;
     }
 
     private bool CheckRouteBySwitches(Switch[] switches, string dir)
@@ -208,23 +294,22 @@ public class Route : Singleton<Route> {
         }
     }
 
-    public void RouteLightsManage(TrafficLights[] arr, bool isRoute)
+    public void RouteLightsManage(TrafficLights light, bool isRoute)
     {
 
-        foreach (TrafficLights tl in arr)
+        
+        if (isRoute)
         {
-            if (isRoute)
-            {
-                tl.tag = LIGHTS_IN_ROUTE;
-                tl.LightInRoute = route.RouteName;
-            }
-            else
-            {
-                tl.SetLightColor(0);
-                tl.tag = LIGHTS_FREE;
-                tl.LightInRoute = "";
-            }
+            light.tag = LIGHTS_IN_ROUTE;
+            light.LightInRoute = route.RouteName;
         }
+        else
+        {
+            light.SetLightColor(0);
+            light.tag = LIGHTS_FREE;
+            light.LightInRoute = "";
+        }
+        
 
     }
 
@@ -236,14 +321,13 @@ public class Route : Singleton<Route> {
             {
                 if (dir == DIR_STR)
                 {
-                    sw.directionStraight();
-                    sw.SwitchLockCount += 1;
+                    sw.directionStraight();                    
                 }
                 else
                 {
-                    sw.directionTurn();
-                    sw.SwitchLockCount += 1;
+                    sw.directionTurn();                   
                 }
+                sw.SwitchLockCount += 1;
             }
         }
     }
