@@ -11,9 +11,7 @@ public class Switch : MonoBehaviour {
     [SerializeField]
     private GameObject straightIndicatorObj;
     private SpriteRenderer turnIndicator;
-    private SpriteRenderer straightIndicator;
-    private string HIDE_INDICATION_LAYER = "HideIndication";
-    private string INDICATION_LAYER = "Indication";
+    private SpriteRenderer straightIndicator;    
     private int timesLocked = 0;
     
 
@@ -87,16 +85,16 @@ public class Switch : MonoBehaviour {
     {
         switchPhysicsTurn.SetActive(false);
         switchPhysicsStraight.SetActive(true);
-        turnIndicator.sortingLayerName = HIDE_INDICATION_LAYER;
-        straightIndicator.sortingLayerName = INDICATION_LAYER;
+        turnIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
+        straightIndicator.sortingLayerName = Constants.INDICATION_LAYER;
         IsSwitchStraight = true;
     }
     public void directionTurn()
     {
         switchPhysicsStraight.SetActive(false);
         switchPhysicsTurn.SetActive(true);
-        turnIndicator.sortingLayerName = INDICATION_LAYER;
-        straightIndicator.sortingLayerName = HIDE_INDICATION_LAYER;
+        turnIndicator.sortingLayerName = Constants.INDICATION_LAYER;
+        straightIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
         IsSwitchStraight = false;        
     }
 

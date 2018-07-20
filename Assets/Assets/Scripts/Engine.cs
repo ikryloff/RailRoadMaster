@@ -1,17 +1,26 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class Engine : RollingStock {
 
     private Rigidbody2D engine;
     private bool brakes = true;
     private float controllerPosition = 0;
+    [SerializeField]
+    private Text speed;
+    private float mSpeed;
     // Use this for initialization
     void Start () {
         engine = gameObject.GetComponent<Rigidbody2D>();
+        speed.text = "Speed: ";
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+
+        mSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
+        speed.text = "Speed: " + mSpeed;
+
         engine.AddRelativeForce(new Vector2(500 * controllerPosition, 0), ForceMode2D.Force);        
 
         if (brakes)

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SwitchManager : Singleton<SwitchManager>
 {
@@ -15,17 +16,20 @@ public class SwitchManager : Singleton<SwitchManager>
     }
 	
 	void Update () {
-        if (Input.GetMouseButtonDown(0) && isSwitchModeOn)
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
-            Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);            
-            if (hit.collider != null && hit.collider.tag == "Lever")
+            if (Input.GetMouseButtonDown(0) && isSwitchModeOn)
             {
-               
-                switchObject = hit.collider.transform.parent.gameObject;
-                Switch sw = switchObject.GetComponent<Switch>();
-                sw.changeDirection();                
-            }   
+                Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
+                if (hit.collider != null && hit.collider.tag == "Lever")
+                {
+
+                    switchObject = hit.collider.transform.parent.gameObject;
+                    Switch sw = switchObject.GetComponent<Switch>();
+                    sw.changeDirection();
+                }
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))

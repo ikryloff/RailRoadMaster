@@ -14,7 +14,7 @@ class RouteObject : MonoBehaviour
     private Switch[] switchesStr;
     private Switch[] switchesTurn;
     private TrafficLights startLight;
-    private TrafficLights endtLight;
+    private TrafficLights endLight;
 
         
     public string RouteName
@@ -69,7 +69,7 @@ class RouteObject : MonoBehaviour
         }
     }
 
-    public TrafficLights EndtLight
+    public TrafficLights EndLight
     {
         get
         {
@@ -78,7 +78,7 @@ class RouteObject : MonoBehaviour
 
         set
         {
-            endtLight = value;
+            endLight = value;
         }
     }
 

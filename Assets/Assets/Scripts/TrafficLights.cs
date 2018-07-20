@@ -20,13 +20,13 @@ public class TrafficLights : MonoBehaviour {
     private int intColor;
     
     const float flashTime = 1f;
-    private string lightInRoute;
+    private string nameRouteOfLight;
    
 
     private void Start()
     {
         lightColor = GetComponent<SpriteRenderer>();
-        SetLightColor(IntColor);
+        SetLightColor(GetLightColor);
     }    
 
 
@@ -39,36 +39,31 @@ public class TrafficLights : MonoBehaviour {
         }
     }
 
-    public string LightInRoute
+    public string NameRouteOfLight
     {
         get
         {
-            return lightInRoute;
+            return nameRouteOfLight;
         }
 
         set
         {
-            lightInRoute = value;
+            nameRouteOfLight = value;
         }
     }
 
-    public int IntColor
+    public int GetLightColor
     {
         get
         {
             return intColor;
-        }
-
-        set
-        {
-            intColor = value;
-        }
+        }       
     }
 
     private IEnumerator YellowFlashing()
     {
         
-        while (IntColor == 5)
+        while (GetLightColor == 5)
         {            
             float temp = 0f;
             while (temp < flashTime)
@@ -91,7 +86,7 @@ public class TrafficLights : MonoBehaviour {
     private IEnumerator YellowTopFlashing()
     {
         const float flashTime = 1f;
-        while (IntColor == 6)
+        while (GetLightColor == 6)
         {
             float temp = 0f;
             while (temp < flashTime)
@@ -114,7 +109,7 @@ public class TrafficLights : MonoBehaviour {
 
     public void SetLightColor(int color)
     {
-        IntColor = color;
+        intColor = color;
         switch (color)
         {
             case 0:

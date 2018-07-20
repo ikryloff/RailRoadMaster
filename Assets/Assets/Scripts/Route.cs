@@ -30,30 +30,10 @@ public class Route : Singleton<Route> {
     [SerializeField]
     private Switch sw15;
 
-    [SerializeField]
-    private TrafficLights n5;
-    [SerializeField]
-    private TrafficLights ch;
-    [SerializeField]
-    private TrafficLights m2;
-    [SerializeField]
-    private TrafficLights n3;
-    [SerializeField]
-    private TrafficLights nI;
-    [SerializeField]
-    private TrafficLights n4;
-    [SerializeField]
-    private TrafficLights n6;
-    [SerializeField]
-    private TrafficLights m3;
     ArrayList routes;
-
     private RouteObject route;
 
-    const string DIR_TURN = "turn";
-    const string DIR_STR = "straight";
-    const string LIGHTS_FREE = "TrafficLight";
-    const string LIGHTS_IN_ROUTE = "TrafficLightInRoute";
+   
     private bool isRoute;
     private string _routeName;   
 
@@ -80,8 +60,7 @@ public class Route : Singleton<Route> {
         route.TrafficLights = tl;
         routes.Add(route);
         route.RouteName = _routeName;
-        RouteLightsManage(startLight, true);
-        Debug.Log(_routeName);
+        RouteLightsManage(startLight, true);       
         RouteManage(route, _routeName);     
            
     }  
@@ -102,62 +81,60 @@ public class Route : Singleton<Route> {
             ro.SwitchesStr = new Switch[] { sw2_4, sw6_8, sw16 };
             ro.StartLight.SetLightColor(1);
         }
-
-        // Routes N3
-        else if (routeName == "N3CH")
+        
+        // Routes N2
+        else if (routeName == "N2CH")
         {
             ro.SwitchesStr = new Switch[] { sw2_4, sw6_8 };
             ro.SwitchesTurn = new Switch[] { sw16 };
             ro.StartLight.SetLightColor(6);
         }
-        else if (routeName == "N3M2")
+        else if (routeName == "N2M2")
         {
             ro.SwitchesStr = new Switch[] { sw2_4 };
             ro.SwitchesTurn = new Switch[] { sw16, sw6_8 };
+            ro.StartLight.SetLightColor(3);
+        }
+       
+        // Routes N3
+        else if (routeName == "N3CH")
+        {
+            ro.SwitchesStr = new Switch[] { sw10 , sw6_8 };
+            ro.SwitchesTurn = new Switch[] { sw2_4 };
+            ro.StartLight.SetLightColor(6);
+        }
+        else if (routeName == "N3M2")
+        {
+            ro.SwitchesStr = new Switch[] { sw2_4, sw10, sw6_8 };
             ro.StartLight.SetLightColor(3);
         }
 
         // Routes N4
         else if (routeName == "N4CH")
         {
-            ro.SwitchesStr = new Switch[] { sw10 , sw6_8 };
-            ro.SwitchesTurn = new Switch[] { sw2_4 };
-            ro.StartLight.SetLightColor(6);
-        }
-        else if (routeName == "N4M2")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw10, sw6_8 };
-            ro.StartLight.SetLightColor(3);
-        }
-
-        // Routes N5
-        else if (routeName == "N5CH")
-        {
             ro.SwitchesStr = new Switch[] { sw6_8 };
             ro.SwitchesTurn = new Switch[] { sw12, sw10, sw2_4 };
             ro.StartLight.SetLightColor(6);
         }
-        else if (routeName == "N5M2")
+        else if (routeName == "N4M2")
         {
             ro.SwitchesStr = new Switch[] { sw6_8, sw2_4 };
             ro.SwitchesTurn = new Switch[] { sw12, sw10 };
             ro.StartLight.SetLightColor(3);
         }
-
-        // Routes N6
-        else if (routeName == "N6CH")
+        // Routes N5
+        else if (routeName == "N5CH")
         {
             ro.SwitchesStr = new Switch[] { sw6_8, sw12 };
             ro.SwitchesTurn = new Switch[] { sw14, sw10, sw2_4 };
             ro.StartLight.SetLightColor(6);
         }
-        else if (routeName == "N6M2")
+        else if (routeName == "N5M2")
         {
             ro.SwitchesStr = new Switch[] { sw6_8, sw2_4, sw12 };
             ro.SwitchesTurn = new Switch[] { sw14, sw10 };
             ro.StartLight.SetLightColor(3);
         }
-
         // Routes M3
         else if (routeName == "M3M2")
         {
@@ -165,9 +142,8 @@ public class Route : Singleton<Route> {
             ro.SwitchesTurn = new Switch[] { sw10 };
             ro.StartLight.SetLightColor(3);
         }
-
         // Routes CH
-        else if (routeName == "CHCH3")
+        else if (routeName == "CHCH2")
         {
             ro.SwitchesStr = new Switch[] { sw6_8, sw2_4 };
             ro.SwitchesTurn = new Switch[] { sw16 };
@@ -180,21 +156,21 @@ public class Route : Singleton<Route> {
             ro.StartLight.SetLightColor(4);
         }
 
-        else if (routeName == "CHCH4")
+        else if (routeName == "CHCH3")
         {
             ro.SwitchesStr = new Switch[] { sw10, sw6_8 };
             ro.SwitchesTurn = new Switch[] { sw2_4 };
             ro.StartLight.SetLightColor(4);
         }
 
-        else if(routeName == "CHCH5")
+        else if(routeName == "CHCH4")
         {
             ro.SwitchesStr = new Switch[] { sw6_8 };
             ro.SwitchesTurn = new Switch[] { sw12, sw10, sw2_4 };
             ro.StartLight.SetLightColor(4);
         }
 
-        else if (routeName == "CHCH6")
+        else if (routeName == "CHCH5")
         {
             ro.SwitchesStr = new Switch[] { sw6_8, sw12 };
             ro.SwitchesTurn = new Switch[] { sw14, sw10, sw2_4 };
@@ -202,18 +178,83 @@ public class Route : Singleton<Route> {
         }
 
         // Routes M2
-
+        else if (routeName == "M2NI")
+        {
+            ro.SwitchesStr = new Switch[] { sw2_4, sw16 };
+            ro.SwitchesTurn = new Switch[] { sw6_8 };
+            ro.StartLight.SetLightColor(3);
+            ro.EndLight.SetLightColor(2);
+        }
+        else if (routeName == "M2N2")
+        {
+            ro.SwitchesStr = new Switch[] { sw2_4 };
+            ro.SwitchesTurn = new Switch[] { sw16, sw6_8 };
+            ro.StartLight.SetLightColor(3);
+            ro.EndLight.SetLightColor(2);
+        }
+        else if (routeName == "M2N3")
+        {
+            ro.SwitchesStr = new Switch[] { sw2_4, sw10, sw6_8 };
+            ro.StartLight.SetLightColor(3);
+            ro.EndLight.SetLightColor(2);
+        }
+        else if (routeName == "M2N4")
+        {
+            ro.SwitchesStr = new Switch[] { sw6_8 };
+            ro.SwitchesTurn = new Switch[] { sw12, sw10, sw2_4 };
+            ro.EndLight.SetLightColor(2);
+        }
         else if (routeName == "M2N5")
         {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw6_8 };
-            ro.SwitchesTurn = new Switch[] { sw12, sw10 };
+            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4, sw12 };
+            ro.SwitchesTurn = new Switch[] { sw14, sw10 };
             ro.StartLight.SetLightColor(3);
-            ro.EndtLight.SetLightColor(2);
+            ro.EndLight.SetLightColor(2);
+        }       
+        else if (routeName == "M2M3")
+        {
+            ro.SwitchesStr = new Switch[] { sw14, sw6_8, sw12, sw2_4 };
+            ro.SwitchesTurn = new Switch[] { sw10 };
+            ro.StartLight.SetLightColor(3);
         }
-       
-        
 
+        // Routes CHI 
+        if (routeName == "CHIM1")
+        {
+            ro.SwitchesStr = new Switch[] { sw15, sw5_17, sw1_3 };
+            ro.SwitchesTurn = new Switch[] { sw7_9 };
+            ro.StartLight.SetLightColor(3);
+        }
+        else if (routeName == "CHIM5")
+        {
+            ro.SwitchesStr = new Switch[] { sw15 };
+            ro.SwitchesTurn = new Switch[] { sw7_9, sw5_17 };
+            ro.StartLight.SetLightColor(3);
+        }
+        else if (routeName == "CHIN")
+        {
+            ro.SwitchesStr = new Switch[] { sw15, sw1_3, sw7_9 };
+            ro.StartLight.SetLightColor(1);
+        }
 
+        // Routes CH2 
+        if (routeName == "CH2M1")
+        {
+            ro.SwitchesStr = new Switch[] { sw5_17, sw1_3 };
+            ro.SwitchesTurn = new Switch[] { sw15, sw7_9 };
+            ro.StartLight.SetLightColor(3);
+        }
+        else if (routeName == "CH2M5")
+        {
+            ro.SwitchesTurn = new Switch[] { sw7_9, sw5_17, sw15 };
+            ro.StartLight.SetLightColor(3);
+        }
+        else if (routeName == "CH2N")
+        {
+            ro.SwitchesStr = new Switch[] { sw1_3, sw7_9 };
+            ro.SwitchesTurn = new Switch[] { sw15 };
+            ro.StartLight.SetLightColor(6);
+        }
 
 
 
@@ -222,10 +263,10 @@ public class Route : Singleton<Route> {
 
         if (ro)
         {
-            if (CheckRouteBySwitches(ro.SwitchesStr, DIR_STR) && CheckRouteBySwitches(ro.SwitchesTurn, DIR_TURN))
+            if (CheckRouteBySwitches(ro.SwitchesStr, Constants.DIR_STR) && CheckRouteBySwitches(ro.SwitchesTurn, Constants.DIR_TURN))
             {
-                RouteDirection(ro.SwitchesStr, DIR_STR);
-                RouteDirection(ro.SwitchesTurn, DIR_TURN);
+                RouteDirection(ro.SwitchesStr, Constants.DIR_STR);
+                RouteDirection(ro.SwitchesTurn, Constants.DIR_TURN);
             }
             else
             {
@@ -250,16 +291,16 @@ public class Route : Singleton<Route> {
 
     public void DestroyRouteByLight(TrafficLights hitLight)
     {
-        if (String.IsNullOrEmpty(hitLight.LightInRoute))
+        if (String.IsNullOrEmpty(hitLight.NameRouteOfLight))
         {
-            hitLight.tag = LIGHTS_FREE;            
+            hitLight.tag = Constants.LIGHTS_FREE;            
         }
         else
         {
             // Remove route object
             foreach (RouteObject routeObject in routes)
             {
-                if (routeObject.RouteName == hitLight.LightInRoute)
+                if (routeObject.RouteName == hitLight.NameRouteOfLight)
                 {
                     DestroyRoute(routeObject);
                     break;
@@ -274,7 +315,7 @@ public class Route : Singleton<Route> {
         {
             foreach (Switch sw in switches)
             {
-                if ((dir == DIR_STR && !sw.IsSwitchStraight && sw.SwitchLockCount > 0) || (dir == DIR_TURN && sw.IsSwitchStraight && sw.SwitchLockCount > 0))
+                if ((dir == Constants.DIR_STR && !sw.IsSwitchStraight && sw.SwitchLockCount > 0) || (dir == Constants.DIR_TURN && sw.IsSwitchStraight && sw.SwitchLockCount > 0))
                 {
                     return false;
                 }
@@ -300,14 +341,17 @@ public class Route : Singleton<Route> {
         
         if (isRoute)
         {
-            light.tag = LIGHTS_IN_ROUTE;
-            light.LightInRoute = route.RouteName;
+            light.tag = Constants.LIGHTS_IN_ROUTE;
+            light.NameRouteOfLight = route.RouteName;
         }
         else
         {
+            if (String.IsNullOrEmpty(route.EndLight.NameRouteOfLight))
+                route.EndLight.SetLightColor(0);
             light.SetLightColor(0);
-            light.tag = LIGHTS_FREE;
-            light.LightInRoute = "";
+            light.tag = Constants.LIGHTS_FREE;
+            light.NameRouteOfLight = "";
+            
         }
         
 
@@ -319,7 +363,7 @@ public class Route : Singleton<Route> {
         {
             foreach (Switch sw in arr)
             {
-                if (dir == DIR_STR)
+                if (dir == Constants.DIR_STR)
                 {
                     sw.directionStraight();                    
                 }
