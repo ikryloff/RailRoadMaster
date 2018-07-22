@@ -16,7 +16,7 @@ public class TrafficLights : MonoBehaviour {
     Sprite yellowFlashing;
     [SerializeField]
     private string trafficLightName;
-    private SpriteRenderer lightColor;    
+    private SpriteRenderer lightColor;
     private int intColor;
     
     const float flashTime = 1f;
@@ -63,7 +63,7 @@ public class TrafficLights : MonoBehaviour {
     private IEnumerator YellowFlashing()
     {
         
-        while (GetLightColor == 5)
+        while (GetLightColor == Constants.COLOR_YELLOW_FLASH)
         {            
             float temp = 0f;
             while (temp < flashTime)
@@ -86,7 +86,7 @@ public class TrafficLights : MonoBehaviour {
     private IEnumerator YellowTopFlashing()
     {
         const float flashTime = 1f;
-        while (GetLightColor == 6)
+        while (GetLightColor == Constants.COLOR_YELLOW_TOP_FLASH)
         {
             float temp = 0f;
             while (temp < flashTime)

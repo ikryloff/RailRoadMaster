@@ -96,7 +96,6 @@ public class Switch : MonoBehaviour {
         turnIndicator.sortingLayerName = Constants.INDICATION_LAYER;
         straightIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
         IsSwitchStraight = false;        
-    }
+    }   
 
-    
 }

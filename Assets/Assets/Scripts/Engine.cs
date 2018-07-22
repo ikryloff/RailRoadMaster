@@ -40,7 +40,7 @@ public class Engine : RollingStock {
         {
             brakes = false;
             controllerPosition++;
-        }
+        }       
     }
 
     public void engineControllerBackwards()

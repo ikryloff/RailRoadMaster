@@ -8,4 +8,12 @@ public class Constants {
     public static string DIR_STR = "straight";
     public static string LIGHTS_FREE = "TrafficLight";
     public static string LIGHTS_IN_ROUTE = "TrafficLightInRoute";
+
+    public static int COLOR_DEFAULT = 0;
+    public static int COLOR_GREEN = 1;
+    public static int COLOR_BLUE = 2;
+    public static int COLOR_WHITE = 3;
+    public static int COLOR_YELLOW = 4;
+    public static int COLOR_YELLOW_FLASH = 5;
+    public static int COLOR_YELLOW_TOP_FLASH = 6;
 }

@@ -65,6 +65,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
                     //its your second light
                     else
                     {
+                        //detect the end of Route
                         endLight = hit.collider.GetComponent<TrafficLights>();
                         if (IsPossibleLight(possibleLights, startLight.Name, endLight.Name))
                         {
@@ -78,7 +79,6 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
                         }
                         isStart = true;
                     }
-                    Debug.Log(hit.collider.name);
                 }
                 else if (hit.collider.tag == Constants.LIGHTS_IN_ROUTE && !isStart)
                 {
