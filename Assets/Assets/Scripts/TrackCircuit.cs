@@ -24,7 +24,7 @@ public class TrackCircuit : MonoBehaviour {
             if (tag == "Switch")
             {
                 transform.parent.GetComponent<Switch>().SwitchLockCount += 1;
-            }                
+            }
             IsCarPresence = true;            
         }
     }

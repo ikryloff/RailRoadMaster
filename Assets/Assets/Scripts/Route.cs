@@ -6,44 +6,20 @@ using UnityEngine;
 public class Route : Singleton<Route> {
 
     [SerializeField]
-    private Switch sw2_4;
-    [SerializeField]
-    private Switch sw6_8;
-    [SerializeField]
-    private Switch sw10;
-    [SerializeField]
-    private Switch sw12;
-    [SerializeField]
-    private Switch sw14;
-    [SerializeField]
-    private Switch sw16;
-    [SerializeField]
-    private Switch sw1_3;
-    [SerializeField]
-    private Switch sw5_17;
-    [SerializeField]
-    private Switch sw7_9;
-    [SerializeField]
-    private Switch sw11;
-    [SerializeField]
-    private Switch sw13;
-    [SerializeField]
-    private Switch sw15;
+    private Switch sw2_4, sw6_8, sw10, sw12, sw14, sw16, sw1_3, sw5_17, sw7_9, sw11, sw13, sw15;
 
     [SerializeField]
-    private TrackCircuit tcI_CH;
-    [SerializeField]
-    private TrackCircuit tcI_2_8;
-    [SerializeField]
-    private TrackCircuit tc2;
-    [SerializeField]
-    private TrackCircuit tcI_8_16;    
-    [SerializeField]
-    private TrackCircuit tcsw_16;
-    [SerializeField]
-    private TrackCircuit tcsw_6_8;
-    [SerializeField]
-    private TrackCircuit tcsw_2_4;
+    private TrackCircuit 
+        tcI_CH,
+        tcI_2_8,
+        tcI_4_6,
+        tc2,
+        tcI_8_16,
+        tcsw_16,
+        tcsw_6_8top,
+        tcsw_6_8bot,
+        tcsw_2_4top,
+        tcsw_2_4bot;    
 
     List<RouteObject> routes;
     private RouteObject route;
@@ -184,7 +160,7 @@ public class Route : Singleton<Route> {
             ro.SwitchesTurn = new Switch[] { sw16 };
             ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
             //order does matter
-            ro.TrackCircuits = new TrackCircuit[] { tcI_CH, tcsw_2_4, tcI_2_8, tcI_8_16, tcsw_6_8, tcsw_16, tc2 };
+            ro.TrackCircuits = new TrackCircuit[] { tcI_CH, tcsw_2_4top, tcI_2_8, tcI_8_16, tcsw_6_8top, tcsw_16, tc2 };
             
             
         }   
@@ -434,7 +410,7 @@ public class Route : Singleton<Route> {
 
         if (ro)
         {
-            if (CheckRootByPresence(ro.TrackCircuits))
+            if (CheckRootByPresence(ro.TrackCircuits, ro.TrafficLights))
             {
                 
                 if (CheckRouteBySwitches(ro.SwitchesStr, Constants.DIR_STR) && CheckRouteBySwitches(ro.SwitchesTurn, Constants.DIR_TURN))
@@ -502,13 +478,16 @@ public class Route : Singleton<Route> {
         return true;
     }
 
-    private bool CheckRootByPresence(TrackCircuit[] trackCircuits)
+    private bool CheckRootByPresence(TrackCircuit[] trackCircuits, TrafficLights [] trafficLights)
     {
-        foreach (TrackCircuit tc in trackCircuits)
+        if(!IsShunting(trafficLights))
         {
-            if (tc.IsCarPresence)
-                return false;
-        }
+            foreach (TrackCircuit tc in trackCircuits)
+            {
+                if (tc.IsCarPresence)
+                    return false;
+            }
+        }        
         return true;
     }
 
@@ -571,6 +550,11 @@ public class Route : Singleton<Route> {
                 sw.SwitchLockCount += 1;
             }
         }
+    }
+    
+    private bool IsShunting(TrafficLights[] trafficLights)
+    {
+        return (trafficLights[0].Name == "CH" || trafficLights[0].Name == "N") && (trafficLights[1].Name == "CH" || trafficLights[1].Name == "N");
     }
 }
 
