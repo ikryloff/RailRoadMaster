@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Route : Singleton<Route> {
@@ -12,10 +13,14 @@ public class Route : Singleton<Route> {
     private TrackCircuit 
         tcI_CH,
         tcI_2_8,
-        tcI_4_6,
+        tc12_4_6,
         tc2,
+        tc4,
+        tc12,
         tcI_8_16,
         tcsw_16,
+        tcsw10,
+        tcsw12,
         tcsw_6_8top,
         tcsw_6_8bot,
         tcsw_2_4top,
@@ -214,6 +219,8 @@ public class Route : Singleton<Route> {
             ro.SwitchesTurn = new Switch[] { sw12, sw10 };
             ro.StartLight.SetLightColor(Constants.COLOR_WHITE);
             ro.EndLight.SetLightColor(Constants.COLOR_BLUE);
+            //order does matter
+            ro.TrackCircuits = new TrackCircuit[] { tc12, tcsw_2_4bot, tc12_4_6, tcsw_6_8bot, tcsw10, tcsw12, tc4 };
         }
         else if (routeName == "M2N5")
         {
@@ -478,17 +485,31 @@ public class Route : Singleton<Route> {
         return true;
     }
 
+    // return true if al is ok, if route is free
     private bool CheckRootByPresence(TrackCircuit[] trackCircuits, TrafficLights [] trafficLights)
     {
-        if(!IsShunting(trafficLights))
+        bool dangerPresence = true;
+        TrackCircuit last = trackCircuits.Last();
+     
+        //check all except first and last track circuit
+        for (int i = 1; i < trackCircuits.Length - 1; i++)
         {
-            foreach (TrackCircuit tc in trackCircuits)
+            
+            if (trackCircuits[i].IsCarPresence)
             {
-                if (tc.IsCarPresence)
-                    return false;
+                
+                dangerPresence = false;
             }
-        }        
-        return true;
+                
+        }
+        Debug.Log(dangerPresence);
+        Debug.Log(IsShunting(trafficLights));
+        //if it is train route, all tracks must be free
+        if (!IsShunting(trafficLights) && last.IsCarPresence)
+            dangerPresence = false;
+
+        
+        return dangerPresence;
     }
 
     private bool CheckRouteUsed(TrackCircuit[] trackCircuits)
@@ -554,7 +575,7 @@ public class Route : Singleton<Route> {
     
     private bool IsShunting(TrafficLights[] trafficLights)
     {
-        return (trafficLights[0].Name == "CH" || trafficLights[0].Name == "N") && (trafficLights[1].Name == "CH" || trafficLights[1].Name == "N");
+        return (trafficLights[0].Name != "CH" || trafficLights[0].Name != "N") && (trafficLights[1].Name != "CH" || trafficLights[1].Name != "N");
     }
 }
 
