@@ -13,8 +13,7 @@ class RouteObject : MonoBehaviour
     private TrafficLights [] trafficLights;
     private Switch[] switchesStr;
     private Switch[] switchesTurn;
-    private TrackCircuit[] trackCircuits;
-    private bool inUse = false;
+    private TrackCircuit[] trackCircuits;    
     
     
 
@@ -109,17 +108,5 @@ class RouteObject : MonoBehaviour
             trackCircuits = value;
         }
     }
-
-    public bool InUse
-    {
-        get
-        {
-            return inUse;
-        }
-
-        set
-        {
-            inUse = value;
-        }
-    }
+    
 }

@@ -16,4 +16,8 @@ public class Constants {
     public static int COLOR_YELLOW = 4;
     public static int COLOR_YELLOW_FLASH = 5;
     public static int COLOR_YELLOW_TOP_FLASH = 6;
+
+    public static int TC_WAIT = 0;
+    public static int TC_OVER = 1;
+    public static int TC_USED = 2;
 }

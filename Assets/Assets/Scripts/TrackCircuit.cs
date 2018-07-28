@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class TrackCircuit : MonoBehaviour {    
     private string trackName;
-    private bool isCarPresence;
+    private int isCarPresence;
+    private int wasUsed;
     // Use this for initialization
     void Start()
     {
@@ -14,7 +15,7 @@ public class TrackCircuit : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        
+             
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -25,7 +26,7 @@ public class TrackCircuit : MonoBehaviour {
             {
                 transform.parent.GetComponent<Switch>().SwitchLockCount += 1;
             }
-            IsCarPresence = true;            
+            IsCarPresence += 1;            
         }
     }
     
@@ -37,11 +38,11 @@ public class TrackCircuit : MonoBehaviour {
             {
                 transform.parent.GetComponent<Switch>().SwitchLockCount -= 1;
             }
-            IsCarPresence = false;
+            IsCarPresence -= 1;
         }
     }
 
-    public bool IsCarPresence
+    public int IsCarPresence
     {
         get
         {
@@ -64,6 +65,27 @@ public class TrackCircuit : MonoBehaviour {
         set
         {
             trackName = value;
+        }
+    }
+
+    public int WasUsed
+    {
+        get
+        {
+            if (isCarPresence > 0)
+            {
+                wasUsed = Constants.TC_OVER;
+            }
+            if (wasUsed == Constants.TC_OVER && isCarPresence == 0)
+            {
+                wasUsed = Constants.TC_USED;
+            }
+            return wasUsed;
+        }
+
+        set
+        {
+            wasUsed = value;
         }
     }
 }

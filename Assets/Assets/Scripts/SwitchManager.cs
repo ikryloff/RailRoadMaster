@@ -11,7 +11,7 @@ public class SwitchManager : Singleton<SwitchManager>
 
     void Start () {
         isSwitchModeOn = false;
-        indicators = GameObject.FindGameObjectsWithTag("Lever");
+        indicators = GameObject.FindGameObjectsWithTag("Indication");
         RunSwitchMode(isSwitchModeOn);
     }
 	
@@ -22,7 +22,7 @@ public class SwitchManager : Singleton<SwitchManager>
             {
                 Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-                if (hit.collider != null && hit.collider.tag == "Lever")
+                if (hit.collider != null && hit.collider.tag == "Indication")
                 {
 
                     switchObject = hit.collider.transform.parent.gameObject;

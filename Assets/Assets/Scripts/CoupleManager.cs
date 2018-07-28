@@ -10,7 +10,7 @@ public class CoupleManager : Singleton<CoupleManager>
     void Update()
     {
         Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);   
+        RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
 
         if (hit.collider != null && hit.collider.name == "ActiveCouple")
         {
