@@ -9,6 +9,20 @@ public class Engine : RollingStock {
     [SerializeField]
     private Text speed;
     private float mSpeed;
+
+    public float ControllerPosition
+    {
+        get
+        {
+            return controllerPosition;
+        }
+
+        set
+        {
+            controllerPosition = value;
+        }
+    }
+
     // Use this for initialization
     void Start () {
         engine = gameObject.GetComponent<Rigidbody2D>();

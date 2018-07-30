@@ -14,30 +14,31 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     [SerializeField]
     private Text lightText;
 
+    public TrafficLights StartLight
+    {
+        get
+        {
+            return startLight;
+        }
 
-    private string[,] possibleLights = new string[,]
-   {
-       //Even part
-        {"NI", "M2", "CH","","","",""},
-        {"N2", "M2", "CH","","","",""},
-        {"N3", "M2", "CH","","","",""},
-        {"N4", "M2", "CH","","","",""},
-        {"N5", "M2", "CH","","","",""},
-        {"M3", "M2", "", "", "","", ""},
-        {"M2", "N2", "NI", "N3", "N4","N5","M3"},
-        {"CH", "CH2", "CHI", "CH3", "CH4","CH5", ""},
-        //Odd part
-        {"CHI", "M1", "N","M5","","",""},
-        {"CH2", "M1", "N","M5","","",""},
-        {"CH3", "M1", "N","M5","","",""},
-        {"CH4", "M1", "N","M5","","",""},
-        {"CH5", "M1", "N","M5","","",""},        
-        {"M1", "CH2", "CHI", "CH3", "CH4","CH5", ""},
-        {"M5", "CH2", "CHI", "CH3", "CH4","CH5", "M4"},
-        {"M4", "M5", "", "", "","",""},
-        {"N", "N2", "NI", "N3", "N4","N5", ""},
+        set
+        {
+            startLight = value;
+        }
+    }
 
-   };
+    public TrafficLights EndLight
+    {
+        get
+        {
+            return endLight;
+        }
+
+        set
+        {
+            endLight = value;
+        }
+    }
 
     private void Start()
     {
@@ -67,16 +68,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
                     {
                         //detect the end of Route
                         endLight = hit.collider.GetComponent<TrafficLights>();
-                        if (IsPossibleLight(possibleLights, startLight.Name, endLight.Name))
-                        {
-                            route.MakeRoute(startLight, endLight);
-                            SetLightsNames(startLight.Name, endLight.Name);
-                        }
-                        else
-                        {
-                            startLight.tag = Constants.LIGHTS_FREE;
-                            lightText.text = "Wrong light";
-                        }
+                        MakeRouteIfPossible(startLight, endLight);
                         isStart = true;
                     }
                 }
@@ -106,8 +98,11 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     }
 
     // Check possible Routes By Lights
-    private bool IsPossibleLight (String[,] arr, string start, string end  )
+    public bool IsPossibleLight (String[,] arr, TrafficLights first, TrafficLights second )
     {
+        string start = first.Name;
+        string end = second.Name;
+
         int n = arr.GetLength(0);
         int m = arr.GetLength(1);        
         for (int i = 0; i < n; i++)
@@ -123,6 +118,20 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
             
         }
         return false;
+    }
+
+    public void MakeRouteIfPossible(TrafficLights startLight, TrafficLights endLight)
+    {
+        if (IsPossibleLight(Constants.POSSIBLE_LIGHTS, startLight, endLight))
+        {
+            route.MakeRoute(startLight, endLight);
+            SetLightsNames(startLight.Name, endLight.Name);
+        }
+        else
+        {
+            startLight.tag = Constants.LIGHTS_FREE;
+            lightText.text = "Wrong light";
+        }
     }
 
     void SetLightsNames(String start, String end = "")

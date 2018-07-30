@@ -17,7 +17,32 @@ public class Constants {
     public static int COLOR_YELLOW_FLASH = 5;
     public static int COLOR_YELLOW_TOP_FLASH = 6;
 
-    public static int TC_WAIT = 0;
+    public static int TC_WAIT = -1;
+    public static int TC_DEFAULT = 0;
     public static int TC_OVER = 1;
     public static int TC_USED = 2;
+
+    public static string[,] POSSIBLE_LIGHTS = new string[,]
+  {
+       //Even part
+        {"NI", "M2", "CH","","","",""},
+        {"N2", "M2", "CH","","","",""},
+        {"N3", "M2", "CH","","","",""},
+        {"N4", "M2", "CH","","","",""},
+        {"N5", "M2", "CH","","","",""},
+        {"M3", "M2", "", "", "","", ""},
+        {"M2", "N2", "NI", "N3", "N4","N5","M3"},
+        {"CH", "CH2", "CHI", "CH3", "CH4","CH5", ""},
+        //Odd part
+        {"CHI", "M1", "N","M5","","",""},
+        {"CH2", "M1", "N","M5","","",""},
+        {"CH3", "M1", "N","M5","","",""},
+        {"CH4", "M1", "N","M5","","",""},
+        {"CH5", "M1", "N","M5","","",""},
+        {"M1", "CH2", "CHI", "CH3", "CH4","CH5", ""},
+        {"M5", "CH2", "CHI", "CH3", "CH4","CH5", "M4"},
+        {"M4", "M5", "", "", "","",""},
+        {"N", "N2", "NI", "N3", "N4","N5", ""},
+
+  };
 }

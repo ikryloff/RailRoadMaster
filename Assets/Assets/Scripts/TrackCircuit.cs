@@ -6,17 +6,12 @@ public class TrackCircuit : MonoBehaviour {
     private string trackName;
     private int isCarPresence;
     private int wasUsed;
-    // Use this for initialization
-    void Start()
-    {
 
+    private void Awake()
+    {
+        wasUsed = Constants.TC_DEFAULT;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-             
-    }
 
     void OnTriggerEnter2D(Collider2D other)
     {

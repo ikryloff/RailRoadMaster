@@ -23,7 +23,7 @@ public class TrafficLights : MonoBehaviour {
     private string nameRouteOfLight;
    
 
-    private void Start()
+    private void Awake()
     {
         lightColor = GetComponent<SpriteRenderer>();
         SetLightColor(GetLightColor);
