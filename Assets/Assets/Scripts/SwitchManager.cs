@@ -7,7 +7,9 @@ public class SwitchManager : Singleton<SwitchManager>
     private GameObject switchObject;
     private GameObject[] indicators;
     private Renderer rend;
-    private bool isSwitchModeOn;    
+    private bool isSwitchModeOn;
+    [SerializeField]
+    private RemoteControlScript rcs;
 
     void Start () {
         isSwitchModeOn = false;
@@ -16,27 +18,30 @@ public class SwitchManager : Singleton<SwitchManager>
     }
 	
 	void Update () {
-        if (!EventSystem.current.IsPointerOverGameObject())
+        if (!rcs.IsRemoteControllerOn)
         {
-            if (Input.GetMouseButtonDown(0) && isSwitchModeOn)
+            if (!EventSystem.current.IsPointerOverGameObject())
             {
-                Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-                if (hit.collider != null && hit.collider.tag == "Indication")
+                if (Input.GetMouseButtonDown(0) && isSwitchModeOn)
                 {
+                    Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
+                    if (hit.collider != null && hit.collider.tag == "Indication")
+                    {
 
-                    switchObject = hit.collider.transform.parent.gameObject;
-                    Switch sw = switchObject.GetComponent<Switch>();
-                    sw.changeDirection();
+                        switchObject = hit.collider.transform.parent.gameObject;
+                        Switch sw = switchObject.GetComponent<Switch>();
+                        sw.changeDirection();
+                    }
                 }
             }
-        }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            isSwitchModeOn = isSwitchModeOn ? false : true;            
-            RunSwitchMode(isSwitchModeOn);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                isSwitchModeOn = isSwitchModeOn ? false : true;
+                RunSwitchMode(isSwitchModeOn);
 
+            }
         }
         
     }

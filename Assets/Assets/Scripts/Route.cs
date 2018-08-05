@@ -267,7 +267,7 @@ public class Route : Singleton<Route> {
         {
             ro.SwitchesStr = new Switch[] { sw6_8, sw2_4, sw12 };
             ro.SwitchesTurn = new Switch[] { sw14, sw10 };
-            ro.TrackCircuits = new TrackCircuit[] { tc6, tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tcsw14, tc4 };
+            ro.TrackCircuits = new TrackCircuit[] { tc6, tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tcsw14, tc5 };
         }       
         else if (ro.RouteName == "M2M3")
         {
@@ -492,7 +492,7 @@ public class Route : Singleton<Route> {
         ///////
         else DestroyRoute(ro);
 
-        Debug.Log(ro.TrackCircuits.Last().WasUsed);
+        Debug.Log(ro.TrackCircuits.Last().UseMode);
 
         if (ro)
         {                        
@@ -501,14 +501,14 @@ public class Route : Singleton<Route> {
                 if (CheckRouteBySwitches(ro.SwitchesStr, Constants.DIR_STR) && CheckRouteBySwitches(ro.SwitchesTurn, Constants.DIR_TURN))
                 {
                     // if the track of reception of train is NOT used in other route
-                    if((!IsShunting(ro.TrafficLights) && ro.TrackCircuits.Last().WasUsed != Constants.TC_WAIT) || IsShunting(ro.TrafficLights))
+                    if((!IsShunting(ro.TrafficLights) && ro.TrackCircuits.Last().UseMode != Constants.TC_WAIT) || IsShunting(ro.TrafficLights))
                     {
                         Debug.Log("Make route direction " + ro.RouteName);
                         RouteDirection(ro.SwitchesStr, Constants.DIR_STR);
                         RouteDirection(ro.SwitchesTurn, Constants.DIR_TURN);
                         foreach (TrackCircuit tc in ro.TrackCircuits)
                         {
-                            tc.WasUsed = Constants.TC_WAIT;
+                            tc.UseMode = Constants.TC_WAIT;
                         }
                         Debug.Log("Route Locked " + ro.RouteName);
                     }
@@ -545,7 +545,7 @@ public class Route : Singleton<Route> {
             RouteSwitchesUnlock(ro.SwitchesTurn);
             foreach (TrackCircuit tc in ro.TrackCircuits)
             {
-                tc.WasUsed = Constants.TC_DEFAULT;
+                tc.UseMode = Constants.TC_DEFAULT;
             }
             Debug.Log("Unlock");
         }        
@@ -641,23 +641,14 @@ public class Route : Singleton<Route> {
         for (int i = 1; i < trackCircuits.Length - 1; i++)
         {
             
-            if (trackCircuits[i].WasUsed == Constants.TC_USED)
+            if (trackCircuits[i].UseMode == Constants.TC_USED)
             {
                 wasRouteUsed = true;
             }
             else
                 wasRouteUsed = false;
 
-        }
-        if (!IsShunting(ro.TrafficLights))
-        {
-            if (trackCircuits[0].WasUsed == Constants.TC_USED && control.WasUsed == Constants.TC_USED && last.WasUsed == Constants.TC_OVER)
-            {
-                wasRouteUsed = true;
-            }
-            else
-                wasRouteUsed = false;
-        }
+        }       
 
         return wasRouteUsed;
         

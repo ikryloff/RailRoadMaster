@@ -12,6 +12,7 @@ public class CameraController : MonoBehaviour {
     Vector2 smoothedPosition;
     private float smoothSpeed = 8f;
     public Toggle myToggle;
+    
 
     private void Start()
     {

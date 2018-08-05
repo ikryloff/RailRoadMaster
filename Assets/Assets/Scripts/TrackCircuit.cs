@@ -5,11 +5,28 @@ using UnityEngine;
 public class TrackCircuit : MonoBehaviour {    
     private string trackName;
     private int isCarPresence;
-    private int wasUsed;
+    private int useMode;
+    private Switch switchTC;
+    [SerializeField]
+    private SpriteRenderer cellsTrack;
+    [SerializeField]
+    private SpriteRenderer cellsStraight;
+    [SerializeField]
+    private SpriteRenderer cellsTurn;
+    private SpriteRenderer[] allCells;
 
-    private void Awake()
+    private void Start()
     {
-        wasUsed = Constants.TC_DEFAULT;
+        useMode = Constants.TC_DEFAULT;
+        allCells = new SpriteRenderer[3];
+        allCells[0] = cellsTrack;
+        if (tag == "Switch")
+        {
+            switchTC = transform.parent.GetComponent<Switch>();
+            allCells[1] = cellsStraight;
+            allCells[2] = cellsTurn;
+        }
+        SetCellsLight(allCells, Constants.TC_DEFAULT);
     }
 
 
@@ -19,9 +36,10 @@ public class TrackCircuit : MonoBehaviour {
         {            
             if (tag == "Switch")
             {
-                transform.parent.GetComponent<Switch>().SwitchLockCount += 1;
+                switchTC.SwitchLockCount += 1;
             }
-            IsCarPresence += 1;            
+            IsCarPresence += 1;
+            SetCellsLight(ReturnCells(), Constants.TC_OVER);
         }
     }
     
@@ -34,6 +52,7 @@ public class TrackCircuit : MonoBehaviour {
                 transform.parent.GetComponent<Switch>().SwitchLockCount -= 1;
             }
             IsCarPresence -= 1;
+            SetCellsLight(ReturnCells(), Constants.TC_DEFAULT);
         }
     }
 
@@ -46,7 +65,8 @@ public class TrackCircuit : MonoBehaviour {
 
         set
         {
-            isCarPresence = value;
+            isCarPresence = value;   
+
         }
     }
 
@@ -63,24 +83,61 @@ public class TrackCircuit : MonoBehaviour {
         }
     }
 
-    public int WasUsed
+    public int UseMode
     {
         get
         {
             if (isCarPresence > 0)
             {
-                wasUsed = Constants.TC_OVER;
+                useMode = Constants.TC_OVER;
             }
-            if (wasUsed == Constants.TC_OVER && isCarPresence == 0)
+            if (useMode == Constants.TC_OVER && isCarPresence == 0)
             {
-                wasUsed = Constants.TC_USED;
+                useMode = Constants.TC_USED;
             }
-            return wasUsed;
+            return useMode;
         }
 
         set
         {
-            wasUsed = value;
+            useMode = value;
+            SetCellsLight(ReturnCells(), value);
+        }
+    }
+
+    public SpriteRenderer[] ReturnCells()
+    {
+        SpriteRenderer[] sr = new SpriteRenderer[2];
+        sr[0] = cellsTrack;
+        if (tag == "Switch")
+        {
+            if (switchTC.IsSwitchStraight)
+                sr[1] = cellsStraight;
+            else
+                sr[1] = cellsTurn;
+        }
+        return sr;
+    }
+
+    public void SetCellsLight(SpriteRenderer[] cells, int color)
+    {
+        if (cells != null)
+        {
+            foreach (SpriteRenderer cell in cells)
+            {
+                if (cell)
+                {
+                    if (color == Constants.TC_WAIT)
+                        cell.color = new Color32(250, 240, 125, 255);
+                    else if (color == Constants.TC_OVER)
+                        cell.color = new Color32(215, 0, 0, 255);
+                    else
+                        cell.color = new Color32(190, 190, 190, 255);
+                    if (IsCarPresence > 0)
+                        cell.color = new Color32(215, 0, 0, 255);
+                }
+            }
+            
         }
     }
 }

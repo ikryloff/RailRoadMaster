@@ -13,6 +13,8 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private Route route;   
     [SerializeField]
     private Text lightText;
+    [SerializeField]
+    private RemoteControlScript rcs;
 
     public TrafficLights StartLight
     {
@@ -46,54 +48,57 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     }
 
     void Update () {
-        if (Input.GetMouseButtonDown(0))
+        if (!rcs.IsRemoteControllerOn)
         {
-            Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-            // if you hit a free traffic light
-            if (hit.collider != null)
-            { 
-                if (hit.collider.tag == Constants.LIGHTS_FREE)
-                {
-                    // its your first light
-                    if (isStart)
-                    {
-                        startLight = hit.collider.GetComponent<TrafficLights>();
-                        startLight.tag = Constants.LIGHTS_IN_ROUTE;
-                        SetLightsNames(startLight.Name);
-                        isStart = false;
-                    }
-                    //its your second light
-                    else
-                    {
-                        //detect the end of Route
-                        endLight = hit.collider.GetComponent<TrafficLights>();
-                        MakeRouteIfPossible(startLight, endLight);
-                        isStart = true;
-                    }
-                }
-                else if (hit.collider.tag == Constants.LIGHTS_IN_ROUTE && !isStart)
-                {
-                    startLight.tag = Constants.LIGHTS_FREE;
-                    isStart = true;
-                    lightText.text = "Wrong light in route";
-                }
-            }
-            
-        }
-
-        if (Input.GetMouseButton(1))
-        {
-            Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-            if (hit.collider != null && hit.collider.tag == Constants.LIGHTS_IN_ROUTE)
+            if (Input.GetMouseButtonDown(0))
             {
-                startLight = hit.collider.GetComponent<TrafficLights>();                
-                route.DestroyRouteByLight(startLight);
-                isStart = true;
-                lightText.text = "None";
+                Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
+                // if you hit a free traffic light
+                if (hit.collider != null)
+                {
+                    if (hit.collider.tag == Constants.LIGHTS_FREE)
+                    {
+                        // its your first light
+                        if (isStart)
+                        {
+                            startLight = hit.collider.GetComponent<TrafficLights>();
+                            startLight.tag = Constants.LIGHTS_IN_ROUTE;
+                            SetLightsNames(startLight.Name);
+                            isStart = false;
+                        }
+                        //its your second light
+                        else
+                        {
+                            //detect the end of Route
+                            endLight = hit.collider.GetComponent<TrafficLights>();
+                            MakeRouteIfPossible(startLight, endLight);
+                            isStart = true;
+                        }
+                    }
+                    else if (hit.collider.tag == Constants.LIGHTS_IN_ROUTE && !isStart)
+                    {
+                        startLight.tag = Constants.LIGHTS_FREE;
+                        isStart = true;
+                        lightText.text = "Wrong light in route";
+                    }
+                }
+
             }
 
+            if (Input.GetMouseButton(1))
+            {
+                Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
+                if (hit.collider != null && hit.collider.tag == Constants.LIGHTS_IN_ROUTE)
+                {
+                    startLight = hit.collider.GetComponent<TrafficLights>();
+                    route.DestroyRouteByLight(startLight);
+                    isStart = true;
+                    lightText.text = "None";
+                }
+
+            }
         }
     }
 
