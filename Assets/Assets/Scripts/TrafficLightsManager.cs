@@ -9,12 +9,14 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private string endRoute;
     private TrafficLights startLight;
     private TrafficLights endLight;
+    private TrafficLights tempLight = null;
     [SerializeField]
     private Route route;   
     [SerializeField]
     private Text lightText;
     [SerializeField]
     private RemoteControlScript rcs;
+    private TrafficLights[] routeLights = new TrafficLights[2];
 
     public TrafficLights StartLight
     {
@@ -42,14 +44,47 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         }
     }
 
+    public void SetRouteLights(TrafficLights light)
+    {
+        if (rcs.IsRemoteControllerOn)
+        {
+            if (light.tag == Constants.LIGHTS_FREE)
+            {
+                if (isStart)
+                {
+                    routeLights[0] = light;
+                    SetLightsNames(routeLights[0].Name);
+                    routeLights[0].tag = Constants.LIGHTS_IN_ROUTE;
+                    isStart = false;
+                }
+                else
+                {
+                    routeLights[1] = light;
+                    MakeRouteIfPossible(routeLights[0], routeLights[1]);
+                    isStart = true;
+                }
+            }
+            else if (light.tag == Constants.LIGHTS_IN_ROUTE && !isStart)
+            {
+                routeLights[0].tag = Constants.LIGHTS_FREE;
+                isStart = true;
+                lightText.text = "Wrong light in route";
+            }
+        }  
+    }
+   
+
     private void Start()
     {
         lightText.text = "None";
+        
     }
 
     void Update () {
+      
         if (!rcs.IsRemoteControllerOn)
         {
+            /*
             if (Input.GetMouseButtonDown(0))
             {
                 Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -83,8 +118,8 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
                         lightText.text = "Wrong light in route";
                     }
                 }
-
-            }
+            } 
+            */
 
             if (Input.GetMouseButton(1))
             {
