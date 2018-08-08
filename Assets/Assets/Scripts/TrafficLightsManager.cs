@@ -16,7 +16,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private Text lightText;
     [SerializeField]
     private RemoteControlScript rcs;
-    private TrafficLights[] routeLights = new TrafficLights[2];
+    private bool cancelRouteIsOn;
 
     public TrafficLights StartLight
     {
@@ -44,98 +44,74 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         }
     }
 
-    public void SetRouteLights(TrafficLights light)
+    public bool CancelRouteIsOn
+    {
+        get
+        {
+            return cancelRouteIsOn;
+        }
+
+        set
+        {
+            cancelRouteIsOn = value;
+            lightText.text = "Cancel..";
+
+        }
+    }
+
+    public void SetLightsInRoute(TrafficLights light)
     {
         if (rcs.IsRemoteControllerOn)
         {
-            if (light.tag == Constants.LIGHTS_FREE)
+            // Canceling Route
+            if (CancelRouteIsOn)
             {
-                if (isStart)
+                if (light != null && light.tag == Constants.LIGHTS_IN_ROUTE)
                 {
-                    routeLights[0] = light;
-                    SetLightsNames(routeLights[0].Name);
-                    routeLights[0].tag = Constants.LIGHTS_IN_ROUTE;
-                    isStart = false;
-                }
-                else
-                {
-                    routeLights[1] = light;
-                    MakeRouteIfPossible(routeLights[0], routeLights[1]);
+                    route.DestroyRouteByLight(light);
                     isStart = true;
+                    lightText.text = "None";
                 }
+                lightText.text = "Done";
+                cancelRouteIsOn = false;
+                
             }
-            else if (light.tag == Constants.LIGHTS_IN_ROUTE && !isStart)
+            else
             {
-                routeLights[0].tag = Constants.LIGHTS_FREE;
-                isStart = true;
-                lightText.text = "Wrong light in route";
-            }
+                //Taking lights in route
+                if (light.tag == Constants.LIGHTS_FREE)
+                {
+                    if (isStart)
+                    {
+                        startLight = light;
+                        SetLightsNames(startLight.Name);
+                        startLight.tag = Constants.LIGHTS_IN_ROUTE;
+                        isStart = false;
+                    }
+                    else
+                    {
+                        endLight = light;
+                        MakeRouteIfPossible(startLight, endLight);
+                        isStart = true;
+                    }
+                }
+                else if (light.tag == Constants.LIGHTS_IN_ROUTE && !isStart)
+                {
+                    startLight.tag = Constants.LIGHTS_FREE;
+                    isStart = true;
+                    lightText.text = "Wrong light in route";
+                }
+            } 
         }  
     }
-   
-
+       
+    
     private void Start()
     {
         lightText.text = "None";
         
     }
-
-    void Update () {
-      
-        if (!rcs.IsRemoteControllerOn)
-        {
-            /*
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-                // if you hit a free traffic light
-                if (hit.collider != null)
-                {
-                    if (hit.collider.tag == Constants.LIGHTS_FREE)
-                    {
-                        // its your first light
-                        if (isStart)
-                        {
-                            startLight = hit.collider.GetComponent<TrafficLights>();
-                            startLight.tag = Constants.LIGHTS_IN_ROUTE;
-                            SetLightsNames(startLight.Name);
-                            isStart = false;
-                        }
-                        //its your second light
-                        else
-                        {
-                            //detect the end of Route
-                            endLight = hit.collider.GetComponent<TrafficLights>();
-                            MakeRouteIfPossible(startLight, endLight);
-                            isStart = true;
-                        }
-                    }
-                    else if (hit.collider.tag == Constants.LIGHTS_IN_ROUTE && !isStart)
-                    {
-                        startLight.tag = Constants.LIGHTS_FREE;
-                        isStart = true;
-                        lightText.text = "Wrong light in route";
-                    }
-                }
-            } 
-            */
-
-            if (Input.GetMouseButton(1))
-            {
-                Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-                if (hit.collider != null && hit.collider.tag == Constants.LIGHTS_IN_ROUTE)
-                {
-                    startLight = hit.collider.GetComponent<TrafficLights>();
-                    route.DestroyRouteByLight(startLight);
-                    isStart = true;
-                    lightText.text = "None";
-                }
-
-            }
-        }
-    }
+       
 
     // Check possible Routes By Lights
     public bool IsPossibleLight (String[,] arr, TrafficLights first, TrafficLights second )

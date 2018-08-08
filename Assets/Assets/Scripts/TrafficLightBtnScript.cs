@@ -8,19 +8,32 @@ public class TrafficLightBtnScript : MonoBehaviour {
     [SerializeField]
     private Button button;
     [SerializeField]
-    private TrafficLights tl;
+    private TrafficLights trafficLight;
     [SerializeField]
-    private TrafficLightsManager tlm;
+    private TrafficLightsManager trafficLightsManager;
+
+    public TrafficLights TrafficLight
+    {
+        get
+        {
+            return trafficLight;
+        }
+
+        set
+        {
+            trafficLight = value;
+        }
+    }
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         button.onClick.AddListener(GetTrafficLight);
 	}
 
     private void GetTrafficLight()
     {
-        tlm.SetRouteLights(tl);
+        trafficLightsManager.SetLightsInRoute(TrafficLight);
     }
 
     // Update is called once per frame
