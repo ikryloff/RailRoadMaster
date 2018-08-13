@@ -59,6 +59,12 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         }
     }
 
+    public void SetRouteByLights(TrafficLights firstLight, TrafficLights secondLight)
+    {
+        SetLightsInRoute(firstLight);
+        SetLightsInRoute(secondLight);
+    }
+
     public void SetLightsInRoute(TrafficLights light)
     {
         if (rcs.IsRemoteControllerOn)

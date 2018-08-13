@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager> {
 
-    public TrafficLights ch2, m1, ch4, N, N3 ;
+    private TrafficLights ch2, m1, ch4, N, N3 ;
     [SerializeField]
     private Route route;
     [SerializeField]
@@ -16,18 +16,21 @@ public class GameManager : Singleton<GameManager> {
 
     void Start ()
     {
-        Invoke("Script", 2f);        
+        Invoke("Script", 2f);
+        N = GetTrafficLightByName("N");
+        N3 = GetTrafficLightByName("N3");
     }
 
     void Update()
     {
+
         
     }
 
     void Script()
     {
         float timeZ = 0f;
-        tlm.MakeRouteIfPossible(N, N3);
+        tlm.SetRouteByLights(N, N3);        
         engineGo();
         Invoke("engineRelease", timeZ + 2f);
         Invoke("engineStop", timeZ + 9f);
@@ -50,6 +53,11 @@ public class GameManager : Singleton<GameManager> {
     {
         engine.engineControllerReleaseAll();
         Debug.Log("Release");
+    }
+
+    public TrafficLights GetTrafficLightByName(string lightName)
+    {
+        return GameObject.Find(lightName).GetComponent<TrafficLights>();
     }
 
 

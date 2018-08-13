@@ -2,19 +2,89 @@
 
 public class RollingStock : MonoBehaviour
 {
-    
-    private Rigidbody2D rollingStock;    
+    private Rigidbody2D rollingStock;
+    [SerializeField]
+    private string number;
+    private Couple activeCouple;
+    private Couple passiveCouple;
+    private Couple connectedToPassive;
+    private GameObject connectedToActive;
+
+    public string Number
+    {
+        get
+        {
+            return number;
+        }
+
+        set
+        {
+            number = value;
+        }
+    }
+
+    public Couple ConnectedToPassive
+    {
+        get
+        {
+            return connectedToPassive;
+        }
+
+        set
+        {
+            connectedToPassive = value;
+        }
+    }
+
+    public GameObject ConnectedToActive
+    {
+        get
+        {
+            return connectedToActive;
+        }
+
+        set
+        {
+            connectedToActive = value;
+        }
+    }
+
+    public void GetConsistsNumber()
+    {
+        
+        if (ConnectedToActive)
+            Debug.Log(Number + " connected to " + ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number);
+        else
+            Debug.Log(Number + " is single");
+
+        if (ConnectedToPassive)
+        {
+            Debug.Log(Number + " passive connected to " + ConnectedToPassive.transform.parent.GetComponent<RollingStock>().Number);
+        }
+        else
+            Debug.Log(Number + " no passive connection");
+
+    }
+
     private void Start()
     {
-        rollingStock = gameObject.GetComponent<Rigidbody2D>();        
-        
+        rollingStock = GetComponent<Rigidbody2D>();
+        Debug.Log(rollingStock.name);
+        activeCouple = transform.GetChild(0).GetComponent<Couple>();
+        passiveCouple = transform.GetChild(1).GetComponent<Couple>();
+
     }
 
     void FixedUpdate()
     {
+        if(Input.GetKeyDown(KeyCode.UpArrow))
+            GetConsistsNumber();
         //railstock friction
         if (rollingStock.velocity.x > 0)
-            rollingStock.AddRelativeForce(new Vector2(-100f, 0), ForceMode2D.Force);
+        {
+            rollingStock.AddRelativeForce(new Vector2(-100f, 0), ForceMode2D.Force);            
+        }
+            
         else if (rollingStock.velocity.x < 0)
             rollingStock.AddRelativeForce(new Vector2(100, 0), ForceMode2D.Force);
 
