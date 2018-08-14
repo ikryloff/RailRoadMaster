@@ -7,8 +7,7 @@ public class RollingStock : MonoBehaviour
     private string number;
     private Couple activeCouple;
     private Couple passiveCouple;
-    private Couple connectedToPassive;
-    private GameObject connectedToActive;
+    private Couple connectedToPassive;   
 
     public string Number
     {
@@ -36,24 +35,11 @@ public class RollingStock : MonoBehaviour
         }
     }
 
-    public GameObject ConnectedToActive
-    {
-        get
-        {
-            return connectedToActive;
-        }
-
-        set
-        {
-            connectedToActive = value;
-        }
-    }
-
     public void GetConsistsNumber()
     {
         
-        if (ConnectedToActive)
-            Debug.Log(Number + " connected to " + ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number);
+        if (activeCouple.ConnectedToActive)
+            Debug.Log(Number + " connected to " + activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number);
         else
             Debug.Log(Number + " is single");
 
@@ -68,8 +54,7 @@ public class RollingStock : MonoBehaviour
 
     private void Start()
     {
-        rollingStock = GetComponent<Rigidbody2D>();
-        Debug.Log(rollingStock.name);
+        rollingStock = GetComponent<Rigidbody2D>();        
         activeCouple = transform.GetChild(0).GetComponent<Couple>();
         passiveCouple = transform.GetChild(1).GetComponent<Couple>();
 
