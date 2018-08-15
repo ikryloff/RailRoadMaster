@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Engine : RollingStock {
+public class Engine : MonoBehaviour {
 
     private Rigidbody2D engine;
     private bool brakes = true;
@@ -45,7 +45,17 @@ public class Engine : RollingStock {
                 engine.AddRelativeForce(new Vector2(2000, 0), ForceMode2D.Force);
             else
                 engine.velocity = new Vector2(0, 0);
-        }        
+        }
+        else
+        {
+            if (engine.velocity.x > 0)
+            {
+                engine.AddRelativeForce(new Vector2(-100f, 0), ForceMode2D.Force);
+            }
+
+            else if (engine.velocity.x < 0)
+                engine.AddRelativeForce(new Vector2(100, 0), ForceMode2D.Force);
+        }
     }
 
     public void engineControllerForward()    {
@@ -76,7 +86,6 @@ public class Engine : RollingStock {
         controllerPosition = 0;
         brakes = true;
     }
-
-    
+       
 
 }

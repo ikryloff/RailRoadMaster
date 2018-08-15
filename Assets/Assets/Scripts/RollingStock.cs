@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class RollingStock : MonoBehaviour
 {
-    private Rigidbody2D rollingStock;
+    private RollingStock rollingStock;
+    private Rigidbody2D rollingStockRB;
     [SerializeField]
     private string number;
+    string consist;
     private Couple activeCouple;
     private Couple passiveCouple;
     private Couple connectedToPassive;   
@@ -37,7 +40,14 @@ public class RollingStock : MonoBehaviour
 
     public void GetConsistsNumber()
     {
+        consist = "";
+        if (!rollingStock.ConnectedToPassive)
+        {
+            Debug.Log("consist is " + ConsistsNumber(rollingStock));
+        }
         
+
+/*
         if (activeCouple.ConnectedToActive)
             Debug.Log(Number + " connected to " + activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number);
         else
@@ -48,30 +58,49 @@ public class RollingStock : MonoBehaviour
             Debug.Log(Number + " passive connected to " + ConnectedToPassive.transform.parent.GetComponent<RollingStock>().Number);
         }
         else
-            Debug.Log(Number + " no passive connection");
+            Debug.Log(Number + " no passive connection"); */
 
     }
 
     private void Start()
     {
-        rollingStock = GetComponent<Rigidbody2D>();        
+        rollingStock = GetComponent<RollingStock>();
+        rollingStockRB = GetComponent<Rigidbody2D>();        
         activeCouple = transform.GetChild(0).GetComponent<Couple>();
         passiveCouple = transform.GetChild(1).GetComponent<Couple>();
 
     }
+    
+    private string ConsistsNumber(RollingStock rollingStock)
+    {
+        if (!rollingStock.activeCouple.ConnectedToActive)
+            return rollingStock.Number;
+        consist += rollingStock.activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number + "-";
+        ConsistsNumber(rollingStock.activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>());
+        
+        return rollingStock.Number + "-" + consist;
+        
+                
+    }
+    
 
     void FixedUpdate()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))
-            GetConsistsNumber();
-        //railstock friction
-        if (rollingStock.velocity.x > 0)
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            rollingStock.AddRelativeForce(new Vector2(-100f, 0), ForceMode2D.Force);            
+            GetConsistsNumber();            
+            
         }
             
-        else if (rollingStock.velocity.x < 0)
-            rollingStock.AddRelativeForce(new Vector2(100, 0), ForceMode2D.Force);
+        //railstock friction
+        if (rollingStockRB.velocity.x > 0)
+        {
+            rollingStockRB.AddRelativeForce(new Vector2(-100f, 0), ForceMode2D.Force);            
+        }
+            
+        else if (rollingStockRB.velocity.x < 0)
+            rollingStockRB.AddRelativeForce(new Vector2(100, 0), ForceMode2D.Force);
 
     } 
    
