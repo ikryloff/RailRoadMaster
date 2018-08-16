@@ -7,7 +7,10 @@ public class RollingStock : MonoBehaviour
     private Rigidbody2D rollingStockRB;
     [SerializeField]
     private string number;
-    string consist;
+    [SerializeField]
+    private CompositionManager cm;
+    private string compositionNumber;
+    string composition;
     private Couple activeCouple;
     private Couple passiveCouple;
     private Couple connectedToPassive;   
@@ -38,28 +41,29 @@ public class RollingStock : MonoBehaviour
         }
     }
 
-    public void GetConsistsNumber()
+    public string CompositionNumber
     {
-        consist = "";
+        get
+        {
+            return compositionNumber;
+        }
+
+        set
+        {
+            compositionNumber = value;
+        }
+    }
+
+    public void GetCompositionNumber()
+    {
+        composition = "";
         if (!rollingStock.ConnectedToPassive)
         {
-            Debug.Log("consist is " + ConsistsNumber(rollingStock));
+           // Debug.Log("composition is " + CompositionNumberFromCars(rollingStock));
+            CompositionNumber = CompositionNumberFromCars(rollingStock);
+            cm.Compositions.Add(CompositionNumber);
         }
         
-
-/*
-        if (activeCouple.ConnectedToActive)
-            Debug.Log(Number + " connected to " + activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number);
-        else
-            Debug.Log(Number + " is single");
-
-        if (ConnectedToPassive)
-        {
-            Debug.Log(Number + " passive connected to " + ConnectedToPassive.transform.parent.GetComponent<RollingStock>().Number);
-        }
-        else
-            Debug.Log(Number + " no passive connection"); */
-
     }
 
     private void Start()
@@ -71,16 +75,13 @@ public class RollingStock : MonoBehaviour
 
     }
     
-    private string ConsistsNumber(RollingStock rollingStock)
+    private string CompositionNumberFromCars(RollingStock rs)
     {
-        if (!rollingStock.activeCouple.ConnectedToActive)
-            return rollingStock.Number;
-        consist += rollingStock.activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number + "-";
-        ConsistsNumber(rollingStock.activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>());
-        
-        return rollingStock.Number + "-" + consist;
-        
-                
+        if (!rs.activeCouple.ConnectedToActive)
+            return rs.Number;
+        composition += rs.activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number;
+        CompositionNumberFromCars(rs.activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>());
+        return rs.Number + composition;
     }
     
 
@@ -89,7 +90,7 @@ public class RollingStock : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            GetConsistsNumber();            
+            GetCompositionNumber();            
             
         }
             

@@ -67,7 +67,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
 
     public void SetLightsInRoute(TrafficLights light)
     {
-        //if (rcs.IsRemoteControllerOn)
+        if (rcs.IsRemoteControllerOn)
         {
             // Canceling Route
             if (CancelRouteIsOn)
