@@ -4,7 +4,7 @@ public class CoupleManager : Singleton<CoupleManager>
 {
     [SerializeField]
     private Texture2D cursor;
-    private Couple couple;
+    private Coupler coupler;
 
 
     void Update()
@@ -12,10 +12,10 @@ public class CoupleManager : Singleton<CoupleManager>
         Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
 
-        if (hit.collider != null && hit.collider.name == "ActiveCouple")
+        if (hit.collider != null && hit.collider.name == "ActiveCoupler")
         {
-            couple = hit.collider.GetComponent<Couple>();
-            if (couple.OtherCouple)
+            coupler = hit.collider.GetComponent<Coupler>();
+            if (coupler.OtherCoupler)
             {
                 Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
             }
@@ -27,12 +27,12 @@ public class CoupleManager : Singleton<CoupleManager>
             if (Input.GetMouseButtonDown(0))
             {
 
-                if (couple.JointCar)
+                if (coupler.JointCar)
                 {
-                    couple.OtherCouple.transform.parent.GetComponent<RollingStock>().ConnectedToPassive = null;
-                    couple.OtherCouple = null;
+                    coupler.OtherCoupler.transform.parent.GetComponent<RollingStock>().ConnectedToPassive = null;
+                    coupler.OtherCoupler = null;
                     
-                    Destroy(couple.JointCar);
+                    Destroy(coupler.JointCar);
                     Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
                 }
             }

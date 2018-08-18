@@ -6,14 +6,12 @@ public class RollingStock : MonoBehaviour
     private RollingStock rollingStock;
     private Rigidbody2D rollingStockRB;
     [SerializeField]
-    private string number;
-    [SerializeField]
-    private CompositionManager cm;
-    private string compositionNumber;
-    string composition;
-    private Couple activeCouple;
-    private Couple passiveCouple;
-    private Couple connectedToPassive;   
+    private string number;    
+    
+    
+    private Coupler activeCoupler;
+    private Coupler passiveCoupler;
+    private Coupler connectedToPassive;   
 
     public string Number
     {
@@ -28,7 +26,7 @@ public class RollingStock : MonoBehaviour
         }
     }
 
-    public Couple ConnectedToPassive
+    public Coupler ConnectedToPassive
     {
         get
         {
@@ -41,59 +39,46 @@ public class RollingStock : MonoBehaviour
         }
     }
 
-    public string CompositionNumber
+    public Coupler ActiveCoupler
     {
         get
         {
-            return compositionNumber;
+            return activeCoupler;
         }
 
         set
         {
-            compositionNumber = value;
+            activeCoupler = value;
         }
     }
 
-    public void GetCompositionNumber()
+    public Coupler PassiveCoupler
     {
-        composition = "";
-        if (!rollingStock.ConnectedToPassive)
+        get
         {
-           // Debug.Log("composition is " + CompositionNumberFromCars(rollingStock));
-            CompositionNumber = CompositionNumberFromCars(rollingStock);
-            cm.Compositions.Add(CompositionNumber);
+            return passiveCoupler;
         }
-        
+
+        set
+        {
+            passiveCoupler = value;
+        }
     }
 
     private void Start()
     {
         rollingStock = GetComponent<RollingStock>();
         rollingStockRB = GetComponent<Rigidbody2D>();        
-        activeCouple = transform.GetChild(0).GetComponent<Couple>();
-        passiveCouple = transform.GetChild(1).GetComponent<Couple>();
+        activeCoupler = transform.GetChild(0).GetComponent<Coupler>();
+        passiveCoupler = transform.GetChild(1).GetComponent<Coupler>();
 
     }
     
-    private string CompositionNumberFromCars(RollingStock rs)
-    {
-        if (!rs.activeCouple.ConnectedToActive)
-            return rs.Number;
-        composition += rs.activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number;
-        CompositionNumberFromCars(rs.activeCouple.ConnectedToActive.transform.parent.GetComponent<RollingStock>());
-        return rs.Number + composition;
-    }
-    
+  
 
     void FixedUpdate()
     {
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            GetCompositionNumber();            
-            
-        }
-            
         //railstock friction
         if (rollingStockRB.velocity.x > 0)
         {
