@@ -91,7 +91,7 @@ public class CompositionManager : Singleton<CompositionManager>
             int ind = 0;
             foreach (string item in Compositions)
             {
-                compositionsList.Add(i, CompositionFromStringToRSArray(item));
+                compositionsList.Add(ind, CompositionFromStringToRSArray(item));
                 ind++;
             }
         }
