@@ -6,18 +6,16 @@ using UnityEngine;
 /// Every time Route make and destroy functions work with new Route object and its functions 
 
 
-class RouteObject : MonoBehaviour
+public class RouteObject : MonoBehaviour
 {
     [SerializeField]
     private string routeName;
     private TrafficLights [] trafficLights;
     private Switch[] switchesStr;
     private Switch[] switchesTurn;
-    private TrackCircuit[] trackCircuits;    
-    
-    
+    private TrackCircuit[] trackCircuits;
 
-        
+
     public string RouteName
     {
         get

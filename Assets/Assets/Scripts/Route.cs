@@ -77,7 +77,7 @@ public class Route : Singleton<Route> {
         {
             for (int i = 0; i < routes.Count; i++)
             {
-                if (routes[i].TrackCircuits[1].IsCarPresence > 0)
+                if (routes[i].TrackCircuits[0].IsCarPresence > 0)
                 {
                     if(!IsShunting(routes[i].TrafficLights))
                         routes[i].StartLight.SetLightColor(0);                    
@@ -492,8 +492,6 @@ public class Route : Singleton<Route> {
         ///////
         else DestroyRoute(ro);
 
-        Debug.Log(ro.TrackCircuits.Last().UseMode);
-
         if (ro)
         {                        
             if (CheckRootByPresence(ro.TrackCircuits, ro.TrafficLights))
@@ -718,5 +716,16 @@ public class Route : Singleton<Route> {
     {
         return trafficLights[0].Name != "CH" && trafficLights[0].Name != "N" && trafficLights[1].Name != "CH" && trafficLights[1].Name != "N";
     }
+
+    public RouteObject FindRouteByName(string name)
+    {
+        foreach (RouteObject ro in Routes)
+        {
+            if (ro.RouteName == name)
+                return ro;
+        }
+        return null;
+    }
+    
 }
 
