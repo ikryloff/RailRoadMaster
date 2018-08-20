@@ -9,6 +9,7 @@ public class Engine : MonoBehaviour {
     [SerializeField]
     private Text speed;
     private float mSpeed;
+    private float brakesPower;
 
     public float ControllerPosition
     {
@@ -23,10 +24,24 @@ public class Engine : MonoBehaviour {
         }
     }
 
+    public float BrakesPower
+    {
+        get
+        {
+            return brakesPower;
+        }
+
+        set
+        {
+            brakesPower = value;
+        }
+    }
+
     // Use this for initialization
     void Start () {
         engine = gameObject.GetComponent<Rigidbody2D>();
         speed.text = "Speed: ";
+        BrakesPower = 1;
     }
 	
 	// Update is called once per frame
@@ -40,9 +55,9 @@ public class Engine : MonoBehaviour {
         if (brakes)
         {
             if (engine.velocity.x > 2f)
-                engine.AddRelativeForce(new Vector2(-2000, 0), ForceMode2D.Force);
+                engine.AddRelativeForce(new Vector2(-2000 * BrakesPower , 0), ForceMode2D.Force);
             else if (engine.velocity.x < -2f)
-                engine.AddRelativeForce(new Vector2(2000, 0), ForceMode2D.Force);
+                engine.AddRelativeForce(new Vector2(2000 * BrakesPower, 0), ForceMode2D.Force);
             else
                 engine.velocity = new Vector2(0, 0);
         }

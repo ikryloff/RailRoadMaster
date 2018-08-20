@@ -40,14 +40,18 @@ public class GameManager : Singleton<GameManager> {
 
     private void Start()
     {
+        Invoke("DD", 0.1f);
+        //StartCoroutine(TrainArriving());        
 
-        StartCoroutine(TrainArriving());        
-
+    }
+    void DD()
+    {
+        tlm.MakeRouteIfPossible(N, N3);
     }
 
     void Update()
     {
-        AutoDriving(speedAllowed);              
+        //AutoDriving(speedAllowed);              
         if (step0 && !route.Routes.Contains(route.FindRouteByName("NN3")))
         {
             StartCoroutine(ShuntingFrom2to7()); 
@@ -133,20 +137,7 @@ public class GameManager : Singleton<GameManager> {
         Debug.Log("Release");
     }
 
-    void AutoDriving(int speed)
-    {
-        if (autoDrive)
-        {
-            if ((int)(Time.deltaTime * engineRB.velocity.magnitude * 5) > speed)
-            {
-                engine.ControllerPosition = (int)(engine.ControllerPosition / 2);
-                autoDrive = false;
-            }
-               
-        }
-        
-    }
-
+    
     public TrafficLights GetTrafficLightByName(string lightName)
     {
         return GameObject.Find(lightName).GetComponent<TrafficLights>();

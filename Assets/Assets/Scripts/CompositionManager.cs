@@ -12,6 +12,8 @@ public class CompositionManager : Singleton<CompositionManager>
     private string compositionNumber;
 
 
+   
+
 
     public List<string> Compositions
     {
@@ -61,30 +63,57 @@ public class CompositionManager : Singleton<CompositionManager>
             cars[i] = item.GetComponent<RollingStock>();
             i++;
         }
+        
 
-      
     }
-	
-	
-	void Update () {
+    private void Start()
+    {
+        
+    }
+
+
+    void Update () {
+        
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            UpdateCompositionList();
-            MakeCompositionDictionary();
-            for (int i = 0; i < Compositions.Count; i++)
-            {
-                foreach (RollingStock item in compositionsList[i])
-                {
-                    Debug.Log("In comp #" + i + " car " + item.Number);
-                }
-            }       
+            //UpdateCompositionsInformation();
         }
         
 
     }
 
-    private void MakeCompositionDictionary()
+    public void UpdateCompositionsInformation()
+    {
+        UpdateCompositionList();
+        MakeCompositionDictionary();
+        for (int i = 0; i < Compositions.Count; i++)
+        {
+            foreach (RollingStock item in CompositionsList[i])
+            {
+                Debug.Log("In comp #" + i + " car " + item.Number);
+            }
+        }
+        SetCompositionNumbersToRS();
+    }
+
+    private void SetCompositionNumbersToRS()
+    {
+        for (int i = 0; i < Compositions.Count; i++)
+        {
+            foreach (RollingStock item in CompositionsList[i])
+            {
+                item.CompositionNumberofRS = i;
+            }
+        }
+    }
+
+    public int GetNumberOfRSFromCompositionNumber(int num)
+    {
+        return CompositionsList[num].Length;
+    }
+
+    public void MakeCompositionDictionary()
     {
         if(Compositions != null)
         {
@@ -94,8 +123,7 @@ public class CompositionManager : Singleton<CompositionManager>
                 compositionsList.Add(ind, CompositionFromStringToRSArray(item));
                 ind++;
             }
-        }
-        
+        }       
         
     }
 
@@ -134,18 +162,19 @@ public class CompositionManager : Singleton<CompositionManager>
         return null;
     }
 
-    private void UpdateCompositionList()
+    public void UpdateCompositionList()
     {
         CompositionsList.Clear();
         Compositions.Clear();
         foreach (RollingStock item in cars)
         {
-            MakeCompositionNumberList(item);
+            MakeCompositionNumberList(item);            
         }
     }
 
 
-    private void MakeCompositionNumberList(RollingStock rs)
+
+    public void MakeCompositionNumberList(RollingStock rs)
     {
         composition = "";
         if (!rs.ConnectedToPassive)
@@ -160,7 +189,9 @@ public class CompositionManager : Singleton<CompositionManager>
     private string CompositionNumberFromCars(RollingStock rs)
     {
         if (!rs.ActiveCoupler.ConnectedToActive)
+        {
             return rs.Number;
+        }            
         composition += rs.ActiveCoupler.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number;
         CompositionNumberFromCars(rs.ActiveCoupler.ConnectedToActive.transform.parent.GetComponent<RollingStock>());
         return rs.Number + composition;

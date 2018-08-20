@@ -7,7 +7,7 @@ public class RollingStock : MonoBehaviour
     private Rigidbody2D rollingStockRB;
     [SerializeField]
     private string number;    
-    
+    private int compositionNumberofRS;
     
     private Coupler activeCoupler;
     private Coupler passiveCoupler;
@@ -62,6 +62,19 @@ public class RollingStock : MonoBehaviour
         set
         {
             passiveCoupler = value;
+        }
+    }
+
+    public int CompositionNumberofRS
+    {
+        get
+        {
+            return compositionNumberofRS;
+        }
+
+        set
+        {
+            compositionNumberofRS = value;
         }
     }
 
