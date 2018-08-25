@@ -68,25 +68,21 @@ public class CompositionManager : Singleton<CompositionManager>
     }
     private void Start()
     {
-        
+        Invoke("UpdateCompositionsInformation", 1f);
     }
 
 
-    void Update () {
-        
-
+    void Update ()
+    {
         if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            //UpdateCompositionsInformation();
-        }
-        
-
+            UpdateCompositionsInformation();
     }
 
     public void UpdateCompositionsInformation()
     {
         UpdateCompositionList();
         MakeCompositionDictionary();
+        
         for (int i = 0; i < Compositions.Count; i++)
         {
             foreach (RollingStock item in CompositionsList[i])
@@ -94,6 +90,7 @@ public class CompositionManager : Singleton<CompositionManager>
                 Debug.Log("In comp #" + i + " car " + item.Number);
             }
         }
+        
         SetCompositionNumbersToRS();
     }
 
@@ -104,6 +101,7 @@ public class CompositionManager : Singleton<CompositionManager>
             foreach (RollingStock item in CompositionsList[i])
             {
                 item.CompositionNumberofRS = i;
+                item.CompositionNumberString = Compositions[i];                
             }
         }
     }
@@ -140,7 +138,7 @@ public class CompositionManager : Singleton<CompositionManager>
                 tempStr += compNum[i];
                 if((i + 1) % 4 == 0)
                 {
-                    Debug.Log(tempStr);
+                    //Debug.Log(tempStr);
                     tempArr[index] = GetRollingStockByNumber(tempStr);
                     tempStr = "";
                     index++;
@@ -180,7 +178,7 @@ public class CompositionManager : Singleton<CompositionManager>
         if (!rs.ConnectedToPassive)
         {
             CompositionNumber = CompositionNumberFromCars(rs);
-            Debug.Log( "Comp # = " + CompositionNumber);
+            //Debug.Log( "Comp # = " + CompositionNumber);
             Compositions.Add(CompositionNumber);
         }
 

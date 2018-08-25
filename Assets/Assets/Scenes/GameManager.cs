@@ -10,13 +10,21 @@ public class GameManager : Singleton<GameManager> {
     public TrafficLightsManager tlm;
     public Engine trainEngine;
     public Engine engine;
+    public Transform behind;
+    public Transform before;
+    public Transform car;
+    public Transform ch3Trigger;
+    public Transform trainEngineT;
+    public Transform engineT;
+    public RollingStock uncoupleFromRS;
     Rigidbody2D trainEngineRB;
     Rigidbody2D engineRB;
     bool step0 = false;
     bool step1 = false;
     bool step2 = false;
     int speedAllowed = 0;
-    bool autoDrive = false;
+    [SerializeField]
+    private AutoDriveManager auto;
 
 
     void Awake()
@@ -29,25 +37,23 @@ public class GameManager : Singleton<GameManager> {
         trainEngineRB = trainEngine.GetComponent<Rigidbody2D>();
         engineRB = engine.GetComponent<Rigidbody2D>();
 
+        trainEngineT = trainEngine.transform;
+        engineT = engine.transform;
+
         N = GetTrafficLightByName("N");
         N3 = GetTrafficLightByName("N3");
         CH2 = GetTrafficLightByName("CH2");
         M1 = GetTrafficLightByName("M1");
-        CH3 = GetTrafficLightByName("CH3");
-
+        CH3 = GetTrafficLightByName("CH3");        
 
     }
 
     private void Start()
-    {
-        Invoke("DD", 0.1f);
-        //StartCoroutine(TrainArriving());        
+    {        
+        StartCoroutine(TrainArriving());     
 
     }
-    void DD()
-    {
-        tlm.MakeRouteIfPossible(N, N3);
-    }
+    
 
     void Update()
     {
@@ -57,13 +63,13 @@ public class GameManager : Singleton<GameManager> {
             StartCoroutine(ShuntingFrom2to7()); 
         }
 
-        if (step1 && !route.Routes.Contains(route.FindRouteByName("CH2M1")))
+        if (step1 && !route.Routes.Contains(route.FindRouteByName("CH2M1")) && (int)(Time.deltaTime * engineRB.velocity.magnitude * 5) == 0)
         {
             StartCoroutine(ShuntingFrom7to3());
         }
-        if (step2 && !route.Routes.Contains(route.FindRouteByName("M1CH3")))
+        if (step2 && !route.Routes.Contains(route.FindRouteByName("M1CH3")) && (int)(Time.deltaTime * engineRB.velocity.magnitude * 5) == 0)
         {
-            StartCoroutine(ShuntingCoupleToComposition()); 
+            StartCoroutine(ShuntingUnCoupleFromComposition()); 
         }
     }
 
@@ -77,9 +83,7 @@ public class GameManager : Singleton<GameManager> {
     {
         yield return new WaitForSecondsRealtime(1f);
         tlm.MakeRouteIfPossible(N, N3);
-        EngineGo(trainEngine, -75);
-        yield return new WaitForSecondsRealtime(3f);       
-        EngineStop(trainEngine);
+        auto.RunAutoDrive(trainEngine, trainEngineT, before, 80, false);                
         step0 = true;
     }
 
@@ -88,55 +92,31 @@ public class GameManager : Singleton<GameManager> {
     IEnumerator ShuntingFrom2to7()
     {
         step0 = false;
+       // auto.AutoDriveOn = false;
         tlm.MakeRouteIfPossible(CH2, M1);        
-        EngineGo(engine, 8);
-        speedAllowed = 40;
+        auto.RunAutoDrive(engine, engineT, behind, 40, false);
         step1 = true;
         yield return null;
     }
 
     IEnumerator ShuntingFrom7to3()
     {
-        step1 = false;        
-        EngineStop(engine);
+        step1 = false;  
         yield return new WaitForSecondsRealtime(3f);
         tlm.MakeRouteIfPossible(M1, CH3);
+        auto.RunAutoDrive(engine, engineT, car, 25, true);
         yield return new WaitForSecondsRealtime(1f);
-        EngineGo(engine, -8);
-        speedAllowed = 25;
         step2 = true;
+
     }
 
-    IEnumerator ShuntingCoupleToComposition()
+    IEnumerator ShuntingUnCoupleFromComposition()
     {
-        yield return new WaitForSecondsRealtime(1f);
-        step2 = false;
-        EngineStop(engine);
+        yield return new WaitForSecondsRealtime(2f);
+        step2 = false;        
+        auto.RunAutoDrive(engine, engineT, ch3Trigger, 25, false, uncoupleFromRS);
+        yield return null;
     }
-
-
-    void EngineGo(Engine e, int cp)
-    {
-        autoDrive = true;
-        e.ControllerPosition = cp;
-        Debug.Log("GO");
-
-    }
-
-    void EngineStop(Engine e)
-    {
-        autoDrive = false;
-        e.engineControllerUseBrakes();
-        Debug.Log("Brakes");
-    }
-
-    void EngineRelease(Engine e)
-    {
-        autoDrive = false;
-        e.engineControllerReleaseAll();
-        Debug.Log("Release");
-    }
-
     
     public TrafficLights GetTrafficLightByName(string lightName)
     {

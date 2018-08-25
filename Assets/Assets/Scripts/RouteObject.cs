@@ -8,7 +8,6 @@ using UnityEngine;
 
 public class RouteObject : MonoBehaviour
 {
-    [SerializeField]
     private string routeName;
     private TrafficLights [] trafficLights;
     private Switch[] switchesStr;

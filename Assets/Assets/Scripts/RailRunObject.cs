@@ -1,0 +1,248 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class RailRunObject : MonoBehaviour {
+
+    public Engine engine;
+    public Rigidbody2D engineRB;
+    public float distance;
+    public int maxSpeed;
+    public Transform rollingStockTransform;
+    public Transform aimPosition;
+    public int direction;
+    public int mSpeed;
+    public bool mustCouple;
+    public RollingStock rollingStock; 
+    public string startCompositionNumberString;
+    public CompositionManager cm;
+
+    public float Distance
+    {
+        get
+        {
+            if (RollingStockTransform && AimPosition)
+                return RollingStockTransform.position.x - AimPosition.position.x;
+            else
+                return 0;
+        }
+
+        set
+        {
+            distance = value;
+        }
+    }
+
+    public int MaxSpeed
+    {
+        get
+        {
+            return maxSpeed;
+        }
+
+        set
+        {
+            maxSpeed = value;
+        }
+    }
+
+    public int Direction
+    {
+        get
+        {
+            if (Distance > 0)
+                return -1;
+            else
+                return 1;
+        }
+
+        set
+        {
+            direction = value;
+        }
+    }
+
+    
+    public Engine Engine
+    {
+        get
+        {
+            return engine;
+        }
+
+        set
+        {
+            engine = value;
+        }
+    }
+
+    public Rigidbody2D EngineRB
+    {
+        get
+        {
+            return engineRB;
+        }
+
+        set
+        {
+            engineRB = value;
+        }
+    }
+
+    public Transform AimPosition
+    {
+        get
+        {
+            return aimPosition;
+        }
+
+        set
+        {
+            aimPosition = value;
+        }
+    }
+
+    public Transform RollingStockTransform
+    {
+        get
+        {
+            return rollingStockTransform;
+        }
+
+        set
+        {
+            rollingStockTransform = value;
+        }
+    }
+
+    public bool MustCouple
+    {
+        get
+        {
+            return mustCouple;
+        }
+
+        set
+        {
+            mustCouple = value;
+        }
+    }
+
+    public RollingStock RollingStock
+    {
+        get
+        {
+            return rollingStock;
+        }
+
+        set
+        {
+            rollingStock = value;
+        }
+    }
+        
+
+
+    void Start () {        
+        EngineRB = Engine.GetComponent<Rigidbody2D>();
+        cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
+        cm.UpdateCompositionsInformation();
+        startCompositionNumberString = RollingStock.CompositionNumberString;
+    }
+    	
+	
+	void FixedUpdate ()
+    {
+        //Debug.Log(RollingStock.CompositionNumberString);
+        //Debug.Log("Mathf.Abs(Distance) " + Mathf.Abs(Distance));        
+        if (EngineRB)
+        {
+            mSpeed = (int)(Time.deltaTime * EngineRB.velocity.magnitude * 5);
+            //Debug.Log(Engine.ControllerPosition + " Dist " + Mathf.Abs(Distance));
+
+        }
+        
+        if (mSpeed > MaxSpeed)
+        {
+            Engine.EngineControllerUseBrakes();
+            //Debug.Log("More  " + (MaxSpeed - (int)(Time.deltaTime * EngineRB.velocity.magnitude * 5)));
+        }
+        else
+        {
+               
+            if (Mathf.Abs(Distance) > 4000)
+            {
+                if(mSpeed < 5)
+                    Engine.ControllerPosition = 1 * Direction;
+                if(mSpeed >= 5 && mSpeed < 15)
+                    Engine.ControllerPosition = 2 * Direction;
+                if (mSpeed >= 15 && mSpeed < 25)
+                    Engine.ControllerPosition = 4 * Direction;
+                if (mSpeed >= 25 )
+                    Engine.ControllerPosition = 8 * Direction;
+                MaxSpeed = maxSpeed;
+            }
+            if (Mathf.Abs(Distance) < 4000 && Mathf.Abs(Distance) > 1500)
+            {
+                MaxSpeed = 25;
+                Engine.ControllerPosition = 4 * Direction;
+            }
+            if (Mathf.Abs(Distance) < 1500 && Mathf.Abs(Distance) > 500)
+            {
+                MaxSpeed = 15;
+                Engine.ControllerPosition = 2 * Direction;
+            }
+            if (Mathf.Abs(Distance) <= 500)
+            {
+                if (!MustCouple)
+                {
+                    if (Mathf.Abs(Distance) > 150)
+                    {
+                        MaxSpeed = 5;
+                        Engine.ControllerPosition = 1 * Direction;
+                    }
+                    if (Mathf.Abs(Distance) <= 150)
+                        Engine.EngineControllerUseBrakes();
+                }
+                else if(MustCouple)
+                {                    
+                    if (RollingStock.CompositionNumberString != startCompositionNumberString)
+                    {
+                        Engine.EngineControllerUseBrakes();
+                        Debug.Log("Changed" + RollingStock.CompositionNumberString);
+                        EngineRB.velocity = new Vector2(0, 0);
+                        Debug.Log("Run is over");
+                        Destroy(this);
+                    }
+                    else
+                    {
+                        MaxSpeed = 5;
+                        Engine.ControllerPosition = 1 * Direction;
+                    }                        
+                }                       
+                if(EngineRB.velocity.magnitude * 5 == 0)
+                {
+                    Debug.Log("Run is over");
+                    Destroy(this);
+                }                        
+            }
+            
+        }
+    }
+
+    public void MakeRailRun(Engine engine, Transform rollingStock, Transform aim,  int maxSpeed, bool _mustCouple, RollingStock uncFromRS)
+    {            
+        RollingStockTransform = rollingStock;
+        AimPosition = aim;
+        Distance = rollingStock.position.x - aim.position.x;
+        Engine = engine;
+        MaxSpeed = maxSpeed;
+        MustCouple = _mustCouple;
+        RollingStock = Engine.GetComponent<RollingStock>();
+        
+        if (uncFromRS)
+        {
+            uncFromRS.ActiveCoupler.Uncouple();
+        }                   
+    }
+}

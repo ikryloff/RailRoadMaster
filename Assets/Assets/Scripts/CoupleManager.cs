@@ -5,7 +5,12 @@ public class CoupleManager : Singleton<CoupleManager>
     [SerializeField]
     private Texture2D cursor;
     private Coupler coupler;
+    private CompositionManager cm;
 
+    private void Awake()
+    {
+        cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
+    }
 
     void Update()
     {
@@ -26,14 +31,10 @@ public class CoupleManager : Singleton<CoupleManager>
 
             if (Input.GetMouseButtonDown(0))
             {
-
                 if (coupler.JointCar)
                 {
-                    coupler.OtherCoupler.transform.parent.GetComponent<RollingStock>().ConnectedToPassive = null;
-                    coupler.OtherCoupler = null;
-                    
-                    Destroy(coupler.JointCar);
-                    Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+                    coupler.Uncouple();
+                    Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);                    
                 }
             }
         }

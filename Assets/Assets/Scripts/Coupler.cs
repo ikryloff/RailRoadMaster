@@ -12,9 +12,11 @@ public class Coupler : MonoBehaviour
     private bool isActiveCoupler;
     private HingeJoint2D jointCar;
     private Coupler connectedToActive;
+    private CompositionManager cm;
 
     void Awake()
     {
+                
         rollingStock = transform.parent.GetComponent<RollingStock>();
         if (IsActiveCoupler)
         {
@@ -31,6 +33,7 @@ public class Coupler : MonoBehaviour
             }
 
         }
+        cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();        
     }
 
 
@@ -55,6 +58,7 @@ public class Coupler : MonoBehaviour
                     ConnectedToActive = OtherCoupler;
                 }
             }
+            cm.UpdateCompositionsInformation();
         }
     }
 
@@ -109,6 +113,17 @@ public class Coupler : MonoBehaviour
         {
             connectedToActive = value;
         }
+    }
+
+    public void Uncouple()
+    {
+        if (JointCar)
+        {
+            OtherCoupler.transform.parent.GetComponent<RollingStock>().ConnectedToPassive = null;
+            OtherCoupler = null;
+            Destroy(JointCar);
+            cm.UpdateCompositionsInformation();
+        }            
     }
 
 }

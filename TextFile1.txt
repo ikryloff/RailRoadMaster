@@ -1,0 +1,166 @@
+ private void AddMovingForce(int controller)
+    {
+        int absController = Mathf.Abs(controller);
+        int direction = 0;
+        if (controller != 0)
+        {
+            direction = controller / absController;
+        }    
+
+        int vel = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
+        if (absController == 1)
+        {
+            if(vel < 3 && vel >=0)
+                JustAddForce(200000, direction);
+            else if (vel >= 3 && vel < 10)
+                JustAddForce(15000, direction);
+            else if (vel >= 10)
+                JustAddForce(1000, direction);
+        }
+        else if (absController == 2)
+        {
+            if (vel < 5 && vel >= 0)
+                JustAddForce(300000, direction);
+            else if (vel >= 5 && vel < 10)
+                JustAddForce(90000, direction);
+            else if (vel >= 10 && vel < 15)
+                JustAddForce(19000, direction);
+            else if (vel >= 15 && vel < 20)
+                JustAddForce(10000, direction);
+            else if (vel >= 20)
+                JustAddForce(3000, direction);
+        }
+        else if (absController == 3)
+        {
+            if (vel < 5 && vel >= 0)
+                JustAddForce(320000, direction);
+            else if (vel >= 5 && vel < 10)
+                JustAddForce(180000, direction);
+            else if (vel >= 10 && vel < 15)
+                JustAddForce(90000, direction);
+            else if (vel >= 15 && vel < 20)
+                JustAddForce(40000, direction);
+            else if (vel >= 20 && vel < 25)
+                JustAddForce(20000, direction);
+            else if (vel >= 25 && vel < 30)
+                JustAddForce(12000, direction);
+            else if (vel >= 30 && vel < 35)
+                JustAddForce(10000, direction);
+            else if (vel >= 35)
+                JustAddForce(8000, direction);
+        }
+        else if (absController == 4)
+        {
+            if (vel < 5 && vel >= 0)
+                JustAddForce(350000, direction);
+            else if (vel >= 5 && vel < 10)
+                JustAddForce(180000, direction);
+            else if (vel >= 10 && vel < 15)
+                JustAddForce(100000, direction);
+            else if (vel >= 15 && vel < 20)
+                JustAddForce(60000, direction);
+            else if (vel >= 20 && vel < 25)
+                JustAddForce(40000, direction);
+            else if (vel >= 25 && vel < 30)
+                JustAddForce(30000, direction);
+            else if (vel >= 30 && vel < 35)
+                JustAddForce(20000, direction);
+            else if (vel >= 35)
+                JustAddForce(10000, direction);
+        }
+
+        else if (absController == 5)
+        {
+            if (vel < 5 && vel >= 0)
+                JustAddForce(400000, direction);
+            else if (vel >= 5 && vel < 10)
+                JustAddForce(280000, direction);
+            else if (vel >= 10 && vel < 15)
+                JustAddForce(200000, direction);
+            else if (vel >= 15 && vel < 20)
+                JustAddForce(130000, direction);
+            else if (vel >= 20 && vel < 25)
+                JustAddForce(80000, direction);
+            else if (vel >= 25 && vel < 30)
+                JustAddForce(60000, direction);
+            else if (vel >= 30 && vel < 35)
+                JustAddForce(30000, direction);
+            else if (vel >= 35 && vel < 40)
+                JustAddForce(28000, direction);
+            else if (vel >= 40 && vel < 45)
+                JustAddForce(20000, direction);
+            else if (vel >= 45 && vel < 50)
+                JustAddForce(16000, direction);
+            else if (vel >= 50)
+                JustAddForce(10000, direction);
+        }
+
+        else if (absController == 6)
+        {
+            if (vel < 5 && vel >= 0)
+                JustAddForce(500000, direction);
+            else if (vel >= 5 && vel < 10)
+                JustAddForce(350000, direction);
+            else if (vel >= 10 && vel < 15)
+                JustAddForce(200000, direction);
+            else if (vel >= 15 && vel < 20)
+                JustAddForce(130000, direction);
+            else if (vel >= 20 && vel < 25)
+                JustAddForce(90000, direction);
+            else if (vel >= 25 && vel < 30)
+                JustAddForce(70000, direction);
+            else if (vel >= 30 && vel < 35)
+                JustAddForce(50000, direction);
+            else if (vel >= 35 && vel < 40)
+                JustAddForce(38000, direction);
+            else if (vel >= 40 && vel < 45)
+                JustAddForce(30000, direction);
+            else if (vel >= 45 && vel < 50)
+                JustAddForce(21000, direction);
+            else if (vel >= 50)
+                JustAddForce(13000, direction);
+        }
+
+        else if (absController == 7)
+        {
+            if (vel < 5 && vel >= 0)
+                JustAddForce(600000, direction);
+            else if (vel >= 5 && vel < 10)
+                JustAddForce(400000, direction);
+            else if (vel >= 10 && vel < 15)
+                JustAddForce(250000, direction);
+            else if (vel >= 15 && vel < 20)
+                JustAddForce(200000, direction);
+            else if (vel >= 20 && vel < 25)
+                JustAddForce(140000, direction);
+            else if (vel >= 25 && vel < 30)
+                JustAddForce(90000, direction);
+            else if (vel >= 30 && vel < 35)
+                JustAddForce(60000, direction);
+            else if (vel >= 35 && vel < 40)
+                JustAddForce(50000, direction);
+            else if (vel >= 40 && vel < 45)
+                JustAddForce(40000, direction);
+            else if (vel >= 45 && vel < 50)
+                JustAddForce(30000, direction);
+            else if (vel >= 50)
+                JustAddForce(20000, direction);
+        }
+
+        else if (absController == 8)
+        {
+            
+            if (vel < 5 && vel >= 0)
+                JustAddForce(90000, direction);
+            if (vel >= 5 && vel < 10)
+                JustAddForce(10800, direction);
+            if (vel >= 10 && vel < 50)
+                JustAddForce(5000, direction);            
+            if (vel >= 50)
+                JustAddForce(3000, direction);
+                
+        }
+
+
+
+    }

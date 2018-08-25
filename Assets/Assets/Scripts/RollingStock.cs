@@ -8,7 +8,8 @@ public class RollingStock : MonoBehaviour
     [SerializeField]
     private string number;    
     private int compositionNumberofRS;
-    
+    private string compositionNumberString;
+    private bool brakes = false;
     private Coupler activeCoupler;
     private Coupler passiveCoupler;
     private Coupler connectedToPassive;   
@@ -78,13 +79,38 @@ public class RollingStock : MonoBehaviour
         }
     }
 
+    public bool Brakes
+    {
+        get
+        {
+            return brakes;
+        }
+
+        set
+        {
+            brakes = value;
+        }
+    }
+
+    public string CompositionNumberString
+    {
+        get
+        {
+            return compositionNumberString;
+        }
+
+        set
+        {
+            compositionNumberString = value;
+        }
+    }
+
     private void Start()
     {
         rollingStock = GetComponent<RollingStock>();
         rollingStockRB = GetComponent<Rigidbody2D>();        
-        activeCoupler = transform.GetChild(0).GetComponent<Coupler>();
-        passiveCoupler = transform.GetChild(1).GetComponent<Coupler>();
-
+        ActiveCoupler = transform.GetChild(0).GetComponent<Coupler>();
+        PassiveCoupler = transform.GetChild(1).GetComponent<Coupler>();
     }
     
   
@@ -92,14 +118,25 @@ public class RollingStock : MonoBehaviour
     void FixedUpdate()
     {
 
-        //railstock friction
-        if (rollingStockRB.velocity.x > 0)
+        if (Brakes)
         {
-            rollingStockRB.AddRelativeForce(new Vector2(-100f, 0), ForceMode2D.Force);            
+            if (rollingStockRB.velocity.x > 3f)
+                rollingStockRB.AddRelativeForce(new Vector2(-600, 0), ForceMode2D.Force);
+            else if (rollingStockRB.velocity.x < -3f)
+                rollingStockRB.AddRelativeForce(new Vector2(600, 0), ForceMode2D.Force);
+            else
+                rollingStockRB.velocity = new Vector2(0, 0);
         }
-            
-        else if (rollingStockRB.velocity.x < 0)
-            rollingStockRB.AddRelativeForce(new Vector2(100, 0), ForceMode2D.Force);
+        else if (!Brakes)
+        {
+            if (rollingStockRB.velocity.x > 0)
+            {
+                rollingStockRB.AddRelativeForce(new Vector2(-10f, 0), ForceMode2D.Force);
+            }
+
+            else if (rollingStockRB.velocity.x < 0)
+                rollingStockRB.AddRelativeForce(new Vector2(10f, 0), ForceMode2D.Force);
+        }
 
     } 
    
