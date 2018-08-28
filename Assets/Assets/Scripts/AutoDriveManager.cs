@@ -4,13 +4,29 @@ using UnityEngine;
 
 public class AutoDriveManager : Singleton<AutoDriveManager>
 {
-   
-    public void RunAutoDrive(Engine engine, Transform rollingStock, Transform aim, int _maxSpeed, bool _mustCouple, RollingStock uncoupleFromRollingstock = null)
+    private List<int> runs = new List<int>();
+
+    public List<int> Runs
+    {
+        get
+        {
+            return runs;
+        }
+
+        set
+        {
+            runs = value;
+        }
+    }
+
+    public void RunAutoDrive(int runID, Engine engine, Transform rollingStock, Transform aim, float offset,  int _maxSpeed, bool _mustCouple, RollingStock uncoupleFromRollingstock = null)
     {
         if(rollingStock != null && aim != null)
         {
             RailRunObject rro = gameObject.AddComponent<RailRunObject>();                      
-            rro.MakeRailRun(engine, rollingStock, aim, _maxSpeed, _mustCouple, uncoupleFromRollingstock);           
+            rro.MakeRailRun(engine, rollingStock, aim, offset, _maxSpeed, _mustCouple, uncoupleFromRollingstock);
+            Runs.Add(runID);
+            rro.RailRunID = runID;
         }
         else
         {

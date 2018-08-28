@@ -82,7 +82,7 @@ public class CompositionManager : Singleton<CompositionManager>
     {
         UpdateCompositionList();
         MakeCompositionDictionary();
-        
+        /*
         for (int i = 0; i < Compositions.Count; i++)
         {
             foreach (RollingStock item in CompositionsList[i])
@@ -90,7 +90,7 @@ public class CompositionManager : Singleton<CompositionManager>
                 Debug.Log("In comp #" + i + " car " + item.Number);
             }
         }
-        
+        */
         SetCompositionNumbersToRS();
     }
 

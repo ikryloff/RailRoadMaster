@@ -701,11 +701,11 @@ public class Route : Singleton<Route> {
             {
                 if (direction == Constants.DIR_STR)
                 {
-                    sw.directionStraight();                    
+                    sw.DirectionStraight();                    
                 }
                 else
                 {
-                    sw.directionTurn();                   
+                    sw.DirectionTurn();                   
                 }
                 sw.SwitchLockCount += 1;
             }

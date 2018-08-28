@@ -31,7 +31,7 @@ public class SwitchManager : Singleton<SwitchManager>
 
                         switchObject = hit.collider.transform.parent.gameObject;
                         Switch sw = switchObject.GetComponent<Switch>();
-                        sw.changeDirection();
+                        sw.ChangeDirection();
                     }
                 }
             }

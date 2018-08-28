@@ -22,7 +22,7 @@ public class Switch : MonoBehaviour {
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();
         IsSwitchStraight = true;
-        directionStraight();       
+        DirectionStraight();       
     }
 
     private void OnGUI()
@@ -40,17 +40,17 @@ public class Switch : MonoBehaviour {
 
     }
 
-    public void changeDirection()
+    public void ChangeDirection()
     {
         if (timesLocked == 0)
         {
             if (IsSwitchStraight == true)
             {
-                directionTurn();
+                DirectionTurn();
             }
             else
             {
-                directionStraight();
+                DirectionStraight();
             }
         }
         else Debug.Log("Locked");
@@ -81,7 +81,7 @@ public class Switch : MonoBehaviour {
         }
     }
 
-    public void directionStraight()
+    public void DirectionStraight()
     {
         switchPhysicsTurn.SetActive(false);
         switchPhysicsStraight.SetActive(true);
@@ -89,7 +89,7 @@ public class Switch : MonoBehaviour {
         straightIndicator.sortingLayerName = Constants.INDICATION_LAYER;
         IsSwitchStraight = true;
     }
-    public void directionTurn()
+    public void DirectionTurn()
     {
         switchPhysicsStraight.SetActive(false);
         switchPhysicsTurn.SetActive(true);

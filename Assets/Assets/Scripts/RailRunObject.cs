@@ -16,13 +16,16 @@ public class RailRunObject : MonoBehaviour {
     public RollingStock rollingStock; 
     public string startCompositionNumberString;
     public CompositionManager cm;
+    private float offset;
+    private int railRunID;
+    private AutoDriveManager adm;
 
     public float Distance
     {
         get
         {
             if (RollingStockTransform && AimPosition)
-                return RollingStockTransform.position.x - AimPosition.position.x;
+                return RollingStockTransform.position.x - AimPosition.position.x - Offset;
             else
                 return 0;
         }
@@ -140,12 +143,37 @@ public class RailRunObject : MonoBehaviour {
             rollingStock = value;
         }
     }
-        
 
+    public float Offset
+    {
+        get
+        {
+            return offset;
+        }
+
+        set
+        {
+            offset = value;
+        }
+    }
+
+    public int RailRunID
+    {
+        get
+        {
+            return railRunID;
+        }
+
+        set
+        {
+            railRunID = value;
+        }
+    }
 
     void Start () {        
         EngineRB = Engine.GetComponent<Rigidbody2D>();
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
+        adm = GameObject.Find("AutoDriveManager").GetComponent<AutoDriveManager>();
         cm.UpdateCompositionsInformation();
         startCompositionNumberString = RollingStock.CompositionNumberString;
     }
@@ -153,6 +181,7 @@ public class RailRunObject : MonoBehaviour {
 	
 	void FixedUpdate ()
     {
+        //Debug.Log(RailRunID);
         //Debug.Log(RollingStock.CompositionNumberString);
         //Debug.Log("Mathf.Abs(Distance) " + Mathf.Abs(Distance));        
         if (EngineRB)
@@ -172,9 +201,9 @@ public class RailRunObject : MonoBehaviour {
                
             if (Mathf.Abs(Distance) > 4000)
             {
-                if(mSpeed < 5)
+                if(mSpeed < 10)
                     Engine.ControllerPosition = 1 * Direction;
-                if(mSpeed >= 5 && mSpeed < 15)
+                if(mSpeed >= 10 && mSpeed < 15)
                     Engine.ControllerPosition = 2 * Direction;
                 if (mSpeed >= 15 && mSpeed < 25)
                     Engine.ControllerPosition = 4 * Direction;
@@ -212,6 +241,7 @@ public class RailRunObject : MonoBehaviour {
                         Debug.Log("Changed" + RollingStock.CompositionNumberString);
                         EngineRB.velocity = new Vector2(0, 0);
                         Debug.Log("Run is over");
+                        adm.Runs.Remove(RailRunID);
                         Destroy(this);
                     }
                     else
@@ -222,7 +252,8 @@ public class RailRunObject : MonoBehaviour {
                 }                       
                 if(EngineRB.velocity.magnitude * 5 == 0)
                 {
-                    Debug.Log("Run is over");
+                    Debug.Log("Run is over");                    
+                    adm.Runs.Remove(RailRunID);
                     Destroy(this);
                 }                        
             }
@@ -230,7 +261,7 @@ public class RailRunObject : MonoBehaviour {
         }
     }
 
-    public void MakeRailRun(Engine engine, Transform rollingStock, Transform aim,  int maxSpeed, bool _mustCouple, RollingStock uncFromRS)
+    public void MakeRailRun(Engine engine, Transform rollingStock, Transform aim, float _offset,  int maxSpeed, bool _mustCouple, RollingStock uncouplingRS)
     {            
         RollingStockTransform = rollingStock;
         AimPosition = aim;
@@ -239,10 +270,11 @@ public class RailRunObject : MonoBehaviour {
         MaxSpeed = maxSpeed;
         MustCouple = _mustCouple;
         RollingStock = Engine.GetComponent<RollingStock>();
+        Offset = _offset;
         
-        if (uncFromRS)
+        if (uncouplingRS)
         {
-            uncFromRS.ActiveCoupler.Uncouple();
+            uncouplingRS.ActiveCoupler.Uncouple();
         }                   
     }
 }

@@ -255,7 +255,7 @@ public class Engine : MonoBehaviour
 
             case 2:
                 if (mSpeed < 5)
-                    AddForceToEngine(15000);
+                    AddForceToEngine(12000);
                 if (mSpeed >= 5 && mSpeed < 10)
                     AddForceToEngine(3900);
                 if (mSpeed >= 10 && mSpeed < 15)
@@ -268,9 +268,9 @@ public class Engine : MonoBehaviour
                     AddForceToEngine(0);
                 break;
             case 1:
-                if (mSpeed < 2)
-                    AddForceToEngine(15000);
-                if (mSpeed >= 2 && mSpeed < 10)
+                if (mSpeed < 1)
+                    AddForceToEngine(11000);
+                if (mSpeed >= 1 && mSpeed < 10)
                     AddForceToEngine(2000);
                 if (mSpeed >= 10 )
                     AddForceToEngine(500);
