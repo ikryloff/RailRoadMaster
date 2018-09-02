@@ -42,7 +42,7 @@ public class Coupler : MonoBehaviour
         if (IsActiveCoupler)
         {
             ContactPoint2D hitPoint = collision.contacts[0];
-            if (collision.gameObject.tag == "PassiveCoupler" && collision.relativeVelocity.magnitude > 10)
+            if (collision.gameObject.tag == "PassiveCoupler" && collision.relativeVelocity.magnitude > 20)
             {
                 otherCouplerRB = collision.gameObject.GetComponent<Rigidbody2D>();
                 otherRollingStock = otherCouplerRB.transform.parent.GetComponent<RollingStock>();

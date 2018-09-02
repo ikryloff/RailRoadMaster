@@ -11,6 +11,8 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
     private GameObject enginePanel;
     [SerializeField]
     private GameObject remoteControlPanel;
+    [SerializeField]
+    private CameraController cc;
     private bool isRemoteControllerOn = false;    
     private GameObject[] switches;
     private TrackCircuit tc;
@@ -59,6 +61,7 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
                 enginePanel.gameObject.SetActive(true);
                 remoteControlPanel.gameObject.SetActive(false);
                 IsRemoteControllerOn = false;
+                cc.CanMoveCamera = true;
             }
             else
             {                
@@ -66,6 +69,7 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
                 enginePanel.gameObject.SetActive(false);
                 remoteControlPanel.gameObject.SetActive(true);
                 IsRemoteControllerOn = true;
+                cc.CanMoveCamera = false;
             }
         }
         remoteControll.transform.position = Camera.main.transform.position + axisZ;

@@ -7,14 +7,21 @@ public class Engine : MonoBehaviour
 
     private Rigidbody2D engine;
     private RollingStock engineRS;
-    private bool brakes;
+    private bool brakes = true;
     private int controllerPosition = 0;
     [SerializeField]
-    private Text speed;   
-    private CompositionManager cm;
+    private Text speedTxt;
+    [SerializeField]
+    private Text throttleTxt;
+    [SerializeField]
+    private Text directionTxt;
+    public CompositionManager cm;
     private float mSpeed;
     private int direction;
     private int absControllerPosition;
+    [SerializeField]
+    Button brakesButton;
+    Image brakesBtnColor;
 
     public int ControllerPosition
     {
@@ -77,19 +84,29 @@ public class Engine : MonoBehaviour
     }
     private void Awake()
     {
-        cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();        
+        cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
+        
+
     }
 
     void Start()
     {
+        
         engine = GetComponent<Rigidbody2D>();
-        engineRS = GetComponent<RollingStock>(); 
-        speed.text = "Speed: ";
+        engineRS = GetComponent<RollingStock>();
+        if (brakesButton)
+            brakesBtnColor = brakesButton.GetComponent<Image>();
+        if (engineRS.Number == "8888")
+        {
+            speedTxt.text = "Speed: ";
+            throttleTxt.text = "Throttle: ";
+            directionTxt.text = "Direction: ";
+        }
+            
     }
     void MoveEngine()
     {
-        if(AbsControllerPosition != 0)
-            ReleaseBrakes();   
+         
         switch (AbsControllerPosition)
         {
             case 8:
@@ -292,28 +309,36 @@ public class Engine : MonoBehaviour
 
     void FixedUpdate()
     {
+        
         mSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
-        speed.text = "Speed: " + mSpeed;        
-        MoveEngine();
-        if (Brakes && mSpeed > 0)
+        if(engineRS.Number == "8888")
         {
-            
-            if (engine.velocity.x > 3f)
-                engine.AddRelativeForce(new Vector2(-2000, 0), ForceMode2D.Force);
-            else if (engine.velocity.x < -3f)
-                engine.AddRelativeForce(new Vector2(2000, 0), ForceMode2D.Force);
-            else
-                engine.velocity = new Vector2(0, 0);
-            if (cm.CompositionsList.Any())
+            speedTxt.text = "Speed: " + mSpeed;
+            throttleTxt.text = "Throttle: " + Mathf.Abs(ControllerPosition);
+            directionTxt.text = "Direction: " + Direction;
+        }
+        MoveEngine();
+        if (Brakes)
+        {
+            if(mSpeed > 0)
             {
-                foreach (RollingStock rs in cm.CompositionsList[engineRS.CompositionNumberofRS])
+                if (engine.velocity.x > 3f)
+                    engine.AddRelativeForce(new Vector2(-2000, 0), ForceMode2D.Force);
+                else if (engine.velocity.x < -3f)
+                    engine.AddRelativeForce(new Vector2(2000, 0), ForceMode2D.Force);
+                else
+                    engine.velocity = new Vector2(0, 0);
+                if (cm.CompositionsList.Any())
                 {
-                    rs.Brakes = true;
-                    //Debug.Log(rs.Number + " use brakes");
+                    foreach (RollingStock rs in cm.CompositionsList[engineRS.CompositionNumberofRS])
+                    {
+                        rs.Brakes = true;
+                        //Debug.Log(rs.Number + " use brakes");
+                    }
                 }
             }
-           
-           
+            if(engineRS.Number == "8888")
+                brakesBtnColor.color = Color.red;
         }
         else if(!Brakes)
         {            
@@ -323,51 +348,60 @@ public class Engine : MonoBehaviour
             }
             else if (engine.velocity.x < 0)
                 engine.AddRelativeForce(new Vector2(30, 0), ForceMode2D.Force);
-           
+            if (engineRS.Number == "8888")
+                brakesBtnColor.color = Color.white;
         }
     }
 
     public void ReleaseBrakes()
     {
         Brakes = false;
-        if(cm.CompositionsList.Any())
+        if (cm.CompositionsList.Any())
         {
             foreach (RollingStock rs in cm.CompositionsList[engineRS.CompositionNumberofRS])
             {
                 rs.Brakes = false;
             }
         }
-       
+
     }
 
     public void EngineControllerForward()
     {
 
-        if (controllerPosition < 8)
+        if (ControllerPosition < 8)
         {
-            controllerPosition++;
-            ReleaseBrakes();
+            ControllerPosition++;            
         }
     }
 
     public void EngineControllerBackwards()
     {
-        if (controllerPosition > -8)
+        if (ControllerPosition > -8)
         {
-            controllerPosition--;           
-            ReleaseBrakes();
+            ControllerPosition--;     
+           
         }
     }
 
     public void EngineControllerReleaseAll()
-    {
-        controllerPosition = 0;        
+    {       
         ReleaseBrakes();
+        ControllerPosition = 0;
     }
     public void EngineControllerUseBrakes()
     {
-        controllerPosition = 0;
         Brakes = true;
+        ControllerPosition = 0;
+    }
+
+    public void EngineUseBrakes()
+    {
+        Brakes = Brakes != false ? false : true;        
+    }
+    public void EngineControllerToZero()
+    {
+        ControllerPosition = 0;
     }
 
 

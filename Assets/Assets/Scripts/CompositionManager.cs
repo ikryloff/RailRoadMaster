@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class CompositionManager : Singleton<CompositionManager>
 {
-    private List<string> compositions = new List<string>();
-    private Dictionary<int, RollingStock[]> compositionsList = new Dictionary<int, RollingStock[]>();
+    public List<string> compositions = new List<string>();
+    public Dictionary<int, RollingStock[]> compositionsList = new Dictionary<int, RollingStock[]>();
     private GameObject[] carsObj;
     private RollingStock[] cars;
-    string composition;
+    public string composition;
     private string compositionNumber;
 
 
@@ -54,7 +54,9 @@ public class CompositionManager : Singleton<CompositionManager>
         }
     }
 
-    void Awake () {
+   
+    private void Awake()
+    {
         carsObj = GameObject.FindGameObjectsWithTag("RollingStock");
         int i = 0;
         cars = new RollingStock[carsObj.Length];
@@ -62,13 +64,11 @@ public class CompositionManager : Singleton<CompositionManager>
         {
             cars[i] = item.GetComponent<RollingStock>();
             i++;
-        }
-        
-
+        }        
     }
     private void Start()
     {
-        Invoke("UpdateCompositionsInformation", 1f);
+        Invoke("UpdateCompositionsInformation", 0.1f);
     }
 
 
@@ -82,7 +82,7 @@ public class CompositionManager : Singleton<CompositionManager>
     {
         UpdateCompositionList();
         MakeCompositionDictionary();
-        /*
+        
         for (int i = 0; i < Compositions.Count; i++)
         {
             foreach (RollingStock item in CompositionsList[i])
@@ -90,7 +90,7 @@ public class CompositionManager : Singleton<CompositionManager>
                 Debug.Log("In comp #" + i + " car " + item.Number);
             }
         }
-        */
+        
         SetCompositionNumbersToRS();
     }
 

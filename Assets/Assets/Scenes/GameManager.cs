@@ -25,7 +25,8 @@ public class GameManager : Singleton<GameManager> {
     public RollingStock uncoupleFromRS;
     public RollingStock carUncoupleFromRS;
     Rigidbody2D trainEngineRB;
-    Rigidbody2D engineRB;    
+    Rigidbody2D engineRB;
+    CameraController cc;
     bool step0 = false;
     bool step1 = false;
     bool step2 = false;
@@ -58,23 +59,35 @@ public class GameManager : Singleton<GameManager> {
         ch3Transform = CH3.transform;
         n3Transform = N3.transform;
         m1Transform = M1.transform;
-
+        cc = Camera.main.GetComponent<CameraController>();
         
 
 
     }
 
     private void Start()
-    {        
-        StartCoroutine(TrainArriving());
+    {
         
+        //StartCoroutine(TrainArriving());
+        //cc.CameraTarget = trainEngineRB;
+
 
     }
     
 
     void Update()
     {
-                     
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            cc.MyUpdate = cc.MyUpdate != true ? true : false;
+            Time.timeScale = Time.timeScale != 0 ? 0 : 1;
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            cc.MyUpdate = cc.MyUpdate != true ? true : false;
+            Time.timeScale = Time.timeScale != 8 ? 8 : 1;
+        }
+
         if (step0 && !route.Routes.Contains(route.FindRouteByName("NN3")))
         {
             StartCoroutine(ShuntingFrom2to7()); 
@@ -107,7 +120,7 @@ public class GameManager : Singleton<GameManager> {
     IEnumerator TrainArriving()
     {
         yield return new WaitForSecondsRealtime(1f);
-        tlm.MakeRouteIfPossible(N, N3);
+        tlm.MakeRouteIfPossible(N, N3);        
         auto.RunAutoDrive(1, trainEngine, trainEngineT, n3Transform, 200,  80, false);                
         step0 = true;
     }
@@ -116,7 +129,8 @@ public class GameManager : Singleton<GameManager> {
 
     IEnumerator ShuntingFrom2to7()
     {
-        step0 = false;       
+        step0 = false;
+        cc.CameraTarget = engineRB;
         tlm.MakeRouteIfPossible(CH2, M1);        
         auto.RunAutoDrive(2, engine, engineT, m1Transform, 300,  40, false);
         step1 = true;
@@ -136,10 +150,9 @@ public class GameManager : Singleton<GameManager> {
 
     IEnumerator ShuntingUnCoupleFromComposition()
     {
-        yield return new WaitForSecondsRealtime(2f);
-        step2 = false;        
-        auto.RunAutoDrive(4, engine, engineT, ch3Transform, -700, 25, false, uncoupleFromRS);        
-        yield return null;
+        step2 = false;
+        yield return new WaitForSecondsRealtime(2f);               
+        auto.RunAutoDrive(4, engine, engineT, ch3Transform, -700, 25, false, uncoupleFromRS);
         step3 = true;
 
     }
@@ -158,8 +171,8 @@ public class GameManager : Singleton<GameManager> {
 
     IEnumerator ShuntingUnCoupleEngineFromComposition()
     {
-        yield return new WaitForSecondsRealtime(2f);
         step4 = false;
+        yield return new WaitForSecondsRealtime(2f);        
         auto.RunAutoDrive(6, engine, engineT, switch21Transform, 200, 25, false, carUncoupleFromRS);
         yield return null;        
 

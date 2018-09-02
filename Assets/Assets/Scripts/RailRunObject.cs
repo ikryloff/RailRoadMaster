@@ -11,7 +11,7 @@ public class RailRunObject : MonoBehaviour {
     public Transform rollingStockTransform;
     public Transform aimPosition;
     public int direction;
-    public int mSpeed;
+    private int mSpeed;
     public bool mustCouple;
     public RollingStock rollingStock; 
     public string startCompositionNumberString;
@@ -170,6 +170,19 @@ public class RailRunObject : MonoBehaviour {
         }
     }
 
+    public int MSpeed
+    {
+        get
+        {
+            return mSpeed;
+        }
+
+        set
+        {
+            mSpeed = value;
+        }
+    }
+
     void Start () {        
         EngineRB = Engine.GetComponent<Rigidbody2D>();
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
@@ -186,29 +199,30 @@ public class RailRunObject : MonoBehaviour {
         //Debug.Log("Mathf.Abs(Distance) " + Mathf.Abs(Distance));        
         if (EngineRB)
         {
-            mSpeed = (int)(Time.deltaTime * EngineRB.velocity.magnitude * 5);
+            MSpeed = (int)(Time.deltaTime * EngineRB.velocity.magnitude * 5);
             //Debug.Log(Engine.ControllerPosition + " Dist " + Mathf.Abs(Distance));
 
         }
         
-        if (mSpeed > MaxSpeed)
+        if (MSpeed > MaxSpeed)
         {
             Engine.EngineControllerUseBrakes();
             //Debug.Log("More  " + (MaxSpeed - (int)(Time.deltaTime * EngineRB.velocity.magnitude * 5)));
         }
         else
         {
-               
+            Engine.ReleaseBrakes();
             if (Mathf.Abs(Distance) > 4000)
             {
-                if(mSpeed < 10)
+                if (MSpeed < 10)
                     Engine.ControllerPosition = 1 * Direction;
-                if(mSpeed >= 10 && mSpeed < 15)
+                if(MSpeed >= 10 && MSpeed < 15)
                     Engine.ControllerPosition = 2 * Direction;
-                if (mSpeed >= 15 && mSpeed < 25)
+                if (MSpeed >= 15 && MSpeed < 25)
                     Engine.ControllerPosition = 4 * Direction;
-                if (mSpeed >= 25 )
+                if (MSpeed >= 25 )
                     Engine.ControllerPosition = 8 * Direction;
+                
                 MaxSpeed = maxSpeed;
             }
             if (Mathf.Abs(Distance) < 4000 && Mathf.Abs(Distance) > 1500)
@@ -231,15 +245,16 @@ public class RailRunObject : MonoBehaviour {
                         Engine.ControllerPosition = 1 * Direction;
                     }
                     if (Mathf.Abs(Distance) <= 150)
+                    {
                         Engine.EngineControllerUseBrakes();
+                    }                        
                 }
                 else if(MustCouple)
                 {                    
                     if (RollingStock.CompositionNumberString != startCompositionNumberString)
                     {
                         Engine.EngineControllerUseBrakes();
-                        Debug.Log("Changed" + RollingStock.CompositionNumberString);
-                        EngineRB.velocity = new Vector2(0, 0);
+                        Debug.Log("Changed" + RollingStock.CompositionNumberString);                        
                         Debug.Log("Run is over");
                         adm.Runs.Remove(RailRunID);
                         Destroy(this);
@@ -249,13 +264,15 @@ public class RailRunObject : MonoBehaviour {
                         MaxSpeed = 5;
                         Engine.ControllerPosition = 1 * Direction;
                     }                        
-                }                       
-                if(EngineRB.velocity.magnitude * 5 == 0)
+                }
+                if (MSpeed == 0)
                 {
-                    Debug.Log("Run is over");                    
+                    Engine.EngineControllerUseBrakes();
+                    Debug.Log("Run is over");
                     adm.Runs.Remove(RailRunID);
                     Destroy(this);
-                }                        
+                }
+                              
             }
             
         }

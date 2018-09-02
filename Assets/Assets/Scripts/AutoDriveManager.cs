@@ -27,6 +27,7 @@ public class AutoDriveManager : Singleton<AutoDriveManager>
             rro.MakeRailRun(engine, rollingStock, aim, offset, _maxSpeed, _mustCouple, uncoupleFromRollingstock);
             Runs.Add(runID);
             rro.RailRunID = runID;
+            Debug.Log("RunID " + runID);
         }
         else
         {

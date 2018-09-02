@@ -9,7 +9,7 @@ public class RollingStock : MonoBehaviour
     private string number;    
     private int compositionNumberofRS;
     private string compositionNumberString;
-    private bool brakes = false;
+    public bool brakes = true;
     private Coupler activeCoupler;
     private Coupler passiveCoupler;
     private Coupler connectedToPassive;   
@@ -126,16 +126,17 @@ public class RollingStock : MonoBehaviour
                 rollingStockRB.AddRelativeForce(new Vector2(600, 0), ForceMode2D.Force);
             else
                 rollingStockRB.velocity = new Vector2(0, 0);
+            
         }
-        else if (!Brakes)
+        else
         {
             if (rollingStockRB.velocity.x > 0)
             {
-                rollingStockRB.AddRelativeForce(new Vector2(-10f, 0), ForceMode2D.Force);
+                rollingStockRB.AddRelativeForce(new Vector2(-50f, 0), ForceMode2D.Force);
             }
 
             else if (rollingStockRB.velocity.x < 0)
-                rollingStockRB.AddRelativeForce(new Vector2(10f, 0), ForceMode2D.Force);
+                rollingStockRB.AddRelativeForce(new Vector2(50f, 0), ForceMode2D.Force);
         }
 
     } 
