@@ -12,7 +12,8 @@ public class RollingStock : MonoBehaviour
     public bool brakes = true;
     private Coupler activeCoupler;
     private Coupler passiveCoupler;
-    private Coupler connectedToPassive;   
+    private Coupler connectedToPassive; 
+    private TrackCircuit trackCircuit; 
 
     public string Number
     {
@@ -102,6 +103,19 @@ public class RollingStock : MonoBehaviour
         set
         {
             compositionNumberString = value;
+        }
+    }
+
+    public TrackCircuit TrackCircuit
+    {
+        get
+        {
+            return trackCircuit;
+        }
+
+        set
+        {
+            trackCircuit = value;
         }
     }
 

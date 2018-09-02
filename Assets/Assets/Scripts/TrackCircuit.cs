@@ -39,7 +39,9 @@ public class TrackCircuit : MonoBehaviour {
                 switchTC.SwitchLockCount += 1;
             }
             IsCarPresence += 1;
-            SetCellsLight(ReturnCells(), Constants.TC_OVER);
+            SetCellsLight(ReturnCells(), Constants.TC_OVER);            
+            other.GetComponent<RollingStock>().TrackCircuit = this;
+            //Debug.Log(other.GetComponent<RollingStock>().TrackCircuit);
         }
     }
     
@@ -70,19 +72,7 @@ public class TrackCircuit : MonoBehaviour {
         }
     }
 
-    public string Name
-    {
-        get
-        {
-            return trackName;
-        }
-
-        set
-        {
-            trackName = value;
-        }
-    }
-
+    
     public int UseMode
     {
         get
@@ -102,6 +92,19 @@ public class TrackCircuit : MonoBehaviour {
         {
             useMode = value;
             SetCellsLight(ReturnCells(), value);
+        }
+    }
+
+    public string TrackName
+    {
+        get
+        {
+            return name;
+        }
+
+        set
+        {
+            trackName = value;
         }
     }
 

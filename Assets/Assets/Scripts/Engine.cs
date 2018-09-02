@@ -4,7 +4,8 @@ using UnityEngine.UI;
 
 public class Engine : MonoBehaviour
 {
-
+    public static int instructionHandler = 0;
+    
     private Rigidbody2D engine;
     private RollingStock engineRS;
     private bool brakes = true;
@@ -16,9 +17,12 @@ public class Engine : MonoBehaviour
     [SerializeField]
     private Text directionTxt;
     public CompositionManager cm;
-    private float mSpeed;
-    private int direction;
+    public float mSpeed;
+    public int direction;
+    private int directionInstructions;
     private int absControllerPosition;
+    public int maxSpeed;
+    private bool isDrivingByInstructionsIsOn;
     [SerializeField]
     Button brakesButton;
     Image brakesBtnColor;
@@ -82,6 +86,59 @@ public class Engine : MonoBehaviour
             brakes = value;
         }
     }
+
+    public float MSpeed
+    {
+        get
+        {
+            return mSpeed;
+        }
+
+        set
+        {
+            mSpeed = value;
+        }
+    }
+
+    public int MaxSpeed
+    {
+        get
+        {
+            return maxSpeed;
+        }
+
+        set
+        {
+            maxSpeed = value;
+        }
+    }
+
+    public bool IsDrivingByInstructionsIsOn
+    {
+        get
+        {
+            return isDrivingByInstructionsIsOn;
+        }
+
+        set
+        {
+            isDrivingByInstructionsIsOn = value;
+        }
+    }
+
+    public int DirectionInstructions
+    {
+        get
+        {
+            return instructionHandler/ Mathf.Abs(instructionHandler);
+        }
+
+        set
+        {
+            directionInstructions = value;
+        }
+    }
+
     private void Awake()
     {
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
@@ -110,188 +167,188 @@ public class Engine : MonoBehaviour
         switch (AbsControllerPosition)
         {
             case 8:
-                if (mSpeed < 10)
+                if (MSpeed < 10)
                     AddForceToEngine(20200);
-                if (mSpeed >= 10 && mSpeed < 15)
+                if (MSpeed >= 10 && MSpeed < 15)
                     AddForceToEngine(18500);
-                if (mSpeed >= 15 && mSpeed < 20)
+                if (MSpeed >= 15 && MSpeed < 20)
                     AddForceToEngine(14000);
-                if (mSpeed >= 20 && mSpeed < 25)
+                if (MSpeed >= 20 && MSpeed < 25)
                     AddForceToEngine(11500);
-                if (mSpeed >= 25 && mSpeed < 30)
+                if (MSpeed >= 25 && MSpeed < 30)
                     AddForceToEngine(14000);
-                if (mSpeed >= 30 && mSpeed < 35)
+                if (MSpeed >= 30 && MSpeed < 35)
                     AddForceToEngine(7800);
-                if (mSpeed >= 35 && mSpeed < 40)
+                if (MSpeed >= 35 && MSpeed < 40)
                     AddForceToEngine(6000);
-                if (mSpeed >= 40 && mSpeed < 45)
+                if (MSpeed >= 40 && MSpeed < 45)
                     AddForceToEngine(5000);
-                if (mSpeed >= 45 && mSpeed < 50)
+                if (MSpeed >= 45 && MSpeed < 50)
                     AddForceToEngine(4000);
-                if (mSpeed >= 50 && mSpeed < 55)
+                if (MSpeed >= 50 && MSpeed < 55)
                     AddForceToEngine(3500);
-                if (mSpeed >= 55 && mSpeed < 60)
+                if (MSpeed >= 55 && MSpeed < 60)
                     AddForceToEngine(2700);
-                if (mSpeed >= 60 && mSpeed < 110)
+                if (MSpeed >= 60 && MSpeed < 110)
                     AddForceToEngine(1500);
-                if (mSpeed > 110)
+                if (MSpeed > 110)
                     AddForceToEngine(0);
                 break;
             case 7:
-                if (mSpeed < 10)
+                if (MSpeed < 10)
                     AddForceToEngine(20500);
-                if (mSpeed >= 10 && mSpeed < 15)
+                if (MSpeed >= 10 && MSpeed < 15)
                     AddForceToEngine(16000);
-                if (mSpeed >= 15 && mSpeed < 20)
+                if (MSpeed >= 15 && MSpeed < 20)
                     AddForceToEngine(13000);
-                if (mSpeed >= 20 && mSpeed < 25)
+                if (MSpeed >= 20 && MSpeed < 25)
                     AddForceToEngine(10000);
-                if (mSpeed >= 25 && mSpeed < 30)
+                if (MSpeed >= 25 && MSpeed < 30)
                     AddForceToEngine(8000);
-                if (mSpeed >= 30 && mSpeed < 35)
+                if (MSpeed >= 30 && MSpeed < 35)
                     AddForceToEngine(6000);
-                if (mSpeed >= 35 && mSpeed < 40)
+                if (MSpeed >= 35 && MSpeed < 40)
                     AddForceToEngine(5000);
-                if (mSpeed >= 40 && mSpeed < 45)
+                if (MSpeed >= 40 && MSpeed < 45)
                     AddForceToEngine(4000);
-                if (mSpeed >= 45 && mSpeed < 50)
+                if (MSpeed >= 45 && MSpeed < 50)
                     AddForceToEngine(3000);
-                if (mSpeed >= 50 && mSpeed < 55)
+                if (MSpeed >= 50 && MSpeed < 55)
                     AddForceToEngine(2000);
-                if (mSpeed >= 55 && mSpeed < 60)
+                if (MSpeed >= 55 && MSpeed < 60)
                     AddForceToEngine(1500);
-                if (mSpeed >= 60 && mSpeed < 110)
+                if (MSpeed >= 60 && MSpeed < 110)
                     AddForceToEngine(1000);
-                if(mSpeed > 110)
+                if(MSpeed > 110)
                     AddForceToEngine(0);
                 break;
             case 6:
-                if (mSpeed < 10)
+                if (MSpeed < 10)
                     AddForceToEngine(20500);
-                if (mSpeed >= 10 && mSpeed < 15)
+                if (MSpeed >= 10 && MSpeed < 15)
                     AddForceToEngine(14000);
-                if (mSpeed >= 15 && mSpeed < 20)
+                if (MSpeed >= 15 && MSpeed < 20)
                     AddForceToEngine(11000);
-                if (mSpeed >= 20 && mSpeed < 25)
+                if (MSpeed >= 20 && MSpeed < 25)
                     AddForceToEngine(8000);
-                if (mSpeed >= 25 && mSpeed < 30)
+                if (MSpeed >= 25 && MSpeed < 30)
                     AddForceToEngine(6000);
-                if (mSpeed >= 30 && mSpeed < 35)
+                if (MSpeed >= 30 && MSpeed < 35)
                     AddForceToEngine(5000);
-                if (mSpeed >= 35 && mSpeed < 40)
+                if (MSpeed >= 35 && MSpeed < 40)
                     AddForceToEngine(3800);
-                if (mSpeed >= 40 && mSpeed < 45)
+                if (MSpeed >= 40 && MSpeed < 45)
                     AddForceToEngine(3000);
-                if (mSpeed >= 45 && mSpeed < 50)
+                if (MSpeed >= 45 && MSpeed < 50)
                     AddForceToEngine(2100);
-                if (mSpeed >= 50 && mSpeed < 55)
+                if (MSpeed >= 50 && MSpeed < 55)
                     AddForceToEngine(1800);
-                if (mSpeed >= 55 && mSpeed < 60)
+                if (MSpeed >= 55 && MSpeed < 60)
                     AddForceToEngine(1000);
-                if (mSpeed >= 60 && mSpeed < 110)
+                if (MSpeed >= 60 && MSpeed < 110)
                     AddForceToEngine(800);
-                if (mSpeed > 110)
+                if (MSpeed > 110)
                     AddForceToEngine(0);
                 break;
             case 5:
-                if (mSpeed < 5)
+                if (MSpeed < 5)
                     AddForceToEngine(20500);
-                if (mSpeed >= 5 && mSpeed < 10)
+                if (MSpeed >= 5 && MSpeed < 10)
                     AddForceToEngine(18000);
-                if (mSpeed >= 10 && mSpeed < 15)
+                if (MSpeed >= 10 && MSpeed < 15)
                     AddForceToEngine(11800);
-                if (mSpeed >= 15 && mSpeed < 20)
+                if (MSpeed >= 15 && MSpeed < 20)
                     AddForceToEngine(9000);
-                if (mSpeed >= 20 && mSpeed < 25)
+                if (MSpeed >= 20 && MSpeed < 25)
                     AddForceToEngine(6000);
-                if (mSpeed >= 25 && mSpeed < 30)
+                if (MSpeed >= 25 && MSpeed < 30)
                     AddForceToEngine(4000);
-                if (mSpeed >= 30 && mSpeed < 35)
+                if (MSpeed >= 30 && MSpeed < 35)
                     AddForceToEngine(3200);
-                if (mSpeed >= 35 && mSpeed < 40)
+                if (MSpeed >= 35 && MSpeed < 40)
                     AddForceToEngine(2800);
-                if (mSpeed >= 40 && mSpeed < 45)
+                if (MSpeed >= 40 && MSpeed < 45)
                     AddForceToEngine(2000);
-                if (mSpeed >= 45 && mSpeed < 50)
+                if (MSpeed >= 45 && MSpeed < 50)
                     AddForceToEngine(1600);
-                if (mSpeed >= 50 && mSpeed < 55)
+                if (MSpeed >= 50 && MSpeed < 55)
                     AddForceToEngine(1100);
-                if (mSpeed >= 55 && mSpeed < 60)
+                if (MSpeed >= 55 && MSpeed < 60)
                     AddForceToEngine(900);
-                if (mSpeed >= 60 && mSpeed < 110)
+                if (MSpeed >= 60 && MSpeed < 110)
                     AddForceToEngine(700);
-                if (mSpeed > 110)
+                if (MSpeed > 110)
                     AddForceToEngine(0);
                 break;
             case 4:
-                if (mSpeed < 5)
+                if (MSpeed < 5)
                     AddForceToEngine(20500);
-                if (mSpeed >= 5 && mSpeed < 10)
+                if (MSpeed >= 5 && MSpeed < 10)
                     AddForceToEngine(13000);
-                if (mSpeed >= 10 && mSpeed < 15)
+                if (MSpeed >= 10 && MSpeed < 15)
                     AddForceToEngine(9500);
-                if (mSpeed >= 15 && mSpeed < 20)
+                if (MSpeed >= 15 && MSpeed < 20)
                     AddForceToEngine(6000);
-                if (mSpeed >= 20 && mSpeed < 25)
+                if (MSpeed >= 20 && MSpeed < 25)
                     AddForceToEngine(4000);
-                if (mSpeed >= 25 && mSpeed < 30)
+                if (MSpeed >= 25 && MSpeed < 30)
                     AddForceToEngine(3000);
-                if (mSpeed >= 30 && mSpeed < 35)
+                if (MSpeed >= 30 && MSpeed < 35)
                     AddForceToEngine(2000);
-                if (mSpeed >= 35 && mSpeed < 40)
+                if (MSpeed >= 35 && MSpeed < 40)
                     AddForceToEngine(1700);
-                if (mSpeed >= 40 && mSpeed < 45)
+                if (MSpeed >= 40 && MSpeed < 45)
                     AddForceToEngine(1100);
-                if (mSpeed >= 45 && mSpeed < 50)
+                if (MSpeed >= 45 && MSpeed < 50)
                     AddForceToEngine(900);
-                if (mSpeed >= 50 && mSpeed < 110)
+                if (MSpeed >= 50 && MSpeed < 110)
                     AddForceToEngine(700);
-                if (mSpeed > 110)
+                if (MSpeed > 110)
                     AddForceToEngine(0);
                 break;
             case 3:
-                if (mSpeed < 5)
+                if (MSpeed < 5)
                     AddForceToEngine(20500);
-                if (mSpeed >= 5 && mSpeed < 10)
+                if (MSpeed >= 5 && MSpeed < 10)
                     AddForceToEngine(11000);
-                if (mSpeed >= 10 && mSpeed < 15)
+                if (MSpeed >= 10 && MSpeed < 15)
                     AddForceToEngine(3000);
-                if (mSpeed >= 15 && mSpeed < 20)
+                if (MSpeed >= 15 && MSpeed < 20)
                     AddForceToEngine(2000);
-                if (mSpeed >= 20 && mSpeed < 25)
+                if (MSpeed >= 20 && MSpeed < 25)
                     AddForceToEngine(1200);
-                if (mSpeed >= 25 && mSpeed < 30)
+                if (MSpeed >= 25 && MSpeed < 30)
                     AddForceToEngine(1000);
-                if (mSpeed >= 30 && mSpeed < 35)
+                if (MSpeed >= 30 && MSpeed < 35)
                     AddForceToEngine(900);
-                if (mSpeed >= 35 && mSpeed < 110)
+                if (MSpeed >= 35 && MSpeed < 110)
                     AddForceToEngine(700);
-                if (mSpeed > 110)
+                if (MSpeed > 110)
                     AddForceToEngine(0);
                 break;
 
             case 2:
-                if (mSpeed < 5)
+                if (MSpeed < 5)
                     AddForceToEngine(12000);
-                if (mSpeed >= 5 && mSpeed < 10)
+                if (MSpeed >= 5 && MSpeed < 10)
                     AddForceToEngine(3900);
-                if (mSpeed >= 10 && mSpeed < 15)
+                if (MSpeed >= 10 && MSpeed < 15)
                     AddForceToEngine(1500);
-                if (mSpeed >= 15 && mSpeed < 20)
+                if (MSpeed >= 15 && MSpeed < 20)
                     AddForceToEngine(1000);
-                if (mSpeed >= 20 && mSpeed < 110)
+                if (MSpeed >= 20 && MSpeed < 110)
                     AddForceToEngine(500);
-                if (mSpeed > 110)
+                if (MSpeed > 110)
                     AddForceToEngine(0);
                 break;
             case 1:
-                if (mSpeed < 1)
+                if (MSpeed < 1)
                     AddForceToEngine(11000);
-                if (mSpeed >= 1 && mSpeed < 10)
+                if (MSpeed >= 1 && MSpeed < 10)
                     AddForceToEngine(2000);
-                if (mSpeed >= 10 )
+                if (MSpeed >= 10 )
                     AddForceToEngine(500);
-                if (mSpeed > 110)
+                if (MSpeed > 110)
                     AddForceToEngine(0);
                 break;
             default:
@@ -310,17 +367,19 @@ public class Engine : MonoBehaviour
     void FixedUpdate()
     {
         
-        mSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
+        MSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
         if(engineRS.Number == "8888")
         {
-            speedTxt.text = "Speed: " + mSpeed;
+            speedTxt.text = "Speed: " + MSpeed;
             throttleTxt.text = "Throttle: " + Mathf.Abs(ControllerPosition);
             directionTxt.text = "Direction: " + Direction;
         }
-        MoveEngine();
+        if(IsDrivingByInstructionsIsOn)
+            DriveByInstructions();
+        MoveEngine();        
         if (Brakes)
         {
-            if(mSpeed > 0)
+            if(MSpeed > 0)
             {
                 if (engine.velocity.x > 3f)
                     engine.AddRelativeForce(new Vector2(-2000, 0), ForceMode2D.Force);
@@ -392,17 +451,71 @@ public class Engine : MonoBehaviour
     public void EngineControllerUseBrakes()
     {
         Brakes = true;
-        ControllerPosition = 0;
+        ControllerPosition = 0;        
     }
 
-    public void EngineUseBrakes()
+    public void EngineInstructionStop()
     {
-        Brakes = Brakes != false ? false : true;        
+        Brakes = true;
+        ControllerPosition = 0;
+        instructionHandler = 0;
     }
     public void EngineControllerToZero()
     {
         ControllerPosition = 0;
     }
 
+    public void EngineInstructionsForward()
+    {
+        IsDrivingByInstructionsIsOn = true;
+        ReleaseBrakes();
+        instructionHandler++;        
+        Debug.Log(instructionHandler);               
+    }
 
+    public void EngineInstructionsBackwards()
+    {
+        IsDrivingByInstructionsIsOn = true;
+        ReleaseBrakes();        
+        instructionHandler--;
+        Debug.Log(instructionHandler);        
+    }
+
+    public void DriveByInstructions()
+    {
+        if (instructionHandler== 0)
+        {
+            MaxSpeed = 0;
+            EngineControllerUseBrakes();
+        }            
+        if (Mathf.Abs(instructionHandler) == 1)
+            MaxSpeed = 3;
+        if (Mathf.Abs(instructionHandler) == 2)
+            MaxSpeed = 5;
+        if (Mathf.Abs(instructionHandler) == 3)
+            MaxSpeed = 10;
+        if (Mathf.Abs(instructionHandler) == 4)
+            MaxSpeed = 15;
+        if (Mathf.Abs(instructionHandler) == 5)
+            MaxSpeed = 25;
+        if (Mathf.Abs(instructionHandler) == 6)
+            MaxSpeed = 40;
+
+        if (MSpeed > MaxSpeed || MaxSpeed == 0)
+        {
+            EngineControllerUseBrakes();
+        }
+        else
+        {
+            ReleaseBrakes();
+            if (MSpeed < 10)
+                ControllerPosition = 1 * DirectionInstructions;
+            if (MSpeed >= 10 && MSpeed < 15)
+                ControllerPosition = 2 * DirectionInstructions;
+            if (MSpeed >= 15 && MSpeed < 25)
+                ControllerPosition = 4 * DirectionInstructions;
+            if (MSpeed >= 25)
+                    ControllerPosition = 8 * DirectionInstructions;
+        }  
+    }
 }
