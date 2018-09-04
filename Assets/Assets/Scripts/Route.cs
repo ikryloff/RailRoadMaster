@@ -451,7 +451,7 @@ public class Route : Singleton<Route> {
         {
             ro.SwitchesStr = new Switch[] { sw1_3, sw5_17, sw7_9, sw13 };
             ro.SwitchesTurn = new Switch[] { sw11 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tcsw13, tc4 };
+            ro.TrackCircuits = new TrackCircuit[] { tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tcsw13, tc5 };
         }
 
         // Routes N done

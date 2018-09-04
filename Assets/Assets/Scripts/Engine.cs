@@ -59,12 +59,10 @@ public class Engine : MonoBehaviour
             if (ControllerPosition != 0)
             {
                 if (AbsControllerPosition / ControllerPosition > 0)
-                    direction = 1;
+                    return 1;
                 else if (AbsControllerPosition / ControllerPosition < 0)
-                    direction = -1;
+                    return -1;
             }
-            else
-                direction = 1;
             return direction;
         }
 
@@ -125,19 +123,7 @@ public class Engine : MonoBehaviour
             isDrivingByInstructionsIsOn = value;
         }
     }
-
-    public int DirectionInstructions
-    {
-        get
-        {
-            return instructionHandler/ Mathf.Abs(instructionHandler);
-        }
-
-        set
-        {
-            directionInstructions = value;
-        }
-    }
+        
 
     private void Awake()
     {
@@ -366,7 +352,7 @@ public class Engine : MonoBehaviour
 
     void FixedUpdate()
     {
-        
+       
         MSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
         if(engineRS.Number == "8888")
         {
@@ -457,6 +443,7 @@ public class Engine : MonoBehaviour
     public void EngineInstructionStop()
     {
         Brakes = true;
+        Direction = 0;
         ControllerPosition = 0;
         instructionHandler = 0;
     }
@@ -468,16 +455,27 @@ public class Engine : MonoBehaviour
     public void EngineInstructionsForward()
     {
         IsDrivingByInstructionsIsOn = true;
+        
+        Direction = Direction == -1 && Direction != 0 ? -1 : 1;
         ReleaseBrakes();
-        instructionHandler++;        
+        instructionHandler++;
+        if (instructionHandler == 0)
+            Direction = 0;
+        if (instructionHandler == 8)
+            instructionHandler = 7;
         Debug.Log(instructionHandler);               
     }
 
     public void EngineInstructionsBackwards()
     {
         IsDrivingByInstructionsIsOn = true;
+        Direction = Direction == 1 && Direction != 0 ? 1 : -1;
         ReleaseBrakes();        
         instructionHandler--;
+        if (instructionHandler == 0)
+            Direction = 0;
+        if (instructionHandler == -8)
+            instructionHandler = -7;
         Debug.Log(instructionHandler);        
     }
 
@@ -500,6 +498,8 @@ public class Engine : MonoBehaviour
             MaxSpeed = 25;
         if (Mathf.Abs(instructionHandler) == 6)
             MaxSpeed = 40;
+        if (Mathf.Abs(instructionHandler) == 7)
+            MaxSpeed = 100;
 
         if (MSpeed > MaxSpeed || MaxSpeed == 0)
         {
@@ -509,13 +509,13 @@ public class Engine : MonoBehaviour
         {
             ReleaseBrakes();
             if (MSpeed < 10)
-                ControllerPosition = 1 * DirectionInstructions;
+                ControllerPosition = 1 * Direction;
             if (MSpeed >= 10 && MSpeed < 15)
-                ControllerPosition = 2 * DirectionInstructions;
+                ControllerPosition = 2 * Direction;
             if (MSpeed >= 15 && MSpeed < 25)
-                ControllerPosition = 4 * DirectionInstructions;
+                ControllerPosition = 4 * Direction;
             if (MSpeed >= 25)
-                    ControllerPosition = 8 * DirectionInstructions;
+                    ControllerPosition = 8 * Direction;
         }  
     }
 }
