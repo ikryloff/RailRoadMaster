@@ -3,21 +3,21 @@ using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour {
     
-    public float mapMovingSpeed = 400f;
+    private float mapMovingSpeed = 380f;
     public Vector2 mapBorder;
     public Vector2 mapLimit; 
     [SerializeField]
-    private Rigidbody2D cameraTarget;
-    private Vector3 offset;
+    private Rigidbody2D cameraTarget;   
     private Vector2 desiredPosition;
     Vector2 smoothedPosition;
     private float smoothSpeed = 8f;
-    public Toggle myToggle;
     private float lastTime;
     private bool myUpdate;
     private bool canMoveCamera = true;
     private Joystick joystick;
     public float cameraSize;
+    public Texture2D cursorForFocus;
+    private bool isFocusModeIsOn;
 
     public Rigidbody2D CameraTarget
     {
@@ -57,13 +57,23 @@ public class CameraController : MonoBehaviour {
             canMoveCamera = value;
         }
     }
-   
-    
+
+    public bool IsFocusModeIsOn
+    {
+        get
+        {
+            return isFocusModeIsOn;
+        }
+
+        set
+        {
+            isFocusModeIsOn = value;
+        }
+    }
 
     private void Start()
     {
-        offset = new Vector3(0, 0, -2);
-        myToggle.isOn = false;
+        IsFocusModeIsOn = false;
         lastTime = Time.realtimeSinceStartup;
         joystick = FindObjectOfType<Joystick>();                
     }
@@ -88,6 +98,29 @@ public class CameraController : MonoBehaviour {
         {
             PauseGame();
         }
+
+        if (IsFocusModeIsOn)
+        {
+            Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
+            //Debug.Log(hit.collider.name);
+
+            if (hit.collider != null && hit.collider.tag == "FocusCarCollider")
+            {
+                Cursor.SetCursor(cursorForFocus, Vector2.zero, CursorMode.Auto);
+
+                if (Input.GetMouseButtonDown(1))
+                {
+                    CameraTarget = hit.collider.GetComponentInParent<Rigidbody2D>();
+                    Debug.Log(CameraTarget.name);
+                }
+            }
+        }
+        else if (!IsFocusModeIsOn)
+        {
+            CameraTarget = null;
+        }
+        
     }
 
     public void PauseGame()
@@ -119,46 +152,44 @@ public class CameraController : MonoBehaviour {
             
     }
 
+    public void RunFocusMode()
+    {
+        IsFocusModeIsOn = IsFocusModeIsOn ? false : true;
+    }
+
 
     void MoveCamera(float dt)
     {
-        if (CanMoveCamera)
+        if (CanMoveCamera) // for remote 
         {
             desiredPosition = transform.position;
 
-
-            if (myToggle.isOn)
+            if (IsFocusModeIsOn && CameraTarget != null)
             {
-                if (CameraTarget.velocity.x >= 1)
-                    offset = new Vector3(0, 0, -2);
-                else if (CameraTarget.velocity.x <= -1)
-                    offset = new Vector3(0, 0, -2);
-                desiredPosition = CameraTarget.transform.position + offset;
+                desiredPosition = CameraTarget.transform.position;                
             }
-            
-            else
+          
+            if (Input.GetKey(KeyCode.W) )
             {
-                if (Input.GetKey(KeyCode.W) )
-                {
-                    desiredPosition.y += mapMovingSpeed;
-                }
-                if (Input.GetKey(KeyCode.S) )
-                {
-                    desiredPosition.y -= mapMovingSpeed;
-                }
-                if (Input.GetKey(KeyCode.A) )
-                {
-                    desiredPosition.x -= mapMovingSpeed;
-                }
-                if (Input.GetKey(KeyCode.D) )
-                {
-                    desiredPosition.x += mapMovingSpeed;
-                }
+                desiredPosition.y += mapMovingSpeed;
+            }
+            if (Input.GetKey(KeyCode.S) )
+            {
+                desiredPosition.y -= mapMovingSpeed;
+            }
+            if (Input.GetKey(KeyCode.A) )
+            {
+                desiredPosition.x -= mapMovingSpeed;
+            }
+            if (Input.GetKey(KeyCode.D) )
+            {
+                desiredPosition.x += mapMovingSpeed;
+            }
            
-                desiredPosition.y += mapMovingSpeed * joystick.Vertical;
-                desiredPosition.x += mapMovingSpeed * joystick.Horizontal;
+            desiredPosition.y += mapMovingSpeed * joystick.Vertical;
+            desiredPosition.x += mapMovingSpeed * joystick.Horizontal;
                 
-            }
+          
             desiredPosition.x = Mathf.Clamp(desiredPosition.x, -mapLimit.x, mapLimit.x);
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, -mapLimit.y, mapLimit.y);
             smoothedPosition = Vector2.Lerp(transform.position, desiredPosition, smoothSpeed * dt);

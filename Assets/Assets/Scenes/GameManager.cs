@@ -42,12 +42,12 @@ public class GameManager : Singleton<GameManager> {
         route = GameObject.Find("Route").GetComponent<Route>();
         tlm = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
         engine = GameObject.Find("Engine").GetComponent<Engine>();
-        trainEngine = GameObject.Find("TrainEngine").GetComponent<Engine>();
+        //trainEngine = GameObject.Find("TrainEngine").GetComponent<Engine>();
 
-        trainEngineRB = trainEngine.GetComponent<Rigidbody2D>();
+        //trainEngineRB = trainEngine.GetComponent<Rigidbody2D>();
         engineRB = engine.GetComponent<Rigidbody2D>();
 
-        trainEngineT = trainEngine.transform;
+        //trainEngineT = trainEngine.transform;
         engineT = engine.transform;
 
         N = GetTrafficLightByName("N");

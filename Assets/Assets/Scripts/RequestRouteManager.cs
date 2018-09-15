@@ -5,30 +5,20 @@ using UnityEngine.UI;
 
 public class RequestRouteManager : Singleton<RequestRouteManager> {
     [SerializeField]
-    private GameObject[] communicationList;
+    private GameObject communicationList;
     [SerializeField]
-    private GameObject[] routeStartList;
-    public GameObject canvasParent;
-    public RollingStock rollingStock;   
+    private GameObject routeList;    
     [SerializeField]
     private GameObject cancelBtn;
-    public TrackCircuit track;
+    [SerializeField]
+    private Button [] routeButtons;
+    private bool isRouteRequestRun;
+    private string resultRoute = "";
 
-    public TrackCircuit Track
-    {
-        get
-        {
-            return track;
-        }
-
-        set
-        {
-            track = value;
-        }
-    }
+    
        
 
-    public GameObject[] CommunicationList
+    public GameObject CommunicationList
     {
         get
         {
@@ -41,16 +31,16 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         }
     }
 
-    public GameObject[] RouteStartList
+    public GameObject RouteList
     {
         get
         {
-            return routeStartList;
+            return routeList;
         }
 
         set
         {
-            routeStartList = value;
+            routeList = value;
         }
     }
 
@@ -67,53 +57,110 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         }
     }
 
-    public void ShowList()
+    public bool IsRouteRequestRun
     {
-        foreach (GameObject item in CommunicationList)
+        get
         {
-            item.SetActive(true);
-        }   
-        GetTrack();
-        foreach (GameObject item in RouteStartList)
-        {
-            item.SetActive(false);
+            return isRouteRequestRun;
         }
-        CancelBtn.SetActive(true);
 
-
+        set
+        {
+            isRouteRequestRun = value;
+        }
     }
 
-    public void ShowRouteStartList()
+    public string ResultRoute
     {
-        foreach (GameObject item in RouteStartList)
+        get
         {
-            item.SetActive(true);
+            return resultRoute;
         }
-        foreach (GameObject item in CommunicationList)
+
+        set
         {
-            item.SetActive(false);
+            resultRoute = value;
         }
-        CancelBtn.SetActive(true);
     }
 
-   
-
-    public void GetTrack()
+    public void ShowCommunicationList()
     {
-        Track = rollingStock.TrackCircuit;        
+        CommunicationList.SetActive(true);
+        IsRouteRequestRun = false;
+        ResultRoute = "";
+        RouteList.SetActive(false);
     }
+    public void ShowRouteList()
+    {
+        IsRouteRequestRun = true;
+        RouteList.SetActive(true);
+        CommunicationList.SetActive(false);
+        
+        foreach (Button btn in routeButtons)
+        {
+            if (!btn.IsInteractable())
+            {
+                btn.interactable = true;                
+            }
+            
+        }
+    }
+
+
+    public void GetStringRoute(Button placeBtn)
+    {
+        
+        if (IsRouteRequestRun)
+        {
+            ResultRoute += placeBtn.name;
+            placeBtn.interactable = false;            
+            IsRouteRequestRun = false;
+            LeavePossibleRoutesButtons(placeBtn);
+        }
+        else
+        {
+            IsRouteRequestRun = true;
+            ResultRoute += placeBtn.name;
+            Debug.Log("result " + ResultRoute);            
+            ShowCommunicationList();
+        }
+    }
+
+    private void LeavePossibleRoutesButtons(Button button)
+    {
+        if(button.name == "6")
+        {
+            foreach (Button btn in routeButtons)
+            {
+                if (btn.name == "7" || btn.name == "T" || btn.name == "8")
+                {
+                    btn.interactable = false;
+                }                    
+
+            }
+        }
+        else if (button.name == "S")
+        {
+            foreach (Button btn in routeButtons)
+            {
+                if (btn.name == "6")
+                {
+                    btn.interactable = true;
+                }
+                else
+                    btn.interactable = false;
+
+            }
+        }
+    }
+
+  
+
 
     private void Start()
     {
-        CancelBtn.SetActive(true);
-        foreach (GameObject item in CommunicationList)
-        {
-            item.SetActive(true);
-        }
-        foreach (GameObject item in RouteStartList)
-        {
-            item.SetActive(false);
-        }
+        IsRouteRequestRun = false;
+        RouteList.SetActive(false);
     }
 
 }

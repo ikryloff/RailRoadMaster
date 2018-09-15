@@ -6,6 +6,7 @@ public class SwitchManager : Singleton<SwitchManager>
 
     private GameObject switchObject;
     private GameObject[] indicators;
+    public GameObject[] switches;
     private Renderer rend;
     private bool isSwitchModeOn;
     [SerializeField]
@@ -23,7 +24,14 @@ public class SwitchManager : Singleton<SwitchManager>
             isSwitchModeOn = value;
         }
     }
-
+    private void Awake()
+    {
+        switches = GameObject.FindGameObjectsWithTag("RailSwitch");
+        foreach (GameObject sw in switches)
+        {
+            sw.layer = 2;
+        }
+    }
     void Start () {
         IsSwitchModeOn = true;
         indicators = GameObject.FindGameObjectsWithTag("Indication");
@@ -64,9 +72,24 @@ public class SwitchManager : Singleton<SwitchManager>
         {
             rend = item.GetComponent<Renderer>();
             if (IsSwitchModeOn)
+            {
+                foreach (GameObject sw in switches)
+                {
+                    sw.layer = 9;
+                }
                 rend.gameObject.SetActive(true);
+                
+            }
+
             else
+            {
+                foreach (GameObject sw in switches)
+                {
+                    sw.layer = 2;
+                }
                 rend.gameObject.SetActive(false);
+            }
+                
         }
     }
 
