@@ -8,14 +8,22 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
     [SerializeField]
     private GameObject remoteControll;
     [SerializeField]
-    private GameObject enginePanel;
+    private GameObject gamePanels;
+    [SerializeField]
+    private GameObject joystickObject;
     [SerializeField]
     private GameObject remoteControlPanel;
     [SerializeField]
     private CameraController cc;
-    private bool isRemoteControllerOn = false;    
+    private bool isRemoteControllerOn;    
     private GameObject[] switches;
     private TrackCircuit tc;
+    private SpriteRenderer remoteSprite;
+    public float cameraHeight;
+    public Vector2 spriteSize;
+    public Vector2 scale;
+    private Vector2 cameraSize;
+    public float halfCameraHeight;
 
     public bool IsRemoteControllerOn
     {
@@ -31,48 +39,53 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
     }
 
     void Awake () {
-        SpriteRenderer remoteSprite = remoteControll.GetComponent<SpriteRenderer>();
-        float cameraHeight = Camera.main.orthographicSize * 2;
-        Vector2 cameraSize = new Vector2(Camera.main.aspect * cameraHeight, cameraHeight);
-        Vector2 spriteSize = remoteSprite.sprite.bounds.size;
+        remoteSprite = remoteControll.GetComponent<SpriteRenderer>();
+        halfCameraHeight = Camera.main.orthographicSize;
+        cameraHeight = halfCameraHeight * 2;
+        cameraSize = new Vector2(Camera.main.aspect * cameraHeight, cameraHeight);
+        spriteSize = remoteSprite.sprite.bounds.size;
         axisZ = new Vector3(0, 0, 190f);
-
-        Vector2 scale = remoteSprite.transform.localScale;
-        if (cameraSize.x >= cameraSize.y)
-        { // Landscape (or equal)
-            scale *= cameraSize.x / spriteSize.x;
-        }
-        else
-        { // Portrait
-            scale *= cameraSize.y / spriteSize.y;
-        }
+        scale = remoteSprite.transform.localScale;
+        scale *= cameraSize.x / spriteSize.x;  
         remoteSprite.transform.localScale = scale;
-        remoteControll.gameObject.SetActive(false);
-        remoteControlPanel.gameObject.SetActive(false);
         switches = GameObject.FindGameObjectsWithTag("Switch");
+        IsRemoteControllerOn = true;
+        RunRemoteControl();
     }
 	
 	void Update () {
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            if (IsRemoteControllerOn)
-            {
-                remoteControll.gameObject.SetActive(false);
-                enginePanel.gameObject.SetActive(true);
-                remoteControlPanel.gameObject.SetActive(false);
-                IsRemoteControllerOn = false;
-                cc.CanMoveCamera = true;
-            }
-            else
-            {                
-                remoteControll.gameObject.SetActive(true);
-                enginePanel.gameObject.SetActive(false);
-                remoteControlPanel.gameObject.SetActive(true);
-                IsRemoteControllerOn = true;
-                cc.CanMoveCamera = false;
-            }
+            RunRemoteControl();
         }
         remoteControll.transform.position = Camera.main.transform.position + axisZ;
+    }
+   
+
+    public void RunRemoteControl()
+    {
+        float tempRatio = Camera.main.orthographicSize / halfCameraHeight;
+        scale = new Vector3(tempRatio, tempRatio);
+        remoteSprite.transform.localScale *= scale;
+        halfCameraHeight = Camera.main.orthographicSize;
+        if (IsRemoteControllerOn)
+        {
+            remoteControll.gameObject.SetActive(false);
+            gamePanels.gameObject.SetActive(true);
+            joystickObject.gameObject.SetActive(true);
+            remoteControlPanel.gameObject.SetActive(false);
+            IsRemoteControllerOn = false;
+            cc.CanMoveCamera = true;
+        }
+        else
+        {
+            remoteControll.gameObject.SetActive(true);
+            gamePanels.gameObject.SetActive(false);
+            joystickObject.gameObject.SetActive(false);
+            remoteControlPanel.gameObject.SetActive(true);
+            IsRemoteControllerOn = true;
+            cc.CanMoveCamera = false;
+        }
     }
 
     public void ShowSwitches()

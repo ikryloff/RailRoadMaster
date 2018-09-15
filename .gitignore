@@ -325,3 +325,11 @@ Assets/Unity Technologies/Recorder/Framework/Recorders/ImageRecorder/Editor/Imag
 Assets/Unity Technologies/Recorder/Framework/Recorders/ImageRecorder/Engine/ImageRecorder.cs
 Assets/Unity Technologies/Recorder/Framework/Recorders/ImageRecorder/Engine/ImageRecorderSettings.cs
 Assets/Unity Technologies/Recorder/Recorder_install.pdf
+*.svg
+*.pdf
+Assets/Virtual Joystick Pack/Scripts/Base/Joystick.cs
+Assets/Virtual Joystick Pack/Scripts/Joysticks/FixedJoystick.cs
+Assets/Virtual Joystick Pack/Scripts/Joysticks/FloatingJoystick.cs
+Assets/Virtual Joystick Pack/Scripts/Joysticks/VariableJoystick.cs
+Assets/Virtual Joystick Pack/Examples/3D Example/Player3DExample.cs
+Assets/Virtual Joystick Pack/Examples/2D Example/Player2DExample.cs

@@ -13,6 +13,7 @@ public class Coupler : MonoBehaviour
     private HingeJoint2D jointCar;
     private Coupler connectedToActive;
     private CompositionManager cm;
+    public CouplerManager cpm;
 
     void Awake()
     {
@@ -34,6 +35,7 @@ public class Coupler : MonoBehaviour
 
         }
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();        
+        cpm = GameObject.Find("CouplerManager").GetComponent<CouplerManager>();        
     }
 
 
@@ -56,6 +58,13 @@ public class Coupler : MonoBehaviour
                     otherRollingStock.ConnectedToPassive = gameObject.GetComponent<Coupler>();
                     OtherCoupler = otherCouplerRB.GetComponent<Coupler>();
                     ConnectedToActive = OtherCoupler;
+                    if (cpm.IsCouplerModeIsOn)
+                    {
+                        //Magic reset Couplermode                        
+                        cpm.ResetUncoupleMode();
+                        
+                    }
+                        
                 }
             }
             cm.UpdateCompositionsInformation();

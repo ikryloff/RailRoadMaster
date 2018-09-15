@@ -5,13 +5,11 @@ using UnityEngine.UI;
 
 public class RequestRouteManager : Singleton<RequestRouteManager> {
     [SerializeField]
-    private GameObject[] firstList;
+    private GameObject[] communicationList;
     [SerializeField]
-    private GameObject[] fromList;
+    private GameObject[] routeStartList;
     public GameObject canvasParent;
-    public RollingStock rollingStock;
-    [SerializeField]
-    private GameObject startBtn;
+    public RollingStock rollingStock;   
     [SerializeField]
     private GameObject cancelBtn;
     public TrackCircuit track;
@@ -28,43 +26,31 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
             track = value;
         }
     }
+       
 
-    public GameObject StartBtn
+    public GameObject[] CommunicationList
     {
         get
         {
-            return startBtn;
+            return communicationList;
         }
 
         set
         {
-            startBtn = value;
+            communicationList = value;
         }
     }
 
-    public GameObject[] FirstList
+    public GameObject[] RouteStartList
     {
         get
         {
-            return firstList;
+            return routeStartList;
         }
 
         set
         {
-            firstList = value;
-        }
-    }
-
-    public GameObject[] FromList
-    {
-        get
-        {
-            return fromList;
-        }
-
-        set
-        {
-            fromList = value;
+            routeStartList = value;
         }
     }
 
@@ -83,58 +69,48 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
 
     public void ShowList()
     {
-        foreach (GameObject item in FirstList)
+        foreach (GameObject item in CommunicationList)
         {
             item.SetActive(true);
         }   
-        GetTrack();        
-        StartBtn.SetActive(false);
+        GetTrack();
+        foreach (GameObject item in RouteStartList)
+        {
+            item.SetActive(false);
+        }
         CancelBtn.SetActive(true);
+
 
     }
 
-    public void ShowFromList()
+    public void ShowRouteStartList()
     {
-        foreach (GameObject item in FromList)
+        foreach (GameObject item in RouteStartList)
         {
             item.SetActive(true);
         }
-        foreach (GameObject item in FirstList)
+        foreach (GameObject item in CommunicationList)
         {
             item.SetActive(false);
         }
         CancelBtn.SetActive(true);
     }
 
-    public void RequestButton()
-    {
-        foreach (GameObject item in FirstList)
-        {
-            item.SetActive(false);
-        }
-        foreach (GameObject item in FromList)
-        {
-            item.SetActive(false);
-        }
-        StartBtn.SetActive(true);
-        CancelBtn.SetActive(false);
-
-    }
+   
 
     public void GetTrack()
     {
-        Track = rollingStock.TrackCircuit;
-        Debug.Log(Track.TrackName);
+        Track = rollingStock.TrackCircuit;        
     }
 
     private void Start()
     {
-        CancelBtn.SetActive(false);
-        foreach (GameObject item in FirstList)
+        CancelBtn.SetActive(true);
+        foreach (GameObject item in CommunicationList)
         {
-            item.SetActive(false);
+            item.SetActive(true);
         }
-        foreach (GameObject item in FromList)
+        foreach (GameObject item in RouteStartList)
         {
             item.SetActive(false);
         }

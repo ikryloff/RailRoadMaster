@@ -11,10 +11,23 @@ public class SwitchManager : Singleton<SwitchManager>
     [SerializeField]
     private RemoteControlScript rcs;
 
+    public bool IsSwitchModeOn
+    {
+        get
+        {
+            return isSwitchModeOn;
+        }
+
+        set
+        {
+            isSwitchModeOn = value;
+        }
+    }
+
     void Start () {
-        isSwitchModeOn = false;
+        IsSwitchModeOn = true;
         indicators = GameObject.FindGameObjectsWithTag("Indication");
-        RunSwitchMode(isSwitchModeOn);
+        RunIndicationMode();
     }
 	
 	void Update () {
@@ -22,7 +35,7 @@ public class SwitchManager : Singleton<SwitchManager>
         {
             if (!EventSystem.current.IsPointerOverGameObject())
             {
-                if (Input.GetMouseButtonDown(0) && isSwitchModeOn)
+                if (Input.GetMouseButtonDown(0) && IsSwitchModeOn)
                 {
                     Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
@@ -35,23 +48,22 @@ public class SwitchManager : Singleton<SwitchManager>
                     }
                 }
             }
-
             if (Input.GetKeyDown(KeyCode.Space))
-            {
-                isSwitchModeOn = isSwitchModeOn ? false : true;
-                RunSwitchMode(isSwitchModeOn);
-
+            {                
+                RunIndicationMode();
             }
+            
         }
         
     }
 
-    void RunSwitchMode(bool isShow)
+    public void RunIndicationMode()
     {
+        IsSwitchModeOn = IsSwitchModeOn ? false : true;
         foreach (GameObject item in indicators)
         {
             rend = item.GetComponent<Renderer>();
-            if(isShow)
+            if (IsSwitchModeOn)
                 rend.gameObject.SetActive(true);
             else
                 rend.gameObject.SetActive(false);

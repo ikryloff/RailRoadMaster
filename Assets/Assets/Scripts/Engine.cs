@@ -56,6 +56,13 @@ public class Engine : MonoBehaviour
     {
         get
         {
+            if (IsDrivingByInstructionsIsOn)
+            {
+                if (instructionHandler > 0)
+                    return 1;
+                else if (instructionHandler < 0)
+                    return -1;
+            }
             if (ControllerPosition != 0)
             {
                 if (AbsControllerPosition / ControllerPosition > 0)
@@ -63,6 +70,7 @@ public class Engine : MonoBehaviour
                 else if (AbsControllerPosition / ControllerPosition < 0)
                     return -1;
             }
+            
             return direction;
         }
 
@@ -446,10 +454,12 @@ public class Engine : MonoBehaviour
         Direction = 0;
         ControllerPosition = 0;
         instructionHandler = 0;
+        Debug.Log(instructionHandler);
     }
     public void EngineControllerToZero()
     {
         ControllerPosition = 0;
+        
     }
 
     public void EngineInstructionsForward()

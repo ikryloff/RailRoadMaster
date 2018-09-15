@@ -77,11 +77,7 @@ public class GameManager : Singleton<GameManager> {
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            cc.MyUpdate = cc.MyUpdate != true ? true : false;
-            Time.timeScale = Time.timeScale != 0 ? 0 : 1;
-        }
+        
         if (Input.GetKeyDown(KeyCode.F))
         {
             cc.MyUpdate = cc.MyUpdate != true ? true : false;

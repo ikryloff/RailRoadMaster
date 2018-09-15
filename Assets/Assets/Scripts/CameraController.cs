@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour {
     
-    private float mapMovingSpeed = 500f;
+    public float mapMovingSpeed = 400f;
     public Vector2 mapBorder;
     public Vector2 mapLimit; 
     [SerializeField]
@@ -16,6 +16,8 @@ public class CameraController : MonoBehaviour {
     private float lastTime;
     private bool myUpdate;
     private bool canMoveCamera = true;
+    private Joystick joystick;
+    public float cameraSize;
 
     public Rigidbody2D CameraTarget
     {
@@ -55,18 +57,23 @@ public class CameraController : MonoBehaviour {
             canMoveCamera = value;
         }
     }
+   
+    
 
     private void Start()
     {
         offset = new Vector3(0, 0, -2);
         myToggle.isOn = false;
         lastTime = Time.realtimeSinceStartup;
+        joystick = FindObjectOfType<Joystick>();                
     }
 
+   
 
     void FixedUpdate ()
     {
-       MoveCamera(Time.deltaTime);
+        MoveCamera(Time.deltaTime);
+        
     }
 
     private void Update()
@@ -77,7 +84,41 @@ public class CameraController : MonoBehaviour {
             MoveCamera(deltaTime);
             lastTime = Time.realtimeSinceStartup;
         }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            PauseGame();
+        }
     }
+
+    public void PauseGame()
+    {
+        MyUpdate = MyUpdate != true ? true : false;
+        Time.timeScale = Time.timeScale != 0 ? 0 : 1;        
+    }
+
+    public void CameraZoomIn()
+    {
+        if(GetComponent<Camera>().orthographicSize > 250)
+        {
+            GetComponent<Camera>().orthographicSize -= 100f;
+            mapLimit.x += 180;
+            mapLimit.y += 100;           
+            mapMovingSpeed -= 60;
+        }
+            
+    }
+    public void CameraZoomOut()
+    {
+        if (GetComponent<Camera>().orthographicSize < 900)
+        {
+            GetComponent<Camera>().orthographicSize += 100f;
+            mapLimit.x -= 180;            
+            mapLimit.y -= 100;            
+            mapMovingSpeed += 60;
+        }
+            
+    }
+
 
     void MoveCamera(float dt)
     {
@@ -94,24 +135,29 @@ public class CameraController : MonoBehaviour {
                     offset = new Vector3(0, 0, -2);
                 desiredPosition = CameraTarget.transform.position + offset;
             }
+            
             else
             {
-                if (Input.GetKey(KeyCode.W))
+                if (Input.GetKey(KeyCode.W) )
                 {
                     desiredPosition.y += mapMovingSpeed;
                 }
-                if (Input.GetKey(KeyCode.S))
+                if (Input.GetKey(KeyCode.S) )
                 {
                     desiredPosition.y -= mapMovingSpeed;
                 }
-                if (Input.GetKey(KeyCode.A))
+                if (Input.GetKey(KeyCode.A) )
                 {
                     desiredPosition.x -= mapMovingSpeed;
                 }
-                if (Input.GetKey(KeyCode.D))
+                if (Input.GetKey(KeyCode.D) )
                 {
                     desiredPosition.x += mapMovingSpeed;
                 }
+           
+                desiredPosition.y += mapMovingSpeed * joystick.Vertical;
+                desiredPosition.x += mapMovingSpeed * joystick.Horizontal;
+                
             }
             desiredPosition.x = Mathf.Clamp(desiredPosition.x, -mapLimit.x, mapLimit.x);
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, -mapLimit.y, mapLimit.y);
