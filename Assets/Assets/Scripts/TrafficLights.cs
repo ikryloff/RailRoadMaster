@@ -24,6 +24,9 @@ public class TrafficLights : MonoBehaviour {
     private Color32 redRC = new Color32(255, 10, 0, 255);
     private Color32 greenRC = new Color32(0, 240, 0, 255);
     private Color32 whiteRC = new Color32(230, 230, 230, 255);
+    [SerializeField]
+    private bool isClosed;
+   
 
     const float flashTime = 1f;
     private string nameRouteOfLight;
@@ -64,6 +67,19 @@ public class TrafficLights : MonoBehaviour {
         {
             return intColor;
         }       
+    }
+
+    public bool IsClosed
+    {
+        get
+        {
+            return isClosed;
+        }
+
+        set
+        {
+            isClosed = value;
+        }
     }
 
     private IEnumerator YellowFlashing()
@@ -116,11 +132,15 @@ public class TrafficLights : MonoBehaviour {
     public void SetLightColor(int color)
     {
         intColor = color;
+        IsClosed = color == 0 || color == 2 ? true : false;
         switch (color)
         {
             case 0:
-                lightColor.sprite = closed;
-                controlLight.color = redRC;
+                if(closed != null) // just for Ends
+                {
+                    lightColor.sprite = closed;
+                    controlLight.color = redRC;
+                }                    
                 break;
             case 1:
                 lightColor.sprite = green;
@@ -151,5 +171,12 @@ public class TrafficLights : MonoBehaviour {
                 controlLight.color = redRC;
                 break;
         }           
+    }
+
+    public TrafficLights GetTrafficLightByName(string lightName)
+    {
+        if (lightName == Name)
+                return this;        
+        return null;
     }
 }

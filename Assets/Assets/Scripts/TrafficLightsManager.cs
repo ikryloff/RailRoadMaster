@@ -9,6 +9,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private string endRoute;
     private TrafficLights startLight;
     private TrafficLights endLight;
+    public TrafficLights[] trafficLights;
     private TrafficLights tempLight = null;
     [SerializeField]
     private Route route;   
@@ -110,11 +111,22 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
             } 
         }  
     }
-       
-    
+
+
+    private void Awake()
+    {
+        GameObject[] trafficLightsObjects = GameObject.FindGameObjectsWithTag("TrafficLight");
+        trafficLights = new TrafficLights [trafficLightsObjects.Length];
+        for (int i = 0; i < trafficLightsObjects.Length; i++)
+        {
+            trafficLights[i] = trafficLightsObjects[i].GetComponent<TrafficLights>();
+        }        
+    }
+
     private void Start()
     {
         lightText.text = "None";
+
         
     }
        
@@ -159,6 +171,16 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     void SetLightsNames(String start, String end = "")
     {
         lightText.text = start + " -> " + end;
+    }
+    
+    public TrafficLights GetTrafficLightByName(string lightName)
+    {
+        foreach (TrafficLights tl in trafficLights)
+        {
+            if (lightName == tl.Name)
+                return tl;
+        }
+        return null;
     }
    
 }

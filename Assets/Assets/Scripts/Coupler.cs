@@ -10,7 +10,10 @@ public class Coupler : MonoBehaviour
     private RollingStock otherRollingStock;
     private RollingStock rollingStock;
     private bool isActiveCoupler;
+    [SerializeField]
+    private bool isPassiveCoupleConnected;
     private HingeJoint2D jointCar;
+    [SerializeField]
     private Coupler connectedToActive;
     private CompositionManager cm;
     public CouplerManager cpm;
@@ -31,6 +34,7 @@ public class Coupler : MonoBehaviour
                 jointCar.autoConfigureConnectedAnchor = true;
                 otherRollingStock.ConnectedToPassive = gameObject.GetComponent<Coupler>();
                 ConnectedToActive = OtherCoupler;
+                OtherCoupler.IsPassiveCoupleConnected = true;
             }
 
         }
@@ -46,6 +50,7 @@ public class Coupler : MonoBehaviour
             ContactPoint2D hitPoint = collision.contacts[0];
             if (collision.gameObject.tag == "PassiveCoupler" && collision.relativeVelocity.magnitude > 20)
             {
+                collision.gameObject.GetComponent<Coupler>().IsPassiveCoupleConnected = true;
                 otherCouplerRB = collision.gameObject.GetComponent<Rigidbody2D>();
                 otherRollingStock = otherCouplerRB.transform.parent.GetComponent<RollingStock>();
 
@@ -124,11 +129,25 @@ public class Coupler : MonoBehaviour
         }
     }
 
+    public bool IsPassiveCoupleConnected
+    {
+        get
+        {
+            return isPassiveCoupleConnected;
+        }
+
+        set
+        {
+            isPassiveCoupleConnected = value;
+        }
+    }
+
     public void Uncouple()
     {
         if (JointCar)
         {
             OtherCoupler.transform.parent.GetComponent<RollingStock>().ConnectedToPassive = null;
+            OtherCoupler.IsPassiveCoupleConnected = false;
             OtherCoupler = null;
             Destroy(JointCar);
             cm.UpdateCompositionsInformation();

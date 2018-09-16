@@ -7,7 +7,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
     [SerializeField]
     private GameObject communicationList;
     [SerializeField]
-    private GameObject routeList;    
+    private GameObject routeButtonsList;    
     [SerializeField]
     private GameObject cancelBtn;
     [SerializeField]
@@ -31,16 +31,16 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         }
     }
 
-    public GameObject RouteList
+    public GameObject RouteButtonsList
     {
         get
         {
-            return routeList;
+            return routeButtonsList;
         }
 
         set
         {
-            routeList = value;
+            routeButtonsList = value;
         }
     }
 
@@ -88,12 +88,12 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         CommunicationList.SetActive(true);
         IsRouteRequestRun = false;
         ResultRoute = "";
-        RouteList.SetActive(false);
+        RouteButtonsList.SetActive(false);
     }
     public void ShowRouteList()
     {
         IsRouteRequestRun = true;
-        RouteList.SetActive(true);
+        RouteButtonsList.SetActive(true);
         CommunicationList.SetActive(false);
         
         foreach (Button btn in routeButtons)
@@ -160,7 +160,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
     private void Start()
     {
         IsRouteRequestRun = false;
-        RouteList.SetActive(false);
+        RouteButtonsList.SetActive(false);
     }
 
 }
