@@ -13,12 +13,12 @@ public class Switch : MonoBehaviour {
     private SpriteRenderer turnIndicator;
     private SpriteRenderer straightIndicator;    
     private int timesLocked = 0;
-    
 
+    [SerializeField]
     private bool isSwitchStraight;
         
 
-    void Start () {
+    void Awake () {
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();
         IsSwitchStraight = true;

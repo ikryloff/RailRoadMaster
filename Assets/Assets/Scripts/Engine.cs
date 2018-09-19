@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,8 @@ public class Engine : MonoBehaviour
     private Text throttleTxt;
     [SerializeField]
     private Text directionTxt;
+    [SerializeField]
+    private Text handlerTxt;
     public CompositionManager cm;
     public float mSpeed;
     private int direction;
@@ -34,6 +37,9 @@ public class Engine : MonoBehaviour
     float distanceToClosedLight;
     public float distanceToCarX;
     public float distanceToCarY;
+    public float distanceToExpectedCarX;
+    public float distanceToExpectedCarY;
+    public float tempX;
     [SerializeField]
     private GameObject nearestCar;
     private RollingStock nearestCarRS;
@@ -451,7 +457,7 @@ public class Engine : MonoBehaviour
                     foreach (RollingStock rs in cm.CompositionsList[engineRS.CompositionNumberofRS])
                     {
                         rs.Brakes = true;
-                        //Debug.Log(rs.Number + " use brakes");
+                        
                     }
                 }
             }            
@@ -532,8 +538,8 @@ public class Engine : MonoBehaviour
         instructionHandler++;
         if (instructionHandler == 0)
             Direction = 0;
-        if (instructionHandler == 8)
-            instructionHandler = 7;        
+        if (instructionHandler == 7)
+            instructionHandler = 6;        
         
         StartCompositionNumber = engineRS.CompositionNumberString;
     }
@@ -554,7 +560,7 @@ public class Engine : MonoBehaviour
 
     public void DriveByInstructions()
     {
-        Debug.Log("instructionHandler " + instructionHandler);
+        PrintHandler();
         if ((Direction == 1 && !engineRS.ActiveCoupler.JointCar) || (Direction == -1 && !engineRS.PassiveCoupler.IsPassiveCoupleConnected))
         {            
             DriveAccordingToLights();
@@ -600,6 +606,16 @@ public class Engine : MonoBehaviour
             if (MSpeed >= 25)
                     ControllerPosition = 8 * Direction;
         }  
+    }
+
+    private void PrintHandler()
+    {
+        if (Direction > 0)
+            handlerTxt.text = "  >>> " + Mathf.Abs(instructionHandler) + ">>> " + MaxSpeed;
+        else if (Direction < 0)
+            handlerTxt.text = MaxSpeed + "  <<< " + Mathf.Abs(instructionHandler) + " <<<";
+        else
+            handlerTxt.text = "  <<< 0 >>>";
     }
 
     public void GetTrack()
@@ -663,24 +679,23 @@ public class Engine : MonoBehaviour
             }
             if (distanceToCarX <= 3000 && distanceToCarX > 1500)
             {
-                if (distanceToCarY <= 400 && distanceToCarY > 20)
+                if (distanceToCarY <= 400)
                     if (Mathf.Abs(instructionHandler) > 3)
                         instructionHandler = 3 * Direction;
             }
             if (distanceToCarX <= 1500 && distanceToCarX > 40)
             {
-                if (distanceToCarY < 20)
+                if (distanceToCarY <= 250)
                     if (Mathf.Abs(instructionHandler) > 2)
                         instructionHandler = 2 * Direction;
             }
-            if (distanceToCarX <= 400)
+            if (distanceToCarX <= 500)
             {
-                if (distanceToCarY < 20)
+                if (distanceToCarY < 100)
                     if (Mathf.Abs(instructionHandler) > 1)
                         instructionHandler = 1 * Direction;
             }            
-        }
-
+        }        
     }
 
 
@@ -706,18 +721,27 @@ public class Engine : MonoBehaviour
 
     public void GetExpectedCar()
     {
-        float tempX = 2000000;        
-        foreach (GameObject rc in ExpectedСars)
+        tempX = 200000;   
+        
+        if(ExpectedСars != null)
         {
-            float distanceToExpectedCarX = Mathf.Abs(rc.transform.position.x - engine.position.x);
-            float distanceToExpectedCarY = Mathf.Abs(rc.transform.position.y - engine.position.y);
-            if (distanceToExpectedCarX < tempX && distanceToExpectedCarY < 100)
-            {                
-                NearestCar = rc;
-                nearestCarRS = NearestCar.GetComponent<RollingStock>();
-                tempX = distanceToExpectedCarX;                
-            }
+            foreach (GameObject rc in ExpectedСars)
+            {
+                distanceToExpectedCarX = Mathf.Abs(rc.transform.position.x - engine.position.x);
+                distanceToExpectedCarY = Mathf.Abs(rc.transform.position.y - engine.position.y);
 
-        }
+                if (distanceToExpectedCarX < tempX && distanceToExpectedCarY < 150 || ExpectedСars.Count == 1)
+                {
+                    NearestCar = rc;
+                    nearestCarRS = NearestCar.GetComponent<RollingStock>();
+                    tempX = distanceToExpectedCarX;                                        
+                }                
+                else
+                    NearestCar = null;
+                Debug.Log("NearestCar " + NearestCar);
+            }
+        }else
+            NearestCar = null;
+
     }
 }

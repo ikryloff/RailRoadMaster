@@ -29,6 +29,7 @@ public class TrackCircuit : MonoBehaviour {
 
 
 
+
     private void Start()
     {
         useMode = Constants.TC_DEFAULT;

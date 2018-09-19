@@ -47,11 +47,43 @@ public class Route : Singleton<Route> {
 
     List<RouteObject> routes;
     private RouteObject route;
+    private TrackCircuit[] forwardPath;
    
     private bool isRoute;
     private string routeName;
     [SerializeField]
     private Text lightText;
+
+
+    public class PathPart : IEquatable<PathPart>
+    {
+        public int PartId { get; set; }
+        public TrackCircuit[] PartsArr { get; set; }
+
+        
+
+        public override string ToString()
+        {
+            string res = "ID: " + PartId;
+
+            foreach (TrackCircuit s in PartsArr)
+            {
+                res += " " + s.name;
+            }
+            return res;
+        }
+
+        
+        public int GetID()
+        {
+            return PartId;
+        }
+
+        bool IEquatable<PathPart>.Equals(PathPart other)
+        {
+            return PartId.Equals(other.PartId);
+        }
+    }
 
     internal List<RouteObject> Routes
     {
@@ -66,9 +98,96 @@ public class Route : Singleton<Route> {
         }
     }
 
+    public TrackCircuit[] ForwardPath
+    {
+        get
+        {
+            return forwardPath;
+        }
+
+        set
+        {
+            forwardPath = value;
+        }
+    }
+
+    public void MakePathArray(TrackCircuit track)
+    {
+        List<PathPart> parts = new List<PathPart>();
+
+        parts.Add(new PathPart() { PartId = 0, PartsArr = new TrackCircuit[] { tcI_CH, tcI_CH_2, tcsw_2_4top } });
+        parts.Add(new PathPart() { PartId = 1, PartsArr = new TrackCircuit[] { tc6, tcsw_2_4bot } });
+        parts.Add(new PathPart() { PartId = 2, PartsArr = new TrackCircuit[] { tcsw_2_4top, tcsw_2_4bot } });
+        parts.Add(new PathPart() { PartId = 3, PartsArr = new TrackCircuit[] { tcsw_2_4top, tcsw_6_8top } });
+        parts.Add(new PathPart() { PartId = 4, PartsArr = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot } });
+        parts.Add(new PathPart() { PartId = 5, PartsArr = new TrackCircuit[] { tcsw_6_8bot, tcsw_6_8top } });
+        parts.Add(new PathPart() { PartId = 6, PartsArr = new TrackCircuit[] { tcsw_6_8bot, tc10 } });
+        parts.Add(new PathPart() { PartId = 7, PartsArr = new TrackCircuit[] { tcsw16, tc2, tcsw15 } });
+        parts.Add(new PathPart() { PartId = 8, PartsArr = new TrackCircuit[] { tcsw16, tcI_16_15, tcsw15 } });
+        parts.Add(new PathPart() { PartId = 9, PartsArr = new TrackCircuit[] { tcsw10, tc3, tcsw11 } });
+        parts.Add(new PathPart() { PartId = 10, PartsArr = new TrackCircuit[] { tcsw10, tcsw12 } });
+        parts.Add(new PathPart() { PartId = 11, PartsArr = new TrackCircuit[] { tcsw12, tc4, tcsw13 } });
+        parts.Add(new PathPart() { PartId = 12, PartsArr = new TrackCircuit[] { tcsw12, tcsw14 } });
+        parts.Add(new PathPart() { PartId = 13, PartsArr = new TrackCircuit[] { tcsw14, tc5, tcsw13 } });
+        parts.Add(new PathPart() { PartId = 14, PartsArr = new TrackCircuit[] { tcsw14, tc10 } });
+
+
+
+        if (tcsw_2_4top.GetComponentInParent<Switch>().IsSwitchStraight)
+            parts.Remove(new PathPart() { PartId = 2});       
+        else
+            parts.Remove(new PathPart() { PartId = 1 });
+
+        if (tcsw_6_8top.GetComponentInParent<Switch>().IsSwitchStraight)
+            parts.Remove(new PathPart() { PartId = 5 });
+        else
+            parts.Remove(new PathPart() { PartId = 3 });
+
+        if (tcsw16.GetComponentInParent<Switch>().IsSwitchStraight)
+            parts.Remove(new PathPart() { PartId = 7 });
+        else
+            parts.Remove(new PathPart() { PartId = 8 });
+
+        if (tcsw10.GetComponentInParent<Switch>().IsSwitchStraight)
+            parts.Remove(new PathPart() { PartId = 10 });
+        else
+            parts.Remove(new PathPart() { PartId = 9 });
+
+        if (tcsw12.GetComponentInParent<Switch>().IsSwitchStraight)
+            parts.Remove(new PathPart() { PartId = 11 });
+        else
+            parts.Remove(new PathPart() { PartId = 12 });
+
+        if (tcsw14.GetComponentInParent<Switch>().IsSwitchStraight)
+            parts.Remove(new PathPart() { PartId = 13 });
+        else
+            parts.Remove(new PathPart() { PartId = 14 });
+
+
+        IEnumerable<TrackCircuit> union = parts[0].PartsArr.Union(parts[3].PartsArr);
+        string res = "";
+        foreach (var item in union)
+        {
+            res += " " + item.name;
+           
+        }
+        Debug.Log(res);
+
+        foreach (var item in parts)
+        {
+
+            Debug.Log(item.PartId);
+        }
+
+    }
+  
+
     void Start()
     {
-        routes = new List<RouteObject>();            
+        routes = new List<RouteObject>();
+        MakePathArray(null);
+
+
     }
 
     private void FixedUpdate()

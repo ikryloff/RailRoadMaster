@@ -125,6 +125,7 @@ public class RollingStock : MonoBehaviour
         rollingStockRB = GetComponent<Rigidbody2D>();        
         ActiveCoupler = transform.GetChild(0).GetComponent<Coupler>();
         PassiveCoupler = transform.GetChild(1).GetComponent<Coupler>();
+        Brakes = true;
     }
     
   
@@ -148,9 +149,10 @@ public class RollingStock : MonoBehaviour
             {
                 rollingStockRB.AddRelativeForce(new Vector2(-50f, 0), ForceMode2D.Force);
             }
-
             else if (rollingStockRB.velocity.x < 0)
                 rollingStockRB.AddRelativeForce(new Vector2(50f, 0), ForceMode2D.Force);
+
+            rollingStockRB.AddRelativeForce(new Vector2(-80f, 0));
         }
 
     } 
