@@ -8,6 +8,7 @@ public class SwitchManager : Singleton<SwitchManager>
     private GameObject[] indicators;
     public GameObject[] switches;
     private Renderer rend;
+    private Route route;
     private bool isSwitchModeOn;
     [SerializeField]
     private RemoteControlScript rcs;
@@ -27,6 +28,7 @@ public class SwitchManager : Singleton<SwitchManager>
     private void Awake()
     {
         switches = GameObject.FindGameObjectsWithTag("RailSwitch");
+        route = GameObject.Find("Route").GetComponent<Route>();
         foreach (GameObject sw in switches)
         {
             sw.layer = 2;
@@ -53,6 +55,7 @@ public class SwitchManager : Singleton<SwitchManager>
                         switchObject = hit.collider.transform.parent.gameObject;
                         Switch sw = switchObject.GetComponent<Switch>();
                         sw.ChangeDirection();
+                        route.MakePath();
                     }
                 }
             }

@@ -7,14 +7,14 @@ using UnityEngine.UI;
 public class Engine : MonoBehaviour
 {
     public static int instructionHandler = 0;
-    
+
     private Rigidbody2D engine;
     private RollingStock engineRS;
     [SerializeField]
-    private GameObject[] cars;
+    private RollingStock[] cars;
     [SerializeField]
-    private List<GameObject> expectedСars;
-    
+    private List<RollingStock> expectedСars;
+    private Route route;
     private bool brakes = true;
     private int controllerPosition = 0;
     [SerializeField]
@@ -31,7 +31,7 @@ public class Engine : MonoBehaviour
     private int directionInstructions;
     private int absControllerPosition;
     public int maxSpeed;
-    private bool isDrivingByInstructionsIsOn;   
+    private bool isDrivingByInstructionsIsOn;
     [SerializeField]
     private TrackCircuit track;
     float distanceToClosedLight;
@@ -39,175 +39,24 @@ public class Engine : MonoBehaviour
     public float distanceToCarY;
     public float distanceToExpectedCarX;
     public float distanceToExpectedCarY;
-    public float tempX;
+    public float tempX;    
+    private bool isCoupling;
     [SerializeField]
-    private GameObject nearestCar;
-    private RollingStock nearestCarRS;
+    private float smothPower = 0;
+    [SerializeField]
+    private RollingStock nearestCar;
+    
     [SerializeField]
     private string startCompositionNumber;
 
-    public int ControllerPosition
-    {
-        get
-        {
-            return controllerPosition;
-        }
-
-        set
-        {
-            controllerPosition = value;
-        }
-    }
-
-    public int AbsControllerPosition
-    {
-        get
-        {
-            return Mathf.Abs(ControllerPosition);
-        }
-
-        set
-        {
-            absControllerPosition = value;
-        }
-    }
-    public int Direction
-    {
-        get
-        {
-            if (IsDrivingByInstructionsIsOn)
-            {
-                if (instructionHandler > 0)
-                    return 1;
-                else if (instructionHandler < 0)
-                    return -1;
-            }
-            if (ControllerPosition != 0)
-            {
-                if (AbsControllerPosition / ControllerPosition > 0)
-                    return 1;
-                else if (AbsControllerPosition / ControllerPosition < 0)
-                    return -1;
-            }
-            
-            return direction;
-        }
-
-        set
-        {
-            direction = value;
-        }
-    }
-
-    public bool Brakes
-    {
-        get
-        {
-            return brakes;
-        }
-
-        set
-        {
-            brakes = value;
-        }
-    }
-
-    public float MSpeed
-    {
-        get
-        {
-            return mSpeed;
-        }
-
-        set
-        {
-            mSpeed = value;
-        }
-    }
-
-    public int MaxSpeed
-    {
-        get
-        {
-            return maxSpeed;
-        }
-
-        set
-        {
-            maxSpeed = value;
-        }
-    }
-
-    public bool IsDrivingByInstructionsIsOn
-    {
-        get
-        {
-            return isDrivingByInstructionsIsOn;
-        }
-
-        set
-        {
-            isDrivingByInstructionsIsOn = value;
-        }
-    }
-
-    public TrackCircuit Track
-    {
-        get
-        {
-            return track;
-        }
-
-        set
-        {
-            track = value;
-        }
-    }
-
-    public List<GameObject> ExpectedСars
-    {
-        get
-        {
-            return expectedСars;
-        }
-
-        set
-        {
-            expectedСars = value;
-        }
-    }
-
-    public GameObject NearestCar
-    {
-        get
-        {
-            return nearestCar;
-        }
-
-        set
-        {
-            nearestCar = value;
-        }
-    }
-
-    public string StartCompositionNumber
-    {
-        get
-        {
-            return startCompositionNumber;
-        }
-
-        set
-        {
-            startCompositionNumber = value;
-        }
-    }
+    
 
     private void Awake()
     {
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
-        cars = GameObject.FindGameObjectsWithTag("RollingStock");
-        ExpectedСars = new List<GameObject>();
+        route = GameObject.Find("Route").GetComponent<Route>();
+        cars = FindObjectsOfType<RollingStock>();
+        ExpectedСars = new List<RollingStock>();
         
     }
 
@@ -215,8 +64,8 @@ public class Engine : MonoBehaviour
     {
         
         engine = GetComponent<Rigidbody2D>();
-        engineRS = GetComponent<RollingStock>();               
-        if (engineRS.Number == "8888")
+        EngineRS = GetComponent<RollingStock>();               
+        if (EngineRS.Number == "8888")
         {
             speedTxt.text = "Speed: ";
             throttleTxt.text = "Throttle: ";
@@ -227,7 +76,7 @@ public class Engine : MonoBehaviour
     }
     void MoveEngine()
     {
-         
+        
         switch (AbsControllerPosition)
         {
             case 8:
@@ -425,7 +274,8 @@ public class Engine : MonoBehaviour
 
     void AddForceToEngine(int power)
     {
-        engine.AddRelativeForce(new Vector2(power * Direction, 0), ForceMode2D.Force);       
+        smothPower = Mathf.Lerp(power, smothPower, 0.9f);
+        engine.AddRelativeForce(new Vector2(smothPower * Direction, 0), ForceMode2D.Force);       
     }
 
     void FixedUpdate()
@@ -433,7 +283,7 @@ public class Engine : MonoBehaviour
         GetTrack();
         
         MSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
-        if(engineRS.Number == "8888")
+        if(EngineRS.Number == "8888")
         {
             speedTxt.text = "Speed: " + MSpeed;
             throttleTxt.text = "Throttle: " + Mathf.Abs(ControllerPosition);
@@ -454,7 +304,7 @@ public class Engine : MonoBehaviour
                     engine.velocity = new Vector2(0, 0);
                 if (cm.CompositionsList.Any())
                 {
-                    foreach (RollingStock rs in cm.CompositionsList[engineRS.CompositionNumberofRS])
+                    foreach (RollingStock rs in cm.CompositionsList[EngineRS.CompositionNumberofRS])
                     {
                         rs.Brakes = true;
                         
@@ -479,7 +329,7 @@ public class Engine : MonoBehaviour
         Brakes = false;
         if (cm.CompositionsList.Any())
         {
-            foreach (RollingStock rs in cm.CompositionsList[engineRS.CompositionNumberofRS])
+            foreach (RollingStock rs in cm.CompositionsList[EngineRS.CompositionNumberofRS])
             {
                 rs.Brakes = false;
             }
@@ -531,9 +381,11 @@ public class Engine : MonoBehaviour
 
     public void EngineInstructionsForward()
     {
-        IsDrivingByInstructionsIsOn = true;
-        
+        route.IsPathCheckingForward = true; 
+        IsDrivingByInstructionsIsOn = true;          
         Direction = Direction == -1 && Direction != 0 ? -1 : 1;
+        route.MakePath();
+        GetAllExpectedCarsByDirection(Direction);
         ReleaseBrakes();
         instructionHandler++;
         if (instructionHandler == 0)
@@ -541,41 +393,54 @@ public class Engine : MonoBehaviour
         if (instructionHandler == 7)
             instructionHandler = 6;        
         
-        StartCompositionNumber = engineRS.CompositionNumberString;
+        StartCompositionNumber = EngineRS.CompositionNumberString;
     }
 
     public void EngineInstructionsBackwards()
     {
+        route.IsPathCheckingForward = false;        
         IsDrivingByInstructionsIsOn = true;
         Direction = Direction == 1 && Direction != 0 ? 1 : -1;
+        route.MakePath();
+        GetAllExpectedCarsByDirection(Direction);
         ReleaseBrakes();        
         instructionHandler--;
         if (instructionHandler == 0)
             Direction = 0;
         if (instructionHandler == -7)
             instructionHandler = -6;
-        StartCompositionNumber = engineRS.CompositionNumberString;
+        StartCompositionNumber = EngineRS.CompositionNumberString;
                 
+    }
+
+    public bool IsEngineGoesAhead()
+    {
+        return (Direction == 1 && !EngineRS.ActiveCoupler.JointCar) || (Direction == -1 && !EngineRS.PassiveCoupler.IsPassiveCoupleConnected);
     }
 
     public void DriveByInstructions()
     {
         PrintHandler();
-        if ((Direction == 1 && !engineRS.ActiveCoupler.JointCar) || (Direction == -1 && !engineRS.PassiveCoupler.IsPassiveCoupleConnected))
+        if (IsEngineGoesAhead())
         {            
             DriveAccordingToLights();
             DriveAccordingToCarPresence();
         }
 
-        if (engineRS.CompositionNumberString != StartCompositionNumber)
+        if (EngineRS.CompositionNumberString != StartCompositionNumber)
         {
             instructionHandler = 0;
+            IsCoupling = false;
+            NearestCar = null;
+            ExpectedСars.Clear();
         }
 
         if (instructionHandler== 0)
         {
             MaxSpeed = 0;
             EngineControllerUseBrakes();
+            if (MSpeed < 1)
+                engine.velocity = new Vector2(0, 0);
         }            
         if (Mathf.Abs(instructionHandler) == 1)
             MaxSpeed = 3;
@@ -620,7 +485,7 @@ public class Engine : MonoBehaviour
 
     public void GetTrack()
     {
-        Track = engineRS.TrackCircuit;        
+        Track = EngineRS.TrackCircuit;        
     }
     
     private void DriveAccordingToLights()
@@ -631,26 +496,26 @@ public class Engine : MonoBehaviour
             for (int i = 0; i < Track.TrackLights.Length; i++)
             {
                 TrafficLights tl = Track.TrackLights[i];
-                if (Track.TrackLights[i].IsClosed)
+                if (Track.TrackLights[i] && Track.TrackLights[i].IsClosed)
                 {
                     if((i == 0 && Direction == -1) || (i == 1 && Direction == 1))
                     {
                         distanceToClosedLight = Mathf.Abs(engine.transform.position.x - tl.transform.position.x);
                         if (distanceToClosedLight <= 5000 && distanceToClosedLight > 1500)
                         {
-                            //Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                            Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if(Mathf.Abs(instructionHandler) > 5)
                                 instructionHandler = 5 * Direction;
                         }
                         else if (distanceToClosedLight <= 1500 && distanceToClosedLight > 250)
                         {
-                            //Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                            Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 2)
                                 instructionHandler = 2 * Direction;
                         }
                         else if (distanceToClosedLight <= 250)
                         {
-                            //Debug.Log("Light is Closed!! I'll stop the engine" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                            Debug.Log("Light is Closed!! I'll stop the engine" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 0)
                                 instructionHandler = 0;
                         }
@@ -663,11 +528,21 @@ public class Engine : MonoBehaviour
        
     }
 
-    private void DriveAccordingToCarPresence()
+    public void CoupleToCar()
     {
         GetAllExpectedCarsByDirection(Direction);
         GetExpectedCar();
-        if (NearestCar && engineRS.CompositionNumberofRS != nearestCarRS.CompositionNumberofRS)
+        IsCoupling = true;
+        if (NearestCar && EngineRS.CompositionNumberofRS != nearestCar.CompositionNumberofRS)
+        {
+            instructionHandler = 1 * Direction;
+        }        
+    }
+
+    private void DriveAccordingToCarPresence()
+    {        
+        GetExpectedCar();
+        if (NearestCar  && !IsCoupling)
         {
             distanceToCarX = Mathf.Abs(NearestCar.transform.position.x - engine.position.x);
             distanceToCarY = Mathf.Abs(NearestCar.transform.position.y - engine.position.y);
@@ -692,27 +567,31 @@ public class Engine : MonoBehaviour
             if (distanceToCarX <= 500)
             {
                 if (distanceToCarY < 100)
-                    if (Mathf.Abs(instructionHandler) > 1)
-                        instructionHandler = 1 * Direction;
+                    if (Mathf.Abs(instructionHandler) > 0)
+                        instructionHandler = 0 * Direction;                
             }            
-        }        
+        }
+        
     }
 
 
     public void GetAllExpectedCarsByDirection(int _direction)
     {
         ExpectedСars.Clear();        
-        foreach (GameObject rc in cars)
+        foreach (RollingStock rc in cars)
         {
-            if (!ExpectedСars.Contains(rc))
+            if(rc.TrackCircuit == route.OccupiedTrack)
             {
-                if (_direction == -1 && rc.transform.position.x < engine.position.x - 200 )
+                if (!ExpectedСars.Contains(rc))
                 {
-                    ExpectedСars.Add(rc);
-                }
-                if (_direction == 1 && rc.transform.position.x > engine.position.x + 200)
-                {
-                    ExpectedСars.Add(rc);
+                    if (_direction == -1 && rc.transform.position.x < engine.position.x - 200)
+                    {
+                        ExpectedСars.Add(rc);
+                    }
+                    if (_direction == 1 && rc.transform.position.x > engine.position.x + 200)
+                    {
+                        ExpectedСars.Add(rc);
+                    }
                 }
             }
 
@@ -721,27 +600,207 @@ public class Engine : MonoBehaviour
 
     public void GetExpectedCar()
     {
-        tempX = 200000;   
-        
+                
         if(ExpectedСars != null)
-        {
-            foreach (GameObject rc in ExpectedСars)
+        {            
+            foreach (RollingStock rc in ExpectedСars)
             {
-                distanceToExpectedCarX = Mathf.Abs(rc.transform.position.x - engine.position.x);
-                distanceToExpectedCarY = Mathf.Abs(rc.transform.position.y - engine.position.y);
-
-                if (distanceToExpectedCarX < tempX && distanceToExpectedCarY < 150 || ExpectedСars.Count == 1)
+                if(rc.CompositionNumberofRS != engineRS.CompositionNumberofRS)
                 {
-                    NearestCar = rc;
-                    nearestCarRS = NearestCar.GetComponent<RollingStock>();
-                    tempX = distanceToExpectedCarX;                                        
-                }                
-                else
-                    NearestCar = null;
-                Debug.Log("NearestCar " + NearestCar);
+                    distanceToExpectedCarX = Mathf.Abs(rc.transform.position.x - engine.position.x);
+                    if (NearestCar == null || distanceToExpectedCarX < NearestCar.transform.position.x - engine.position.x)
+                    {
+                        NearestCar = rc;
+                    }
+                }          
             }
         }else
             NearestCar = null;
 
+    }
+
+
+
+    public int ControllerPosition
+    {
+        get
+        {
+            return controllerPosition;
+        }
+
+        set
+        {
+            controllerPosition = value;
+        }
+    }
+
+    public int AbsControllerPosition
+    {
+        get
+        {
+            return Mathf.Abs(ControllerPosition);
+        }
+
+        set
+        {
+            absControllerPosition = value;
+        }
+    }
+    public int Direction
+    {
+        get
+        {
+            if (IsDrivingByInstructionsIsOn)
+            {
+                if (instructionHandler > 0)
+                    return 1;
+                else if (instructionHandler < 0)
+                    return -1;
+            }
+            if (ControllerPosition != 0)
+            {
+                if (AbsControllerPosition / ControllerPosition > 0)
+                    return 1;
+                else if (AbsControllerPosition / ControllerPosition < 0)
+                    return -1;
+            }
+
+            return direction;
+        }
+
+        set
+        {
+            direction = value;
+        }
+    }
+
+    public bool Brakes
+    {
+        get
+        {
+            return brakes;
+        }
+
+        set
+        {
+            brakes = value;
+        }
+    }
+
+    public float MSpeed
+    {
+        get
+        {
+            return mSpeed;
+        }
+
+        set
+        {
+            mSpeed = value;
+        }
+    }
+
+    public int MaxSpeed
+    {
+        get
+        {
+            return maxSpeed;
+        }
+
+        set
+        {
+            maxSpeed = value;
+        }
+    }
+
+    public bool IsDrivingByInstructionsIsOn
+    {
+        get
+        {
+            return isDrivingByInstructionsIsOn;
+        }
+
+        set
+        {
+            isDrivingByInstructionsIsOn = value;
+        }
+    }
+
+    public TrackCircuit Track
+    {
+        get
+        {
+            return track;
+        }
+
+        set
+        {
+            track = value;
+        }
+    }
+
+    public List<RollingStock> ExpectedСars
+    {
+        get
+        {
+            return expectedСars;
+        }
+
+        set
+        {
+            expectedСars = value;
+        }
+    }
+
+    public RollingStock NearestCar
+    {
+        get
+        {
+            return nearestCar;
+        }
+
+        set
+        {
+            nearestCar = value;
+        }
+    }
+
+    public string StartCompositionNumber
+    {
+        get
+        {
+            return startCompositionNumber;
+        }
+
+        set
+        {
+            startCompositionNumber = value;
+        }
+    }
+
+    public RollingStock EngineRS
+    {
+        get
+        {
+            return engineRS;
+        }
+
+        set
+        {
+            engineRS = value;
+        }
+    }
+
+    public bool IsCoupling
+    {
+        get
+        {
+            return isCoupling;
+        }
+
+        set
+        {
+            isCoupling = value;
+        }
     }
 }

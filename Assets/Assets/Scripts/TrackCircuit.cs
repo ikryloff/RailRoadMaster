@@ -189,7 +189,7 @@ public class TrackCircuit : MonoBehaviour {
     //order does matter
     public void GetTrackLightsByTrack(TrackCircuit track)
     {
-        if(track.TrackName == "Track_10_14_18")
+        if(track.TrackName == "Track_10_14_18" || track.TrackName == "Track_10" || track.TrackName == "Track_9" || track.TrackName == "Track_11")
         {
             TrackLightsNames = new string[] { "M3", "End10" };
         }
@@ -221,7 +221,7 @@ public class TrackCircuit : MonoBehaviour {
         {
             TrackLightsNames = new string[] { "M1", "End7" };
         }
-        if (track.TrackName == "Track_12_17_19")
+        if (track.TrackName == "Track_12_17_19" || track.TrackName == "Track_12" || track.TrackName == "Track_13" || track.TrackName == "Track_12A")
         {
             TrackLightsNames = new string[] { "M5", "End12" };
         }

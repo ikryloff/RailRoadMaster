@@ -52,6 +52,8 @@ public class Coupler : MonoBehaviour
             {
                 collision.gameObject.GetComponent<Coupler>().IsPassiveCoupleConnected = true;
                 otherCouplerRB = collision.gameObject.GetComponent<Rigidbody2D>();
+                otherCouplerRB.transform.rotation = Quaternion.Euler(0, 0, 0);
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
                 otherRollingStock = otherCouplerRB.transform.parent.GetComponent<RollingStock>();
 
                 if (hitPoint.point.x - gameObject.transform.position.x > 0)
@@ -84,6 +86,22 @@ public class Coupler : MonoBehaviour
             return jointCar;
         }
 
+    }
+
+    private void Start()
+    {
+        InvokeRepeating("UpdateCoupleralignment", 1f, 1f);  //1s delay, repeat every 1s
+        
+        
+    }
+
+    private void UpdateCoupleralignment()
+    {
+        if (otherRollingStock && otherRollingStock.transform.rotation == Quaternion.Euler(0, 0, 0))
+        {
+            otherCouplerRB.transform.rotation = Quaternion.Euler(0, 0, 0);
+            gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
     }
 
 
