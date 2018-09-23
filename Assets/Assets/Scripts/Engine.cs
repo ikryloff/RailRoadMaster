@@ -64,7 +64,10 @@ public class Engine : MonoBehaviour
     {
         
         engine = GetComponent<Rigidbody2D>();
-        EngineRS = GetComponent<RollingStock>();               
+        EngineRS = GetComponent<RollingStock>();
+        // conductor mode
+        IsDrivingByInstructionsIsOn = true;
+
         if (EngineRS.Number == "8888")
         {
             speedTxt.text = "Speed: ";
@@ -382,7 +385,7 @@ public class Engine : MonoBehaviour
     public void EngineInstructionsForward()
     {
         route.IsPathCheckingForward = true; 
-        IsDrivingByInstructionsIsOn = true;          
+               
         Direction = Direction == -1 && Direction != 0 ? -1 : 1;
         route.MakePath();
         GetAllExpectedCarsByDirection(Direction);
@@ -398,8 +401,7 @@ public class Engine : MonoBehaviour
 
     public void EngineInstructionsBackwards()
     {
-        route.IsPathCheckingForward = false;        
-        IsDrivingByInstructionsIsOn = true;
+        route.IsPathCheckingForward = false; 
         Direction = Direction == 1 && Direction != 0 ? 1 : -1;
         route.MakePath();
         GetAllExpectedCarsByDirection(Direction);
@@ -513,7 +515,7 @@ public class Engine : MonoBehaviour
                             if (Mathf.Abs(instructionHandler) > 2)
                                 instructionHandler = 2 * Direction;
                         }
-                        else if (distanceToClosedLight <= 250)
+                        else if (distanceToClosedLight <= 250 && distanceToClosedLight >= 60)
                         {
                             Debug.Log("Light is Closed!! I'll stop the engine" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 0)

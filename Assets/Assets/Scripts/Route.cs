@@ -69,6 +69,8 @@ public class Route : Singleton<Route> {
     private string routeName;
     [SerializeField]
     private Text lightText;
+    [SerializeField]
+    private Button cancelRouteButton;
 
 
     public class PathPart : IEquatable<PathPart>
@@ -574,7 +576,8 @@ public class Route : Singleton<Route> {
 
             RouteLightsManage(tl, true);
             Debug.Log(route.RouteName);
-            RouteManage(route, routeName);            
+            RouteManage(route, routeName);
+            cancelRouteButton.interactable = true;
         }
         else Debug.Log("Duplicate");
 
@@ -1010,6 +1013,8 @@ public class Route : Singleton<Route> {
         }        
         routes.Remove(ro);
         Destroy(ro);
+        if (!Routes.Any())
+            cancelRouteButton.interactable = false;
     }
 
     public void DestroyRouteByLight(TrafficLights hitLight)

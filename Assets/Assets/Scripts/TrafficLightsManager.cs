@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,48 +18,16 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private Text lightText;
     [SerializeField]
     private RemoteControlScript rcs;
+    [SerializeField]
     private bool cancelRouteIsOn;
+    [SerializeField]
+    private List<Button> trafficlightsButtons;    
+    private Button[] tempBtns;
+    [SerializeField]
+    private List<TrafficLightBtnScript> listOfScriptedTLButtons;
+    [SerializeField]
+    private Button cancelButton;
 
-    public TrafficLights StartLight
-    {
-        get
-        {
-            return startLight;
-        }
-
-        set
-        {
-            startLight = value;
-        }
-    }
-
-    public TrafficLights EndLight
-    {
-        get
-        {
-            return endLight;
-        }
-
-        set
-        {
-            endLight = value;
-        }
-    }
-
-    public bool CancelRouteIsOn
-    {
-        get
-        {
-            return cancelRouteIsOn;
-        }
-
-        set
-        {
-            cancelRouteIsOn = value;
-            lightText.text = "Cancel..";
-
-        }
-    }
 
     public void SetRouteByLights(TrafficLights firstLight, TrafficLights secondLight)
     {
@@ -66,9 +35,20 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         SetLightsInRoute(secondLight);
     }
 
+    public Button GetButtonByTLName(string name)
+    {
+        foreach (var btn in ListOfScriptedTLButtons)
+        {
+            if (btn.TrafficLight.Name == name)
+                return btn.GetComponent<Button>();
+        }
+        return null;
+    } 
+
+
     public void SetLightsInRoute(TrafficLights light)
     {
-        //if (rcs.IsRemoteControllerOn)
+        if (rcs.IsRemoteControllerOn)
         {
             // Canceling Route
             if (CancelRouteIsOn)
@@ -76,46 +56,99 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
                 if (light != null && light.tag == Constants.LIGHTS_IN_ROUTE)
                 {
                     route.DestroyRouteByLight(light);
-                    isStart = true;
+                    IsStart = true;
                     lightText.text = "None";
+                    ShowTrafficLightsButtons();
+                    
                 }
                 lightText.text = "Done";
-                cancelRouteIsOn = false;
-                
+                cancelRouteIsOn = false;   
             }
             else
             {
                 //Taking lights in route
                 if (light.tag == Constants.LIGHTS_FREE)
                 {
-                    if (isStart)
+                    if (IsStart)
                     {
                         startLight = light;
                         SetLightsNames(startLight.Name);
                         startLight.tag = Constants.LIGHTS_IN_ROUTE;
-                        isStart = false;
+                        IsStart = false;
+                        ShowPossibleTrafficLightsButtons(startLight);                        
                     }
                     else
                     {
                         endLight = light;
                         MakeRouteIfPossible(startLight, endLight);
-                        isStart = true;
+                        IsStart = true;
+                        ShowTrafficLightsButtons();
                     }
                 }
-                else if (light.tag == Constants.LIGHTS_IN_ROUTE && !isStart)
+                else if (light.tag == Constants.LIGHTS_IN_ROUTE && !IsStart)
                 {
                     startLight.tag = Constants.LIGHTS_FREE;
-                    isStart = true;
+                    IsStart = true;
                     lightText.text = "Wrong light in route";
                 }
             } 
         }  
     }
 
+    public void ShowTrafficLightsButtons()
+    {
+        foreach (var btn in ListOfScriptedTLButtons)
+        {
+            btn.IsInteractable = true;
+        }
+        cancelButton.interactable = true;
+    }
+
+    private void ShowPossibleTrafficLightsButtons(TrafficLights _startLight)
+    {
+        foreach (var btn in ListOfScriptedTLButtons)
+        {
+            btn.IsInteractable = false;
+        }
+        foreach (var _endLight in trafficLights)
+        {
+            if(IsPossibleLight(Constants.POSSIBLE_LIGHTS, _startLight, _endLight))
+            {
+                GetButtonByTLName(_endLight.Name).interactable = true;
+            }
+        }
+
+
+
+    }
 
     private void Awake()
     {
         GameObject[] trafficLightsObjects = GameObject.FindGameObjectsWithTag("TrafficLight");
+
+        tempBtns = Resources.FindObjectsOfTypeAll<Button>();
+        TrafficlightsButtons = new List<Button>();
+        for (int i = 0; i < tempBtns.Length; i++)
+        {
+            if (tempBtns[i].tag == "TrafficLightsButton")
+            {                
+                TrafficlightsButtons.Add(tempBtns[i]);
+            }
+
+        }
+
+        ListOfScriptedTLButtons = new List<TrafficLightBtnScript>();
+        for (int i = 0; i < TrafficlightsButtons.Count; i++)
+        {
+
+            if (TrafficlightsButtons[i].GetComponent<TrafficLightBtnScript>() != null)
+            {
+                ListOfScriptedTLButtons.Add(TrafficlightsButtons[i].GetComponent<TrafficLightBtnScript>());
+            }
+
+        }
+
+
         trafficLights = new TrafficLights [trafficLightsObjects.Length];
         for (int i = 0; i < trafficLightsObjects.Length; i++)
         {
@@ -182,5 +215,89 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         }
         return null;
     }
-   
+
+
+
+    public TrafficLights StartLight
+    {
+        get
+        {
+            return startLight;
+        }
+
+        set
+        {
+            startLight = value;
+        }
+    }
+
+    public TrafficLights EndLight
+    {
+        get
+        {
+            return endLight;
+        }
+
+        set
+        {
+            endLight = value;
+        }
+    }
+
+    public bool CancelRouteIsOn
+    {
+        get
+        {
+            return cancelRouteIsOn;
+        }
+
+        set
+        {
+            cancelRouteIsOn = value;
+            if(value)
+                lightText.text = "Cancel..";
+            else
+                lightText.text = "not cancel..";
+
+        }
+    }
+
+    public List<Button> TrafficlightsButtons
+    {
+        get
+        {
+            return trafficlightsButtons;
+        }
+
+        set
+        {
+            trafficlightsButtons = value;
+        }
+    }
+
+    public List<TrafficLightBtnScript> ListOfScriptedTLButtons
+    {
+        get
+        {
+            return listOfScriptedTLButtons;
+        }
+
+        set
+        {
+            listOfScriptedTLButtons = value;
+        }
+    }
+
+    public bool IsStart
+    {
+        get
+        {
+            return isStart;
+        }
+
+        set
+        {
+            isStart = value;
+        }
+    }
 }

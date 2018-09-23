@@ -11,6 +11,7 @@ public class TrafficLightBtnScript : MonoBehaviour {
     private TrafficLights trafficLight;
     [SerializeField]
     private TrafficLightsManager trafficLightsManager;
+    private bool isInteractable;
 
     public TrafficLights TrafficLight
     {
@@ -25,8 +26,14 @@ public class TrafficLightBtnScript : MonoBehaviour {
         }
     }
 
+    public bool IsInteractable
+    {
+        set
+        {
+            GetComponent<Button>().interactable = value;            
+        }
+    }
 
-    // Use this for initialization
     void Start () {
         button.onClick.AddListener(GetTrafficLight);
 	}
@@ -35,9 +42,5 @@ public class TrafficLightBtnScript : MonoBehaviour {
     {
         trafficLightsManager.SetLightsInRoute(TrafficLight);
     }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
+   
 }
