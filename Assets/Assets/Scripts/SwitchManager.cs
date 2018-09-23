@@ -6,12 +6,17 @@ public class SwitchManager : Singleton<SwitchManager>
 
     private GameObject switchObject;
     private GameObject[] indicators;
-    public GameObject[] switches;
+    public Switch[] switches;
+    public GameObject[] switchObj;
     private Renderer rend;
     private Route route;
     private bool isSwitchModeOn;
     [SerializeField]
     private RemoteControlScript rcs;
+    [SerializeField]
+    private Engine engine;
+    private TrafficLightsManager trafficLightsManager;   
+    
 
     public bool IsSwitchModeOn
     {
@@ -25,11 +30,13 @@ public class SwitchManager : Singleton<SwitchManager>
             isSwitchModeOn = value;
         }
     }
-    private void Awake()
-    {
-        switches = GameObject.FindGameObjectsWithTag("RailSwitch");
+    private void Awake()    {
+
+        switches = FindObjectsOfType<Switch>();
+        switchObj = GameObject.FindGameObjectsWithTag("RailSwitch");
+        trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();        
         route = GameObject.Find("Route").GetComponent<Route>();
-        foreach (GameObject sw in switches)
+        foreach (GameObject sw in switchObj)
         {
             sw.layer = 2;
         }
@@ -37,6 +44,7 @@ public class SwitchManager : Singleton<SwitchManager>
     void Start () {
         IsSwitchModeOn = true;
         indicators = GameObject.FindGameObjectsWithTag("Indication");
+        UpdatePathEnds();
         RunIndicationMode();
     }
 	
@@ -55,7 +63,10 @@ public class SwitchManager : Singleton<SwitchManager>
                         switchObject = hit.collider.transform.parent.gameObject;
                         Switch sw = switchObject.GetComponent<Switch>();
                         sw.ChangeDirection();
+                        UpdatePathEnds();
                         route.MakePath();
+                        engine.GetAllExpectedCarsByDirection(engine.Direction);
+                        engine.GetExpectedCar();
                     }
                 }
             }
@@ -76,7 +87,7 @@ public class SwitchManager : Singleton<SwitchManager>
             rend = item.GetComponent<Renderer>();
             if (IsSwitchModeOn)
             {
-                foreach (GameObject sw in switches)
+                foreach (GameObject sw in switchObj)
                 {
                     sw.layer = 9;
                 }
@@ -86,7 +97,7 @@ public class SwitchManager : Singleton<SwitchManager>
 
             else
             {
-                foreach (GameObject sw in switches)
+                foreach (GameObject sw in switchObj)
                 {
                     sw.layer = 2;
                 }
@@ -96,6 +107,26 @@ public class SwitchManager : Singleton<SwitchManager>
         }
     }
 
+    public void UpdatePathEnds()
+    {
+        foreach (var _switch in switches)
+        {
+            if (_switch.name == "Switch_21")
+            {
+                if (_switch.IsSwitchStraight)
+                {
+                    route.GetTrackCircuitByName("Track_12").SetTrackLights(trafficLightsManager.GetTrafficLightByName("M5"), trafficLightsManager.GetTrafficLightByName("End12"));
+                    route.GetTrackCircuitByName("Track_13").SetTrackLights(trafficLightsManager.GetTrafficLightByName("M5"), trafficLightsManager.GetTrafficLightByName("End12_13CH"));
+                }
+                else if (!_switch.IsSwitchStraight)
+                {
+                    route.GetTrackCircuitByName("Track_12").SetTrackLights(trafficLightsManager.GetTrafficLightByName("M5"), trafficLightsManager.GetTrafficLightByName("End12_13CH"));
+                    route.GetTrackCircuitByName("Track_13").SetTrackLights(trafficLightsManager.GetTrafficLightByName("M5"), trafficLightsManager.GetTrafficLightByName("End12"));
+                }
+
+            }
+        }
+    }
 
 
 

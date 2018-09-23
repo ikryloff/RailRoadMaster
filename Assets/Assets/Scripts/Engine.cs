@@ -68,12 +68,8 @@ public class Engine : MonoBehaviour
         // conductor mode
         IsDrivingByInstructionsIsOn = true;
 
-        if (EngineRS.Number == "8888")
-        {
-            speedTxt.text = "Speed: ";
-            throttleTxt.text = "Throttle: ";
-            directionTxt.text = "Direction: ";
-        }
+        InformationUpdateFunction();
+        InvokeRepeating("InformationUpdateFunction", 0.5f, 0.5f);
         GetTrack();      
 
     }
@@ -281,17 +277,22 @@ public class Engine : MonoBehaviour
         engine.AddRelativeForce(new Vector2(smothPower * Direction, 0), ForceMode2D.Force);       
     }
 
-    void FixedUpdate()
+    void InformationUpdateFunction()
     {
-        GetTrack();
-        
-        MSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
-        if(EngineRS.Number == "8888")
+        if (EngineRS.Number == "8888")
         {
             speedTxt.text = "Speed: " + MSpeed;
             throttleTxt.text = "Throttle: " + Mathf.Abs(ControllerPosition);
             directionTxt.text = "Direction: " + Direction;
         }
+    }
+
+    void FixedUpdate()
+    {
+        GetTrack();
+        
+        MSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 5);
+       
         if(IsDrivingByInstructionsIsOn)
             DriveByInstructions();
         MoveEngine();        
@@ -464,11 +465,11 @@ public class Engine : MonoBehaviour
         else
         {
             ReleaseBrakes();
-            if (MSpeed < 10)
+            if (MSpeed < 6)
                 ControllerPosition = 1 * Direction;
-            if (MSpeed >= 10 && MSpeed < 15)
+            if (MSpeed >= 6 && MSpeed < 10)
                 ControllerPosition = 2 * Direction;
-            if (MSpeed >= 15 && MSpeed < 25)
+            if (MSpeed >= 10 && MSpeed < 25)
                 ControllerPosition = 4 * Direction;
             if (MSpeed >= 25)
                     ControllerPosition = 8 * Direction;
@@ -505,13 +506,13 @@ public class Engine : MonoBehaviour
                         distanceToClosedLight = Mathf.Abs(engine.transform.position.x - tl.transform.position.x);
                         if (distanceToClosedLight <= 5000 && distanceToClosedLight > 1500)
                         {
-                            Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                            //Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if(Mathf.Abs(instructionHandler) > 5)
                                 instructionHandler = 5 * Direction;
                         }
                         else if (distanceToClosedLight <= 1500 && distanceToClosedLight > 250)
                         {
-                            Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                           // Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 2)
                                 instructionHandler = 2 * Direction;
                         }
@@ -579,7 +580,8 @@ public class Engine : MonoBehaviour
 
     public void GetAllExpectedCarsByDirection(int _direction)
     {
-        ExpectedСars.Clear();        
+        ExpectedСars.Clear();
+        
         foreach (RollingStock rc in cars)
         {
             if(rc.TrackCircuit == route.OccupiedTrack)
@@ -597,26 +599,28 @@ public class Engine : MonoBehaviour
                 }
             }
 
-        }
+        }        
     }
 
     public void GetExpectedCar()
     {
                 
         if(ExpectedСars != null)
-        {            
+        {
+            NearestCar = null;
             foreach (RollingStock rc in ExpectedСars)
             {
                 if(rc.CompositionNumberofRS != engineRS.CompositionNumberofRS)
                 {
                     distanceToExpectedCarX = Mathf.Abs(rc.transform.position.x - engine.position.x);
-                    if (NearestCar == null || distanceToExpectedCarX < NearestCar.transform.position.x - engine.position.x)
+                    if (NearestCar == null || distanceToExpectedCarX < Mathf.Abs(NearestCar.transform.position.x - engine.position.x))
                     {
                         NearestCar = rc;
                     }
                 }          
             }
-        }else
+        }
+        else
             NearestCar = null;
 
     }

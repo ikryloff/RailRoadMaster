@@ -59,6 +59,8 @@ public class Route : Singleton<Route> {
     List<RouteObject> routes;
     private RouteObject route;
     private TrackCircuit[] forwardPath;
+    [SerializeField]
+    private List <TrackCircuit> trackCircuits;
     public Engine engine;
     private TrackCircuit startTrack;
     private TrackCircuit occupiedTrack;
@@ -71,6 +73,7 @@ public class Route : Singleton<Route> {
     private Text lightText;
     [SerializeField]
     private Button cancelRouteButton;
+    SwitchManager switchManager;
 
 
     public class PathPart : IEquatable<PathPart>
@@ -103,69 +106,26 @@ public class Route : Singleton<Route> {
         }
     }
 
-    internal List<RouteObject> Routes
+    public TrackCircuit GetTrackCircuitByName( string _track)
     {
-        get
+        foreach (var tc in trackCircuits)
         {
-            return routes;
+            if (tc.TrackName == _track)
+                return tc;
         }
-
-        set
-        {
-            routes = value;
-        }
+        return null;
     }
 
-    public TrackCircuit[] ForwardPath
+    private void Awake()
     {
-        get
+        TrackCircuit [] tempArr = GameObject.FindObjectsOfType<TrackCircuit>();
+        trackCircuits = new List<TrackCircuit>();
+        for (int i = 0; i < tempArr.Length; i++)
         {
-            return forwardPath;
+            if (tempArr[i].tag == "Track")
+                trackCircuits.Add(tempArr[i]);
         }
-
-        set
-        {
-            forwardPath = value;
-        }
-    }
-
-    public IEnumerable<TrackCircuit> FullPath
-    {
-        get
-        {
-            return fullPath;
-        }
-
-        set
-        {
-            fullPath = value;
-        }
-    }
-
-    public bool IsPathCheckingForward
-    {
-        get
-        {
-            return isPathCheckingForward;
-        }
-
-        set
-        {
-            isPathCheckingForward = value;
-        }
-    }
-
-    public TrackCircuit OccupiedTrack
-    {
-        get
-        {
-            return occupiedTrack;
-        }
-
-        set
-        {
-            occupiedTrack = value;
-        }
+        switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();
     }
 
     public void MakePath()
@@ -503,23 +463,24 @@ public class Route : Singleton<Route> {
 
                 }
                 Debug.Log(res);
+                OccupiedTrack = null;
                 foreach (var track in FullPath)
                 {
                     if (track.IsCarPresence > 0 && track != FullPath.First())
                     {
-                        OccupiedTrack = track;
-                        Debug.Log(track);
+                        OccupiedTrack = track;                        
                         break;
                     }
+                    if(OccupiedTrack == null)
+                        OccupiedTrack = FullPath.Last();    
                 }
             }
             else
                 OccupiedTrack = startTrack;
-           
-
-
+            Debug.Log("Occupied  " + OccupiedTrack);
         }
-
+        switchManager.UpdatePathEnds();
+        
 
     }
 
@@ -1192,6 +1153,71 @@ public class Route : Singleton<Route> {
         }
         return null;
     }
-    
+
+    internal List<RouteObject> Routes
+    {
+        get
+        {
+            return routes;
+        }
+
+        set
+        {
+            routes = value;
+        }
+    }
+
+    public TrackCircuit[] ForwardPath
+    {
+        get
+        {
+            return forwardPath;
+        }
+
+        set
+        {
+            forwardPath = value;
+        }
+    }
+
+    public IEnumerable<TrackCircuit> FullPath
+    {
+        get
+        {
+            return fullPath;
+        }
+
+        set
+        {
+            fullPath = value;
+        }
+    }
+
+    public bool IsPathCheckingForward
+    {
+        get
+        {
+            return isPathCheckingForward;
+        }
+
+        set
+        {
+            isPathCheckingForward = value;
+        }
+    }
+
+    public TrackCircuit OccupiedTrack
+    {
+        get
+        {
+            return occupiedTrack;
+        }
+
+        set
+        {
+            occupiedTrack = value;
+        }
+    }
+
 }
 

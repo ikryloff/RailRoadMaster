@@ -187,11 +187,24 @@ public class TrackCircuit : MonoBehaviour {
     }
 
     //order does matter
+
+    public void SetTrackLights( TrafficLights _left, TrafficLights _right)
+    {
+        TrackLightsNames = new string[] { _left.Name, _right.Name };
+    }
     public void GetTrackLightsByTrack(TrackCircuit track)
     {
-        if(track.TrackName == "Track_10_14_18" || track.TrackName == "Track_10" || track.TrackName == "Track_9" || track.TrackName == "Track_11")
+        if(track.TrackName == "Track_10_14_18" )
         {
             TrackLightsNames = new string[] { "M3", "End10" };
+        }
+        if (track.TrackName == "Track_10" || track.TrackName == "Track_11")
+        {
+            TrackLightsNames = new string[] { "End10_11", "End10" };
+        }
+        if (track.TrackName == "Track_9")
+        {
+            TrackLightsNames = new string[] { "End9", "End10" };
         }
         if (track.TrackName == "Track_6")
         {
@@ -221,10 +234,10 @@ public class TrackCircuit : MonoBehaviour {
         {
             TrackLightsNames = new string[] { "M1", "End7" };
         }
-        if (track.TrackName == "Track_12_17_19" || track.TrackName == "Track_12" || track.TrackName == "Track_13" || track.TrackName == "Track_12A")
+        if (track.TrackName == "Track_12_17_19" || track.TrackName == "Track_12A")
         {
             TrackLightsNames = new string[] { "M5", "End12" };
-        }
+        }        
         if (track.TrackName == "Track_8")
         {
             TrackLightsNames = new string[] { "End8", "M4" };

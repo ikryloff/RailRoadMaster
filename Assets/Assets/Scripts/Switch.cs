@@ -11,7 +11,8 @@ public class Switch : MonoBehaviour {
     [SerializeField]
     private GameObject straightIndicatorObj;
     private SpriteRenderer turnIndicator;
-    private SpriteRenderer straightIndicator;    
+    private SpriteRenderer straightIndicator;
+    private SwitchManager switchManager;    
     private int timesLocked = 0;
 
     [SerializeField]
@@ -19,11 +20,14 @@ public class Switch : MonoBehaviour {
         
 
     void Awake () {
+        switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();        
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();
         IsSwitchStraight = true;
-        DirectionStraight();       
+        DirectionStraight();
+        
     }
+    
 
     private void OnGUI()
     {
@@ -51,7 +55,7 @@ public class Switch : MonoBehaviour {
             else
             {
                 DirectionStraight();
-            }
+            }            
         }
         else Debug.Log("Locked");
     } 
