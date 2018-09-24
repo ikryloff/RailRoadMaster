@@ -39,15 +39,16 @@ public class Engine : MonoBehaviour
     public float distanceToCarY;
     public float distanceToExpectedCarX;
     public float distanceToExpectedCarY;
-    public float tempX;    
-    private bool isCoupling;
     [SerializeField]
+    private bool isCoupling;    
     private float smothPower = 0;
     [SerializeField]
     private RollingStock nearestCar;
     
     [SerializeField]
     private string startCompositionNumber;
+
+    private Switch switch19, switch21, switch18, switch20;
 
     
 
@@ -57,6 +58,13 @@ public class Engine : MonoBehaviour
         route = GameObject.Find("Route").GetComponent<Route>();
         cars = FindObjectsOfType<RollingStock>();
         ExpectedСars = new List<RollingStock>();
+
+        // Cashing hand switches
+
+        switch18 = route.GetSwitchByName("Switch_18");
+        switch19 = route.GetSwitchByName("Switch_19");
+        switch20 = route.GetSwitchByName("Switch_20");
+        switch21 = route.GetSwitchByName("Switch_21");
         
     }
 
@@ -418,7 +426,7 @@ public class Engine : MonoBehaviour
 
     public bool IsEngineGoesAhead()
     {
-        return (Direction == 1 && !EngineRS.ActiveCoupler.JointCar) || (Direction == -1 && !EngineRS.PassiveCoupler.IsPassiveCoupleConnected);
+        return (Direction == 1 && !EngineRS.ActiveCoupler.JointCar) || (Direction == -1 && !EngineRS.PassiveCoupler.IsPassiveCoupleConnected) ;
     }
 
     public void DriveByInstructions()
@@ -494,11 +502,12 @@ public class Engine : MonoBehaviour
     private void DriveAccordingToLights()
     {
         
-        if(Track.TrackLights != null && Track.gameObject.tag == "Track")
+        if(Track.TrackLights != null)
         {
             for (int i = 0; i < Track.TrackLights.Length; i++)
             {
                 TrafficLights tl = Track.TrackLights[i];
+                CheckPathEnds(tl);
                 if (Track.TrackLights[i] && Track.TrackLights[i].IsClosed)
                 {
                     if((i == 0 && Direction == -1) || (i == 1 && Direction == 1))
@@ -506,13 +515,13 @@ public class Engine : MonoBehaviour
                         distanceToClosedLight = Mathf.Abs(engine.transform.position.x - tl.transform.position.x);
                         if (distanceToClosedLight <= 5000 && distanceToClosedLight > 1500)
                         {
-                            //Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                            Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if(Mathf.Abs(instructionHandler) > 5)
                                 instructionHandler = 5 * Direction;
                         }
                         else if (distanceToClosedLight <= 1500 && distanceToClosedLight > 250)
                         {
-                           // Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                           Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 2)
                                 instructionHandler = 2 * Direction;
                         }
@@ -521,7 +530,7 @@ public class Engine : MonoBehaviour
                             Debug.Log("Light is Closed!! I'll stop the engine" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 0)
                                 instructionHandler = 0;
-                        }
+                        }                        
                     }
                    
                 }
@@ -531,11 +540,48 @@ public class Engine : MonoBehaviour
        
     }
 
+    public void CheckPathEnds(TrafficLights trackEnd)
+    {
+        if (trackEnd)
+        {
+            if (trackEnd.Name == "End12_13CH" && Direction == 1)
+            {
+                if (Track.TrackName == "Track_12")
+                    trackEnd.IsClosed = switch21.IsSwitchStraight ? false : true;
+                if (Track.TrackName == "Track_13")
+                    trackEnd.IsClosed = switch21.IsSwitchStraight ? true : false;
+            }
+            if (trackEnd.Name == "End12_13N" && Direction == -1)
+            {
+                if (Track.TrackName == "Track_12")
+                    trackEnd.IsClosed = switch19.IsSwitchStraight ? false : true;
+                if (Track.TrackName == "Track_13")
+                    trackEnd.IsClosed = switch19.IsSwitchStraight ? true : false;
+            }
+
+            if (trackEnd.Name == "End9" && Direction == -1)
+            {
+                if (Track.TrackName == "Track_9")
+                    trackEnd.IsClosed = switch18.IsSwitchStraight ? true : false;
+            }
+            if (trackEnd.Name == "End10_11" && Direction == -1)
+            {
+                if (Track.TrackName == "Track_10")
+                    trackEnd.IsClosed = switch18.IsSwitchStraight && switch20.IsSwitchStraight ? false : true;
+
+                if (Track.TrackName == "Track_11")
+                    trackEnd.IsClosed = switch18.IsSwitchStraight && !switch20.IsSwitchStraight ? false : true;
+            }
+        }
+
+
+    }
+
     public void CoupleToCar()
     {
+        IsCoupling = IsCoupling ? false : true;
         GetAllExpectedCarsByDirection(Direction);
-        GetExpectedCar();
-        IsCoupling = true;
+        GetExpectedCar();        
         if (NearestCar && EngineRS.CompositionNumberofRS != nearestCar.CompositionNumberofRS)
         {
             instructionHandler = 1 * Direction;

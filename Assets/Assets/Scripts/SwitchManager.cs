@@ -43,8 +43,7 @@ public class SwitchManager : Singleton<SwitchManager>
     }
     void Start () {
         IsSwitchModeOn = true;
-        indicators = GameObject.FindGameObjectsWithTag("Indication");
-        UpdatePathEnds();
+        indicators = GameObject.FindGameObjectsWithTag("Indication");        
         RunIndicationMode();
     }
 	
@@ -62,8 +61,7 @@ public class SwitchManager : Singleton<SwitchManager>
 
                         switchObject = hit.collider.transform.parent.gameObject;
                         Switch sw = switchObject.GetComponent<Switch>();
-                        sw.ChangeDirection();
-                        UpdatePathEnds();
+                        sw.ChangeDirection();                        
                         route.MakePath();
                         engine.GetAllExpectedCarsByDirection(engine.Direction);
                         engine.GetExpectedCar();
@@ -107,26 +105,7 @@ public class SwitchManager : Singleton<SwitchManager>
         }
     }
 
-    public void UpdatePathEnds()
-    {
-        foreach (var _switch in switches)
-        {
-            if (_switch.name == "Switch_21")
-            {
-                if (_switch.IsSwitchStraight)
-                {
-                    route.GetTrackCircuitByName("Track_12").SetTrackLights(trafficLightsManager.GetTrafficLightByName("M5"), trafficLightsManager.GetTrafficLightByName("End12"));
-                    route.GetTrackCircuitByName("Track_13").SetTrackLights(trafficLightsManager.GetTrafficLightByName("M5"), trafficLightsManager.GetTrafficLightByName("End12_13CH"));
-                }
-                else if (!_switch.IsSwitchStraight)
-                {
-                    route.GetTrackCircuitByName("Track_12").SetTrackLights(trafficLightsManager.GetTrafficLightByName("M5"), trafficLightsManager.GetTrafficLightByName("End12_13CH"));
-                    route.GetTrackCircuitByName("Track_13").SetTrackLights(trafficLightsManager.GetTrafficLightByName("M5"), trafficLightsManager.GetTrafficLightByName("End12"));
-                }
-
-            }
-        }
-    }
+   
 
 
 

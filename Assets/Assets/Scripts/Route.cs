@@ -65,6 +65,7 @@ public class Route : Singleton<Route> {
     private TrackCircuit startTrack;
     private TrackCircuit occupiedTrack;
     private bool isPathCheckingForward;
+    private Switch[] switches;
 
     IEnumerable<TrackCircuit> fullPath;
     private bool isRoute;
@@ -126,6 +127,7 @@ public class Route : Singleton<Route> {
                 trackCircuits.Add(tempArr[i]);
         }
         switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();
+        switches = FindObjectsOfType<Switch>();
     }
 
     public void MakePath()
@@ -478,8 +480,7 @@ public class Route : Singleton<Route> {
             else
                 OccupiedTrack = startTrack;
             Debug.Log("Occupied  " + OccupiedTrack);
-        }
-        switchManager.UpdatePathEnds();
+        }        
         
 
     }
@@ -1137,6 +1138,16 @@ public class Route : Singleton<Route> {
                 sw.SwitchLockCount += 1;
             }
         }
+    }
+
+    public Switch GetSwitchByName(string _switchName)
+    {
+        foreach (var sw in switches)
+        {
+            if (sw.name == _switchName)
+                return sw;            
+        }
+        return null;
     }
     
     private bool IsShunting(TrafficLights[] trafficLights)

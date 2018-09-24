@@ -194,54 +194,64 @@ public class TrackCircuit : MonoBehaviour {
     }
     public void GetTrackLightsByTrack(TrackCircuit track)
     {
-        if(track.TrackName == "Track_10_14_18" )
+        if(track.name == "Track_10_14_18" || track.name == "TrackCircuitSw18" ||  track.name == "TrackCircuitSw20")
         {
             TrackLightsNames = new string[] { "M3", "End10" };
         }
-        if (track.TrackName == "Track_10" || track.TrackName == "Track_11")
+        if (track.name == "Track_10" || track.name == "Track_11")
         {
             TrackLightsNames = new string[] { "End10_11", "End10" };
         }
-        if (track.TrackName == "Track_9")
+        if (track.name == "Track_12" || track.name == "Track_13")
+        {
+            TrackLightsNames = new string[] { "End12_13N", "End12_13CH" };
+        }
+        if (track.name == "Track_9")
         {
             TrackLightsNames = new string[] { "End9", "End10" };
         }
-        if (track.TrackName == "Track_6")
+        if (track.name == "Track_6")
         {
             TrackLightsNames = new string[] { "End6", "M2" };
         }
-        if (track.TrackName == "Track_2")
+        if (track.name == "Track_2")
         {
             TrackLightsNames = new string[] { "N2", "CH2" };
         }
-        if (track.TrackName == "Track_I_16_15")
+        if (track.name == "Track_I_16_15")
         {
             TrackLightsNames = new string[] { "NI", "CHI" };
         }
-        if (track.TrackName == "Track_3")
+        if (track.name == "Track_3")
         {
             TrackLightsNames = new string[] { "N3", "CH3" };
         }
-        if (track.TrackName == "Track_4")
+        if (track.name == "Track_4")
         {
             TrackLightsNames = new string[] { "N4", "CH4" };
         }
-        if (track.TrackName == "Track_5")
+        if (track.name == "Track_5")
         {
             TrackLightsNames = new string[] { "N5", "CH5" };
         }
-        if (track.TrackName == "Track_7")
+        if (track.name == "Track_7")
         {
             TrackLightsNames = new string[] { "M1", "End7" };
         }
-        if (track.TrackName == "Track_12_17_19" || track.TrackName == "Track_12A")
+        if (track.name == "Track_12_17_19" || track.name == "Track_12A" || track.name == "TrackCircuitSw21" || track.name == "TrackCircuitSw19")
         {
             TrackLightsNames = new string[] { "M5", "End12" };
         }        
-        if (track.TrackName == "Track_8")
+        if (track.name == "Track_8")
         {
             TrackLightsNames = new string[] { "End8", "M4" };
         }
+        if (track.name == "TrackCircuitSw5_17Bot")
+        {
+            TrackLightsNames = new string[] { "End8", "End12" };
+        }
+
+
         TrackLights = new TrafficLights[2];
 
         for (int i = 0; i < TrackLightsNames.Length; i++)
