@@ -293,6 +293,12 @@ public class Engine : MonoBehaviour
             throttleTxt.text = "Throttle: " + Mathf.Abs(ControllerPosition);
             directionTxt.text = "Direction: " + Direction;
         }
+        
+    }
+
+    private void Update()
+    {
+        PrintHandler();
     }
 
     void FixedUpdate()
@@ -491,7 +497,7 @@ public class Engine : MonoBehaviour
         else if (Direction < 0)
             handlerTxt.text = MaxSpeed + "  <<< " + Mathf.Abs(instructionHandler) + " <<<";
         else
-            handlerTxt.text = "  <<< 0 >>>";
+            handlerTxt.text = "  <<< 0 >>>";        
     }
 
     public void GetTrack()
@@ -515,19 +521,19 @@ public class Engine : MonoBehaviour
                         distanceToClosedLight = Mathf.Abs(engine.transform.position.x - tl.transform.position.x);
                         if (distanceToClosedLight <= 5000 && distanceToClosedLight > 1500)
                         {
-                            Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                            //Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if(Mathf.Abs(instructionHandler) > 5)
                                 instructionHandler = 5 * Direction;
                         }
                         else if (distanceToClosedLight <= 1500 && distanceToClosedLight > 250)
                         {
-                           Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                           //Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 2)
                                 instructionHandler = 2 * Direction;
                         }
                         else if (distanceToClosedLight <= 250 && distanceToClosedLight >= 60)
                         {
-                            Debug.Log("Light is Closed!! I'll stop the engine" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                            //Debug.Log("Light is Closed!! I'll stop the engine" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 0)
                                 instructionHandler = 0;
                         }                        
@@ -594,30 +600,35 @@ public class Engine : MonoBehaviour
         if (NearestCar  && !IsCoupling)
         {
             distanceToCarX = Mathf.Abs(NearestCar.transform.position.x - engine.position.x);
-            distanceToCarY = Mathf.Abs(NearestCar.transform.position.y - engine.position.y);
+            if(distanceToCarX < 300)
+            {
+                NearestCar = null;
+            }
 
-            if (distanceToCarX <= 5000 && distanceToCarX > 1500)
+            else if (distanceToCarX <= 5000 && distanceToCarX > 1500)
             {
                 if (Mathf.Abs(instructionHandler) > 5)
                     instructionHandler = 5 * Direction;
             }
-            if (distanceToCarX <= 3000 && distanceToCarX > 1500)
+            else if(distanceToCarX <= 3000 && distanceToCarX > 1500)
             {
                 if (distanceToCarY <= 400)
                     if (Mathf.Abs(instructionHandler) > 3)
                         instructionHandler = 3 * Direction;
             }
-            if (distanceToCarX <= 1500 && distanceToCarX > 40)
+            else if(distanceToCarX <= 1500 && distanceToCarX > 600)
             {
-                if (distanceToCarY <= 250)
-                    if (Mathf.Abs(instructionHandler) > 2)
-                        instructionHandler = 2 * Direction;
+                if (Mathf.Abs(instructionHandler) > 2)
+                    instructionHandler = 2 * Direction;
             }
-            if (distanceToCarX <= 500)
+            else if(distanceToCarX <= 600 && distanceToCarX >= 300)
             {
-                if (distanceToCarY < 100)
-                    if (Mathf.Abs(instructionHandler) > 0)
-                        instructionHandler = 0 * Direction;                
+                if (Mathf.Abs(instructionHandler) > 0)
+                {
+                    Debug.Log("Can't move on the car is ");
+                    instructionHandler = 0 * Direction;
+                }
+                                  
             }            
         }
         
