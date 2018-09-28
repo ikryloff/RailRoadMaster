@@ -956,6 +956,11 @@ public class Route : Singleton<Route> {
             }            
         }
     }
+
+    public void DestroyRouteByRouteName(string _routeName)
+    {
+        DestroyRoute(GetRouteByName(_routeName));
+    }
     
 
     private void DestroyRoute(RouteObject ro, bool withUnlock = true)
@@ -1155,7 +1160,7 @@ public class Route : Singleton<Route> {
         return trafficLights[0].Name != "CH" && trafficLights[0].Name != "N" && trafficLights[1].Name != "CH" && trafficLights[1].Name != "N";
     }
 
-    public RouteObject FindRouteByName(string name)
+    public RouteObject GetRouteByName(string name)
     {
         foreach (RouteObject ro in Routes)
         {

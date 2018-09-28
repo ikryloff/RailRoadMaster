@@ -84,16 +84,16 @@ public class GameManager : Singleton<GameManager> {
             Time.timeScale = Time.timeScale != 8 ? 8 : 1;
         }
 
-        if (step0 && !route.Routes.Contains(route.FindRouteByName("NN3")))
+        if (step0 && !route.Routes.Contains(route.GetRouteByName("NN3")))
         {
             StartCoroutine(ShuntingFrom2to7()); 
         }
 
-        if (step1 && !route.Routes.Contains(route.FindRouteByName("CH2M1")) && (int)(Time.deltaTime * engineRB.velocity.magnitude * 5) == 0)
+        if (step1 && !route.Routes.Contains(route.GetRouteByName("CH2M1")) && (int)(Time.deltaTime * engineRB.velocity.magnitude * 5) == 0)
         {
             StartCoroutine(ShuntingFrom7to3());
         }
-        if (step2 && !route.Routes.Contains(route.FindRouteByName("M1CH3")) && (int)(Time.deltaTime * engineRB.velocity.magnitude * 5) == 0)
+        if (step2 && !route.Routes.Contains(route.GetRouteByName("M1CH3")) && (int)(Time.deltaTime * engineRB.velocity.magnitude * 5) == 0)
         {
             StartCoroutine(ShuntingUnCoupleFromComposition()); 
         }

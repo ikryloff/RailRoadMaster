@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class RequestRouteManager : Singleton<RequestRouteManager> {
@@ -26,6 +27,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
     private TrafficLights endLight;
     [SerializeField]
     private List <Button> routeBtns;
+    private string [] routes;
 
     private void Awake()
     {
@@ -33,6 +35,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         route = GameObject.Find("Route").GetComponent<Route>();
         routeParseList = Constants.CONDUCTOR_ROUTE_ASK;
         routeBtns = new List<Button>();
+        routes = new string[3];
         foreach (Transform btn in CancelRouteList.transform)
         {
             Button tBtn = btn.GetComponent<Button>();
@@ -82,18 +85,30 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         }
 
         int index = 0;
+
         foreach (RouteObject ro in route.Routes)
         {
             if (ro)
             {
                 routeBtns.ElementAt(index).gameObject.SetActive(true);
                 routeBtns.ElementAt(index).GetComponentInChildren<Text>().text = ro.RouteName;
+                routes[index] = ro.RouteName;
                 index++;
                 
             }
 
         }
+    }
 
+    public void CancelRouteByButton(Button button)
+    {
+        string routeBtnName = button.name;
+        if (routeBtnName == "Route0")
+            route.DestroyRouteByRouteName(routes[0]);
+        else if (routeBtnName == "Route1")
+            route.DestroyRouteByRouteName(routes[1]);
+        else if (routeBtnName == "Route2")
+            route.DestroyRouteByRouteName(routes[2]);
     }
 
     public void ShowEngineerList()
