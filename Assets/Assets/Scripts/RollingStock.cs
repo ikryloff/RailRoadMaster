@@ -13,6 +13,7 @@ public class RollingStock : MonoBehaviour
     private Coupler activeCoupler;
     private Coupler passiveCoupler;
     private Coupler connectedToPassive; 
+    [SerializeField]
     private TrackCircuit trackCircuit; 
 
     public string Number

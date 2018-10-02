@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class Route : Singleton<Route> {
 
     [SerializeField]
-    private Switch sw2_4, sw6_8, sw10, sw12, sw14, sw16, sw1_3, sw5_17, sw7_9, sw11, sw13, sw15, sw18, sw20, sw19, sw21;
+    private Switch sw2_4, sw6_8, sw10, sw12, sw14, sw16, sw1_3, sw5_17, sw7_9, sw11, sw13, sw15, sw18, sw20, sw19, sw21, sw22;
 
     [SerializeField]
     private TrackCircuit 
@@ -33,6 +33,7 @@ public class Route : Singleton<Route> {
         tc12_12,
         tc12A,
         tc13,
+        tc14,
         tcsw_1_3top,
         tcsw_1_3bot,
         tcsw_5_17top,
@@ -43,12 +44,13 @@ public class Route : Singleton<Route> {
         tcsw_2_4bot,
         tcsw_6_8top,
         tcsw_6_8bot,
+        tcsw14,
+        tcsw22,
         tcsw16,
         tcsw10,
         tcsw11,
         tcsw12,
-        tcsw13,
-        tcsw14,
+        tcsw13,        
         tcsw15,
         tcsw18,    
         tcsw19,    
@@ -133,7 +135,7 @@ public class Route : Singleton<Route> {
     public void MakePath()
     {
 
-        if (engine.IsEngineGoesAhead())
+        if (engine.IsEngineGoesAhead)
         {
             List<PathPart> parts = new List<PathPart>();
             parts.Clear();
@@ -141,6 +143,7 @@ public class Route : Singleton<Route> {
             FullPath = null;
             if (IsPathCheckingForward)
             {
+                
                 //forward parts
                 parts.Add(new PathPart() { PartId = 0, PartsArr = new TrackCircuit[] { tcI_CH, tcI_CH_2 } });
                 parts.Add(new PathPart() { PartId = 1, PartsArr = new TrackCircuit[] { tcI_CH_2, tcsw_2_4top } });
@@ -163,7 +166,7 @@ public class Route : Singleton<Route> {
                 parts.Add(new PathPart() { PartId = 18, PartsArr = new TrackCircuit[] { tcsw12, tcsw14 } });
                 parts.Add(new PathPart() { PartId = 19, PartsArr = new TrackCircuit[] { tcsw14, tc5 } });
                 parts.Add(new PathPart() { PartId = 20, PartsArr = new TrackCircuit[] { tc5, tcsw13 } });
-                parts.Add(new PathPart() { PartId = 21, PartsArr = new TrackCircuit[] { tcsw14, tc10 } });
+                parts.Add(new PathPart() { PartId = 21, PartsArr = new TrackCircuit[] { tcsw22, tc10 } });
                 parts.Add(new PathPart() { PartId = 22, PartsArr = new TrackCircuit[] { tcsw_7_9top, tcsw_1_3top } });
                 parts.Add(new PathPart() { PartId = 23, PartsArr = new TrackCircuit[] { tcsw_7_9top, tcsw_7_9bot } });
                 parts.Add(new PathPart() { PartId = 24, PartsArr = new TrackCircuit[] { tcsw_7_9bot, tcsw_5_17top } });
@@ -189,6 +192,8 @@ public class Route : Singleton<Route> {
                 parts.Add(new PathPart() { PartId = 94, PartsArr = new TrackCircuit[] { tcsw21, tc12A } });
                 parts.Add(new PathPart() { PartId = 95, PartsArr = new TrackCircuit[] { tcsw19, tc13 } });
                 parts.Add(new PathPart() { PartId = 96, PartsArr = new TrackCircuit[] { tc13, tcsw21 } });
+                parts.Add(new PathPart() { PartId = 97, PartsArr = new TrackCircuit[] { tc14, tcsw22 } });
+                parts.Add(new PathPart() { PartId = 98, PartsArr = new TrackCircuit[] { tcsw14, tcsw22 } });
 
             }
             if (!IsPathCheckingForward)
@@ -229,7 +234,7 @@ public class Route : Singleton<Route> {
                 parts.Add(new PathPart() { PartId = 72, PartsArr = new TrackCircuit[] { tcsw13, tc5 } });
                 parts.Add(new PathPart() { PartId = 73, PartsArr = new TrackCircuit[] { tc5, tcsw14 } });
                 parts.Add(new PathPart() { PartId = 74, PartsArr = new TrackCircuit[] { tcsw14, tcsw12 } });
-                parts.Add(new PathPart() { PartId = 75, PartsArr = new TrackCircuit[] { tc10, tcsw14 } });
+                parts.Add(new PathPart() { PartId = 75, PartsArr = new TrackCircuit[] { tc10, tcsw22 } });
                 parts.Add(new PathPart() { PartId = 76, PartsArr = new TrackCircuit[] { tc12A, tcsw21 } });
                 parts.Add(new PathPart() { PartId = 77, PartsArr = new TrackCircuit[] { tcsw21, tc12_12 } });
                 parts.Add(new PathPart() { PartId = 78, PartsArr = new TrackCircuit[] { tc12_12, tcsw19 } });
@@ -241,6 +246,8 @@ public class Route : Singleton<Route> {
                 parts.Add(new PathPart() { PartId = 84, PartsArr = new TrackCircuit[] { tc10_10, tcsw20 } });
                 parts.Add(new PathPart() { PartId = 85, PartsArr = new TrackCircuit[] { tcsw20, tcsw18 } });
                 parts.Add(new PathPart() { PartId = 86, PartsArr = new TrackCircuit[] { tc11, tcsw20 } });
+                parts.Add(new PathPart() { PartId = 87, PartsArr = new TrackCircuit[] { tcsw22, tcsw14 } });
+                parts.Add(new PathPart() { PartId = 88, PartsArr = new TrackCircuit[] { tcsw22, tc14 } });
             }
 
 
@@ -311,6 +318,17 @@ public class Route : Singleton<Route> {
             {
                 parts.Remove(new PathPart() { PartId = 21 });
                 parts.Remove(new PathPart() { PartId = 75 });
+            }
+
+            if (sw22.IsSwitchStraight)
+            {
+                parts.Remove(new PathPart() { PartId = 97 });
+                parts.Remove(new PathPart() { PartId = 88 });
+            }
+            else
+            {
+                parts.Remove(new PathPart() { PartId = 98 });
+                parts.Remove(new PathPart() { PartId = 87 });
             }
 
             if (sw13.IsSwitchStraight)
@@ -699,7 +717,7 @@ public class Route : Singleton<Route> {
         {
             ro.SwitchesStr = new Switch[] { sw14, sw6_8, sw12, sw2_4 };
             ro.SwitchesTurn = new Switch[] { sw10 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tcsw14, tc10 };
+            ro.TrackCircuits = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tcsw14, tcsw22 };
         }
 
         // Routes CHI done

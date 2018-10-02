@@ -22,12 +22,15 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
     private string resultRoute = "";
     private TrafficLightsManager tlm;
     private Route route;
+    [SerializeField]
+    private Engine engine;
     private List<string[]> routeParseList;
     private TrafficLights startLight;
     private TrafficLights endLight;
     [SerializeField]
     private List <Button> routeBtns;
     private string [] routes;
+    private string report;
 
     private void Awake()
     {
@@ -99,6 +102,73 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
 
         }
     }
+
+    public void GetTheDistanceToStop()
+    {
+        report = "";
+        int pastDirection = engine.Direction;
+        bool pastPathChecking = route.IsPathCheckingForward;
+        GetDistanceToStopByDirection(1);
+        GetDistanceToStopByDirection(-1);
+        engine.Direction = pastDirection;
+        route.IsPathCheckingForward = pastPathChecking;
+    }
+
+    public void GetDistanceToStopByDirection(int _direction)
+    {
+        int trackLightNum;
+        engine.GetTrack();        
+        engine.Direction = _direction;
+        route.IsPathCheckingForward = _direction == 1 ? true : false;
+        trackLightNum = _direction == 1 ? 1 : 0;
+        route.MakePath();
+        engine.GetAllExpectedCarsByDirection(_direction);
+        engine.GetExpectedCar();
+        float distanceToCar = engine.NearestCar ? engine.DistanceToCar : float.MaxValue;
+        float distanceToLight = float.MaxValue;
+
+
+        if (engine.Track.TrackLights[trackLightNum] && engine.Track.TrackLights[trackLightNum].IsClosed && engine.IsEngineGoesAheadByDirection(_direction))
+        {
+            engine.GetDistanceToLight(engine.Track.TrackLights[trackLightNum]);
+            distanceToLight = engine.DistanceToLight;            
+        } 
+        else
+        {
+            distanceToLight = float.MaxValue;            
+        }
+        ShowDistanceToStop(_direction, distanceToCar, distanceToLight);
+    }
+
+    public void ShowDistanceToStop(int _direction, float dToCar, float dToLight)
+    {
+        if (_direction == 1)
+        {
+            
+            if (dToCar < dToLight)
+               report += " Disance to Car forward " + ((dToCar - 300) / 300);
+            else if (dToCar > dToLight)
+               report += " Disance to signal forward " + ((dToLight - 150) / 300);
+            else
+                report += " Forward can't say!";
+
+        }
+
+        if (_direction == -1)
+        {
+
+            if (dToCar < dToLight)
+                report += " Disance to Car backward " + ((dToCar - 300) / 300);
+            else if(dToCar > dToLight)
+                report += " Disance to signal backward " + ((dToLight - 150 ) / 300);
+             else
+                report += " Backward can't say!!";
+        }
+
+        Debug.Log(report);
+        
+    }
+        
 
     public void CancelRouteByButton(Button button)
     {

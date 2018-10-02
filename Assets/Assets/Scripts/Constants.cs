@@ -50,7 +50,7 @@ public class Constants {
     public static List <string[]> CONDUCTOR_ROUTE_ASK = new List<string[]>()
     {
     
-        new string[] {"6I", "M2", "N2"},
+        new string[] {"6I", "M2", "NI"},
         new string[] {"62", "M2", "N2"},
         new string[] {"63", "M2", "N3"},
         new string[] {"64", "M2", "N4"},

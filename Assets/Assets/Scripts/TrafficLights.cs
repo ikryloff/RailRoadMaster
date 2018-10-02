@@ -20,6 +20,7 @@ public class TrafficLights : MonoBehaviour {
     SpriteRenderer controlLight;
 
     private SpriteRenderer lightColor;
+    [SerializeField]
     private int intColor;
     private Color32 redRC = new Color32(255, 10, 0, 255);
     private Color32 greenRC = new Color32(0, 240, 0, 255);
