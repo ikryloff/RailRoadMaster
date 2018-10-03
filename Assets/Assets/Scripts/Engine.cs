@@ -47,7 +47,12 @@ public class Engine : MonoBehaviour
     private string startCompositionNumber;
 
     private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
+    [SerializeField]
     private bool isEngineGoesAhead;
+    [SerializeField]
+    private bool isEngineMovesDistance;
+
+      
 
     private void Awake()
     {
@@ -80,6 +85,8 @@ public class Engine : MonoBehaviour
         InformationUpdateFunction();
         InvokeRepeating("InformationUpdateFunction", 0.5f, 0.5f);
         GetTrack();
+
+        
 
     }
     void MoveEngine()
@@ -431,6 +438,10 @@ public class Engine : MonoBehaviour
 
     }
 
+    
+    
+
+
     public bool IsEngineGoesAhead
     {
         get
@@ -444,20 +455,31 @@ public class Engine : MonoBehaviour
         
     }
 
+    
+
     public bool IsEngineGoesAheadByDirection( int _direction)
-    {
-        return (_direction == 1 && !EngineRS.ActiveCoupler.JointCar) || (_direction == -1 && !EngineRS.PassiveCoupler.IsPassiveCoupleConnected);
+    {        
+        if((_direction == 1 && !EngineRS.ActiveCoupler.JointCar) || (_direction == -1 && !EngineRS.PassiveCoupler.IsPassiveCoupleConnected))
+        {
+            IsEngineGoesAhead = true;
+            return true;
+        }
+        else
+        {
+            IsEngineGoesAhead = false;
+            return false;
+        }
     }
 
     public void DriveByInstructions()
     {
         PrintHandler();
-        if (IsEngineGoesAhead)
-        {            
-            DriveAccordingToLights();
+        if (IsEngineGoesAheadByDirection(Direction))
+        {
             DriveAccordingToCarPresence();
+            DriveAccordingToLights();            
         }
-
+        // Stop after each coupling
         if (EngineRS.CompositionNumberString != StartCompositionNumber)
         {
             instructionHandler = 0;
@@ -535,18 +557,18 @@ public class Engine : MonoBehaviour
                 CheckPathEnds(tl);
                 if (Track.TrackLights[i] && Track.TrackLights[i].IsClosed)
                 {
-                    if((i == 0 && Direction == -1) || (i == 1 && Direction == 1))
+                    if ((i == 0 && Direction == -1) || (i == 1 && Direction == 1))
                     {
                         GetDistanceToLight(tl);
                         if (DistanceToLight <= 5000 && DistanceToLight > 1500)
                         {
                             //Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
-                            if(Mathf.Abs(instructionHandler) > 5)
+                            if (Mathf.Abs(instructionHandler) > 5)
                                 instructionHandler = 5 * Direction;
                         }
                         else if (DistanceToLight <= 1500 && DistanceToLight > 250)
                         {
-                          // Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+                            // Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 2)
                                 instructionHandler = 2 * Direction;
                         }
@@ -555,9 +577,9 @@ public class Engine : MonoBehaviour
                             //Debug.Log("Light is Closed!! I'll stop the engine" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
                             if (Mathf.Abs(instructionHandler) > 0)
                                 instructionHandler = 0;
-                        }                        
+                        }
                     }
-                   
+
                 }
 
             }
@@ -681,7 +703,7 @@ public class Engine : MonoBehaviour
         foreach (RollingStock rc in cars)
         {
             
-            if (rc.TrackCircuit == route.OccupiedTrack)
+            if (rc.TrackCircuit == route.OccupiedTrack || rc.TrackCircuit == EngineRS.TrackCircuit)
             {                
                 if (!ExpectedСars.Contains(rc))
                 {
@@ -931,6 +953,19 @@ public class Engine : MonoBehaviour
         set
         {
             distanceToLight = value;
+        }
+    }
+
+    public bool IsEngineMovesDistance
+    {
+        get
+        {
+            return isEngineMovesDistance;
+        }
+
+        set
+        {
+            isEngineMovesDistance = value;
         }
     }
 }

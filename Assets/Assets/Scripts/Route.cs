@@ -135,7 +135,7 @@ public class Route : Singleton<Route> {
     public void MakePath()
     {
 
-        if (engine.IsEngineGoesAhead)
+        if (engine.IsEngineGoesAheadByDirection(engine.Direction))
         {
             List<PathPart> parts = new List<PathPart>();
             parts.Clear();
