@@ -8,13 +8,14 @@ public class CameraController : MonoBehaviour {
     public Vector2 mapLimit; 
     [SerializeField]
     private Rigidbody2D cameraTarget;   
+    [SerializeField]
+    private Rigidbody2D startPos;   
     private Vector2 desiredPosition;
     Vector2 smoothedPosition;
-    private float smoothSpeed = 8f;
+    private float smoothSpeed = 10f;
     private float lastTime;
     private bool myUpdate;
     private bool canMoveCamera = true;
-    private Joystick joystick;
     public float cameraSize;
     public Texture2D cursorForFocus;
     private bool isFocusModeIsOn;
@@ -75,7 +76,7 @@ public class CameraController : MonoBehaviour {
     {
         IsFocusModeIsOn = false;
         lastTime = Time.realtimeSinceStartup;
-        joystick = FindObjectOfType<Joystick>();                
+        transform.position = startPos.position;
     }
 
    
@@ -142,11 +143,11 @@ public class CameraController : MonoBehaviour {
     }
     public void CameraZoomOut()
     {
-        if (GetComponent<Camera>().orthographicSize < 900)
+        if (GetComponent<Camera>().orthographicSize < 1900)
         {
             GetComponent<Camera>().orthographicSize += 100f;
             mapLimit.x -= 180;            
-            mapLimit.y -= 100;            
+            mapLimit.y -= 20;            
             mapMovingSpeed += 60;
         }
             
@@ -185,10 +186,7 @@ public class CameraController : MonoBehaviour {
             {
                 desiredPosition.x += mapMovingSpeed;
             }
-           
-            desiredPosition.y += mapMovingSpeed * joystick.Vertical;
-            desiredPosition.x += mapMovingSpeed * joystick.Horizontal;
-                
+                      
           
             desiredPosition.x = Mathf.Clamp(desiredPosition.x, -mapLimit.x, mapLimit.x);
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, -mapLimit.y, mapLimit.y);

@@ -87,7 +87,7 @@ public class CompositionManager : Singleton<CompositionManager>
         {
             foreach (RollingStock item in CompositionsList[i])
             {
-                Debug.Log("In comp #" + i + " car " + item.Number);
+                //Debug.Log("In comp #" + i + " car " + item.Number);
             }
         }
         

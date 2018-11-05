@@ -54,8 +54,8 @@ public class Route : Singleton<Route> {
         tcsw15,
         tcsw18,    
         tcsw19,    
-        tcsw20,   
-        tcsw21   
+        tcsw20, 
+        tcsw21  
         ;    
 
     List<RouteObject> routes;
@@ -66,9 +66,11 @@ public class Route : Singleton<Route> {
     public Engine engine;
     private TrackCircuit startTrack;
     private TrackCircuit occupiedTrack;
+    private TrackCircuit lastRouteTrackForward;
+    private TrackCircuit lastRouteTrackBackward;
     private bool isPathCheckingForward;
     private Switch[] switches;
-
+    private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
     IEnumerable<TrackCircuit> fullPath;
     private bool isRoute;
     private string routeName;
@@ -78,6 +80,37 @@ public class Route : Singleton<Route> {
     private Button cancelRouteButton;
     SwitchManager switchManager;
 
+
+    private void Awake()
+    {
+        TrackCircuit[] tempArr = GameObject.FindObjectsOfType<TrackCircuit>();
+        trackCircuits = new List<TrackCircuit>();
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            if (tempArr[i].tag == "Track")
+                trackCircuits.Add(tempArr[i]);
+        }
+        switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();
+        switches = FindObjectsOfType<Switch>();
+
+        // Cashing hand switches
+
+        switch18 = GetSwitchByName("Switch_18");
+        switch19 = GetSwitchByName("Switch_19");
+        switch20 = GetSwitchByName("Switch_20");
+        switch21 = GetSwitchByName("Switch_21");
+        switch22 = GetSwitchByName("Switch_22");
+        switch10 = GetSwitchByName("Switch_10");
+        switch12 = GetSwitchByName("Switch_12");
+        switch14 = GetSwitchByName("Switch_14");
+    }
+    void Start()
+    {
+        routes = new List<RouteObject>();
+        engine = GameObject.Find("Engine").GetComponent<Engine>();
+        Invoke("MakePathInBothDirections", 0.1f);
+
+    }
 
     public class PathPart : IEquatable<PathPart>
     {
@@ -119,398 +152,533 @@ public class Route : Singleton<Route> {
         return null;
     }
 
-    private void Awake()
+    
+
+    public void MakePath(int _direction)
     {
-        TrackCircuit [] tempArr = GameObject.FindObjectsOfType<TrackCircuit>();
-        trackCircuits = new List<TrackCircuit>();
-        for (int i = 0; i < tempArr.Length; i++)
+                    
+        List<PathPart> parts = new List<PathPart>();
+        parts.Clear();
+        startTrack = engine.Track;
+        FullPath = null;        
+
+        if (_direction == 1)
         {
-            if (tempArr[i].tag == "Track")
-                trackCircuits.Add(tempArr[i]);
+
+            //forward parts
+            parts.Add(new PathPart() { PartId = 0, PartsArr = new TrackCircuit[] { tcI_CH, tcI_CH_2 } });
+            parts.Add(new PathPart() { PartId = 1, PartsArr = new TrackCircuit[] { tcI_CH_2, tcsw_2_4top } });
+            parts.Add(new PathPart() { PartId = 2, PartsArr = new TrackCircuit[] { tc6, tcsw_2_4bot } });
+            parts.Add(new PathPart() { PartId = 3, PartsArr = new TrackCircuit[] { tcsw_2_4top, tcsw_2_4bot } });
+            parts.Add(new PathPart() { PartId = 4, PartsArr = new TrackCircuit[] { tcsw_2_4top, tcsw_6_8top } });
+            parts.Add(new PathPart() { PartId = 5, PartsArr = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot } });
+            parts.Add(new PathPart() { PartId = 6, PartsArr = new TrackCircuit[] { tcsw_6_8bot, tcsw_6_8top } });
+            parts.Add(new PathPart() { PartId = 7, PartsArr = new TrackCircuit[] { tcsw_6_8bot, tcsw10 } });
+            parts.Add(new PathPart() { PartId = 8, PartsArr = new TrackCircuit[] { tcsw16, tc2 } });
+            parts.Add(new PathPart() { PartId = 9, PartsArr = new TrackCircuit[] { tc2, tcsw15 } });
+            parts.Add(new PathPart() { PartId = 10, PartsArr = new TrackCircuit[] { tcsw15, tcsw_7_9top } });
+            parts.Add(new PathPart() { PartId = 11, PartsArr = new TrackCircuit[] { tcsw16, tcI_16_15 } });
+            parts.Add(new PathPart() { PartId = 12, PartsArr = new TrackCircuit[] { tcI_16_15, tcsw15 } });
+            parts.Add(new PathPart() { PartId = 13, PartsArr = new TrackCircuit[] { tcsw10, tc3 } });
+            parts.Add(new PathPart() { PartId = 14, PartsArr = new TrackCircuit[] { tc3, tcsw11 } });
+            parts.Add(new PathPart() { PartId = 15, PartsArr = new TrackCircuit[] { tcsw10, tcsw12 } });
+            parts.Add(new PathPart() { PartId = 16, PartsArr = new TrackCircuit[] { tcsw12, tc4 } });
+            parts.Add(new PathPart() { PartId = 17, PartsArr = new TrackCircuit[] { tc4, tcsw13 } });
+            parts.Add(new PathPart() { PartId = 18, PartsArr = new TrackCircuit[] { tcsw12, tcsw14 } });
+            parts.Add(new PathPart() { PartId = 19, PartsArr = new TrackCircuit[] { tcsw14, tc5 } });
+            parts.Add(new PathPart() { PartId = 20, PartsArr = new TrackCircuit[] { tc5, tcsw13 } });
+            parts.Add(new PathPart() { PartId = 21, PartsArr = new TrackCircuit[] { tcsw22, tc10 } });
+            parts.Add(new PathPart() { PartId = 22, PartsArr = new TrackCircuit[] { tcsw_7_9top, tcsw_1_3top } });
+            parts.Add(new PathPart() { PartId = 23, PartsArr = new TrackCircuit[] { tcsw_7_9top, tcsw_7_9bot } });
+            parts.Add(new PathPart() { PartId = 24, PartsArr = new TrackCircuit[] { tcsw_7_9bot, tcsw_5_17top } });
+            parts.Add(new PathPart() { PartId = 25, PartsArr = new TrackCircuit[] { tcsw_1_3top, tcI_1_N } });
+            parts.Add(new PathPart() { PartId = 26, PartsArr = new TrackCircuit[] { tcI_1_N, tcI_N } });
+            parts.Add(new PathPart() { PartId = 27, PartsArr = new TrackCircuit[] { tcsw_5_17top, tcsw_1_3bot } });
+            parts.Add(new PathPart() { PartId = 28, PartsArr = new TrackCircuit[] { tcsw_5_17top, tcsw_5_17bot } });
+            parts.Add(new PathPart() { PartId = 29, PartsArr = new TrackCircuit[] { tcsw_5_17bot, tc12 } });
+            parts.Add(new PathPart() { PartId = 30, PartsArr = new TrackCircuit[] { tcsw_1_3bot, tcsw_1_3top } });
+            parts.Add(new PathPart() { PartId = 31, PartsArr = new TrackCircuit[] { tc8, tcsw_5_17bot } });
+            parts.Add(new PathPart() { PartId = 32, PartsArr = new TrackCircuit[] { tcsw13, tcsw11 } });
+            parts.Add(new PathPart() { PartId = 33, PartsArr = new TrackCircuit[] { tcsw11, tcsw_7_9bot } });
+            parts.Add(new PathPart() { PartId = 34, PartsArr = new TrackCircuit[] { tcsw_1_3bot, tc7 } });
+            parts.Add(new PathPart() { PartId = 35, PartsArr = new TrackCircuit[] { tcsw_6_8top, tcsw16 } });
+            parts.Add(new PathPart() { PartId = 36, PartsArr = new TrackCircuit[] { tc10, tcsw18 } });
+            parts.Add(new PathPart() { PartId = 37, PartsArr = new TrackCircuit[] { tcsw18, tc9 } });
+            parts.Add(new PathPart() { PartId = 38, PartsArr = new TrackCircuit[] { tcsw18, tcsw20 } });
+            parts.Add(new PathPart() { PartId = 39, PartsArr = new TrackCircuit[] { tcsw20, tc10_10 } });
+            parts.Add(new PathPart() { PartId = 90, PartsArr = new TrackCircuit[] { tcsw20, tc11 } });
+            parts.Add(new PathPart() { PartId = 91, PartsArr = new TrackCircuit[] { tc12, tcsw19 } });
+            parts.Add(new PathPart() { PartId = 92, PartsArr = new TrackCircuit[] { tcsw19, tc12_12 } });
+            parts.Add(new PathPart() { PartId = 93, PartsArr = new TrackCircuit[] { tc12_12, tcsw21 } });
+            parts.Add(new PathPart() { PartId = 94, PartsArr = new TrackCircuit[] { tcsw21, tc12A } });
+            parts.Add(new PathPart() { PartId = 95, PartsArr = new TrackCircuit[] { tcsw19, tc13 } });
+            parts.Add(new PathPart() { PartId = 96, PartsArr = new TrackCircuit[] { tc13, tcsw21 } });
+            parts.Add(new PathPart() { PartId = 97, PartsArr = new TrackCircuit[] { tc14, tcsw22 } });
+            parts.Add(new PathPart() { PartId = 98, PartsArr = new TrackCircuit[] { tcsw14, tcsw22 } });
+
         }
-        switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();
-        switches = FindObjectsOfType<Switch>();
-    }
-
-    public void MakePath()
-    {
-
-        if (engine.IsEngineGoesAheadByDirection(engine.Direction))
+        if (_direction == -1)
         {
-            List<PathPart> parts = new List<PathPart>();
-            parts.Clear();
-            startTrack = engine.Track;
-            FullPath = null;
-            if (IsPathCheckingForward)
+            //backward parts
+            parts.Add(new PathPart() { PartId = 40, PartsArr = new TrackCircuit[] { tcI_1_N, tcI_N } });
+            parts.Add(new PathPart() { PartId = 41, PartsArr = new TrackCircuit[] { tcI_N, tcsw_1_3top } });
+            parts.Add(new PathPart() { PartId = 42, PartsArr = new TrackCircuit[] { tcsw_1_3top, tcsw_7_9top } });
+            parts.Add(new PathPart() { PartId = 43, PartsArr = new TrackCircuit[] { tcsw_1_3top, tcsw_1_3bot } });
+            parts.Add(new PathPart() { PartId = 44, PartsArr = new TrackCircuit[] { tc7, tcsw_1_3bot } });
+            parts.Add(new PathPart() { PartId = 45, PartsArr = new TrackCircuit[] { tcsw_1_3bot, tcsw_5_17top } });
+            parts.Add(new PathPart() { PartId = 46, PartsArr = new TrackCircuit[] { tc12, tcsw_5_17bot } });
+            parts.Add(new PathPart() { PartId = 47, PartsArr = new TrackCircuit[] { tcsw_5_17bot, tcsw_5_17top } });
+            parts.Add(new PathPart() { PartId = 48, PartsArr = new TrackCircuit[] { tcsw_5_17bot, tc8 } });
+            parts.Add(new PathPart() { PartId = 49, PartsArr = new TrackCircuit[] { tcsw_5_17top, tcsw_7_9bot } });
+            parts.Add(new PathPart() { PartId = 50, PartsArr = new TrackCircuit[] { tcsw_7_9bot, tcsw_7_9top } });
+            parts.Add(new PathPart() { PartId = 51, PartsArr = new TrackCircuit[] { tcsw_7_9bot, tcsw11 } });
+            parts.Add(new PathPart() { PartId = 52, PartsArr = new TrackCircuit[] { tcsw_7_9top, tcsw15 } });
+            parts.Add(new PathPart() { PartId = 53, PartsArr = new TrackCircuit[] { tcsw15, tc2 } });
+            parts.Add(new PathPart() { PartId = 54, PartsArr = new TrackCircuit[] { tc2, tcsw16 } });
+            parts.Add(new PathPart() { PartId = 55, PartsArr = new TrackCircuit[] { tcsw15, tcI_16_15 } });
+            parts.Add(new PathPart() { PartId = 56, PartsArr = new TrackCircuit[] { tcI_16_15, tcsw16 } });
+            parts.Add(new PathPart() { PartId = 57, PartsArr = new TrackCircuit[] { tcsw16, tcsw_6_8top } });
+            parts.Add(new PathPart() { PartId = 58, PartsArr = new TrackCircuit[] { tcsw_6_8top, tcsw_6_8bot } });
+            parts.Add(new PathPart() { PartId = 59, PartsArr = new TrackCircuit[] { tcsw_6_8top, tcsw_2_4top } });
+            parts.Add(new PathPart() { PartId = 60, PartsArr = new TrackCircuit[] { tcsw_2_4top, tcI_CH_2 } });
+            parts.Add(new PathPart() { PartId = 61, PartsArr = new TrackCircuit[] { tcI_CH_2, tcI_CH } });
+            parts.Add(new PathPart() { PartId = 62, PartsArr = new TrackCircuit[] { tcsw11, tc3 } });
+            parts.Add(new PathPart() { PartId = 63, PartsArr = new TrackCircuit[] { tc3, tcsw10 } });
+            parts.Add(new PathPart() { PartId = 64, PartsArr = new TrackCircuit[] { tcsw10, tcsw_6_8bot } });
+            parts.Add(new PathPart() { PartId = 65, PartsArr = new TrackCircuit[] { tcsw_6_8bot, tcsw_2_4bot } });
+            parts.Add(new PathPart() { PartId = 66, PartsArr = new TrackCircuit[] { tcsw_2_4bot, tcsw_2_4top } });
+            parts.Add(new PathPart() { PartId = 67, PartsArr = new TrackCircuit[] { tcsw_2_4bot, tc6 } });
+            parts.Add(new PathPart() { PartId = 68, PartsArr = new TrackCircuit[] { tcsw11, tcsw13 } });
+            parts.Add(new PathPart() { PartId = 69, PartsArr = new TrackCircuit[] { tcsw13, tc4 } });
+            parts.Add(new PathPart() { PartId = 70, PartsArr = new TrackCircuit[] { tc4, tcsw12 } });
+            parts.Add(new PathPart() { PartId = 71, PartsArr = new TrackCircuit[] { tcsw12, tcsw10 } });
+            parts.Add(new PathPart() { PartId = 72, PartsArr = new TrackCircuit[] { tcsw13, tc5 } });
+            parts.Add(new PathPart() { PartId = 73, PartsArr = new TrackCircuit[] { tc5, tcsw14 } });
+            parts.Add(new PathPart() { PartId = 74, PartsArr = new TrackCircuit[] { tcsw14, tcsw12 } });
+            parts.Add(new PathPart() { PartId = 75, PartsArr = new TrackCircuit[] { tc10, tcsw22 } });
+            parts.Add(new PathPart() { PartId = 76, PartsArr = new TrackCircuit[] { tc12A, tcsw21 } });
+            parts.Add(new PathPart() { PartId = 77, PartsArr = new TrackCircuit[] { tcsw21, tc12_12 } });
+            parts.Add(new PathPart() { PartId = 78, PartsArr = new TrackCircuit[] { tc12_12, tcsw19 } });
+            parts.Add(new PathPart() { PartId = 79, PartsArr = new TrackCircuit[] { tcsw19, tc12 } });
+            parts.Add(new PathPart() { PartId = 80, PartsArr = new TrackCircuit[] { tcsw21, tc13 } });
+            parts.Add(new PathPart() { PartId = 81, PartsArr = new TrackCircuit[] { tc13, tcsw19 } });
+            parts.Add(new PathPart() { PartId = 82, PartsArr = new TrackCircuit[] { tc9, tcsw18 } });
+            parts.Add(new PathPart() { PartId = 83, PartsArr = new TrackCircuit[] { tcsw18, tc10 } });
+            parts.Add(new PathPart() { PartId = 84, PartsArr = new TrackCircuit[] { tc10_10, tcsw20 } });
+            parts.Add(new PathPart() { PartId = 85, PartsArr = new TrackCircuit[] { tcsw20, tcsw18 } });
+            parts.Add(new PathPart() { PartId = 86, PartsArr = new TrackCircuit[] { tc11, tcsw20 } });
+            parts.Add(new PathPart() { PartId = 87, PartsArr = new TrackCircuit[] { tcsw22, tcsw14 } });
+            parts.Add(new PathPart() { PartId = 88, PartsArr = new TrackCircuit[] { tcsw22, tc14 } });
+        }
+
+
+        if (sw2_4.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 3 });
+            parts.Remove(new PathPart() { PartId = 66 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 2 });
+            parts.Remove(new PathPart() { PartId = 4 });
+            parts.Remove(new PathPart() { PartId = 59 });
+        }
+
+        if (sw6_8.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 6 });
+            parts.Remove(new PathPart() { PartId = 58 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 4 });
+            parts.Remove(new PathPart() { PartId = 7 });
+            parts.Remove(new PathPart() { PartId = 59 });
+            parts.Remove(new PathPart() { PartId = 64 });
+        }
+
+        if (sw16.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 8 });
+            parts.Remove(new PathPart() { PartId = 54 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 11 });
+            parts.Remove(new PathPart() { PartId = 56 });
+        }
+
+        if (sw10.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 15 });
+            parts.Remove(new PathPart() { PartId = 71 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 13 });
+            parts.Remove(new PathPart() { PartId = 63 });
+        }
+
+        if (sw12.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 16 });
+            parts.Remove(new PathPart() { PartId = 70 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 18 });
+            parts.Remove(new PathPart() { PartId = 74 });
+        }
+
+        if (sw14.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 19 });
+            parts.Remove(new PathPart() { PartId = 73 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 98 });
+            parts.Remove(new PathPart() { PartId = 87 });
+        }
+
+        if (sw22.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 97 });
+            parts.Remove(new PathPart() { PartId = 88 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 98 });
+            parts.Remove(new PathPart() { PartId = 87 });
+        }
+
+        if (sw13.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 17 });
+            parts.Remove(new PathPart() { PartId = 69 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 20 });
+            parts.Remove(new PathPart() { PartId = 72 });
+        }
+
+        if (sw15.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 9 });
+            parts.Remove(new PathPart() { PartId = 53 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 12 });
+            parts.Remove(new PathPart() { PartId = 55 });
+        }
+
+        if (sw11.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 32 });
+            parts.Remove(new PathPart() { PartId = 68 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 14 });
+            parts.Remove(new PathPart() { PartId = 62 });
+        }
+
+        if (sw7_9.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 23 });
+            parts.Remove(new PathPart() { PartId = 50 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 22 });
+            parts.Remove(new PathPart() { PartId = 33 });
+            parts.Remove(new PathPart() { PartId = 42 });
+            parts.Remove(new PathPart() { PartId = 51 });
+        }
+
+        if (sw5_17.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 28 });
+            parts.Remove(new PathPart() { PartId = 47 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 27 });
+            parts.Remove(new PathPart() { PartId = 31 });
+            parts.Remove(new PathPart() { PartId = 45 });
+            parts.Remove(new PathPart() { PartId = 48 });
+        }
+
+        if (sw1_3.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 30 });
+            parts.Remove(new PathPart() { PartId = 43 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 22 });
+            parts.Remove(new PathPart() { PartId = 34 });
+            parts.Remove(new PathPart() { PartId = 42 });
+            parts.Remove(new PathPart() { PartId = 44 });
+        }
+
+        if (sw18.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 37 });
+            parts.Remove(new PathPart() { PartId = 82 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 38 });
+            parts.Remove(new PathPart() { PartId = 85 });
+        }
+
+        if (sw20.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 90 });
+            parts.Remove(new PathPart() { PartId = 86 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 39 });
+            parts.Remove(new PathPart() { PartId = 84 });
+        }
+
+        if (sw19.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 95 });
+            parts.Remove(new PathPart() { PartId = 81 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 92 });
+            parts.Remove(new PathPart() { PartId = 78 });
+        }
+
+        if (sw21.IsSwitchStraight)
+        {
+            parts.Remove(new PathPart() { PartId = 96 });
+            parts.Remove(new PathPart() { PartId = 80 });
+        }
+        else
+        {
+            parts.Remove(new PathPart() { PartId = 93 });
+            parts.Remove(new PathPart() { PartId = 77 });
+        }
+
+
+        //find start point
+        foreach (var item in parts)
+        {
+            if (item.PartsArr.First() == startTrack)
+                FullPath = item.PartsArr;
+        }
+
+        
+        Debug.Log("startPoint " + startTrack);
+
+
+        // make full path
+        foreach (var p in parts)
+        {
+            foreach (var part in parts)
             {
+                if (FullPath != null)
+                {
+                    if (part.PartsArr.First() == FullPath.Last())
+                    {
+                        FullPath = FullPath.Union(part.PartsArr);
+                    }
+                }
+            }
+
+        }
+
+        // print full path
+        string res = "";
+        if (FullPath != null)
+        {
+            foreach (var item in FullPath)
+            {
+
+                res += " -> " + item.name;
+
+            }
+            Debug.Log(res);
+            OccupiedTrack = null;            
+            foreach (var track in FullPath)
+            {
+                if (track.IsCarPresence > 0 && track != FullPath.First())
+                {
+                    OccupiedTrack = track;                    
+                    break;
+                }
+                if (OccupiedTrack == null)
+                    OccupiedTrack = FullPath.Last();
                 
-                //forward parts
-                parts.Add(new PathPart() { PartId = 0, PartsArr = new TrackCircuit[] { tcI_CH, tcI_CH_2 } });
-                parts.Add(new PathPart() { PartId = 1, PartsArr = new TrackCircuit[] { tcI_CH_2, tcsw_2_4top } });
-                parts.Add(new PathPart() { PartId = 2, PartsArr = new TrackCircuit[] { tc6, tcsw_2_4bot } });
-                parts.Add(new PathPart() { PartId = 3, PartsArr = new TrackCircuit[] { tcsw_2_4top, tcsw_2_4bot } });
-                parts.Add(new PathPart() { PartId = 4, PartsArr = new TrackCircuit[] { tcsw_2_4top, tcsw_6_8top } });
-                parts.Add(new PathPart() { PartId = 5, PartsArr = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot } });
-                parts.Add(new PathPart() { PartId = 6, PartsArr = new TrackCircuit[] { tcsw_6_8bot, tcsw_6_8top } });
-                parts.Add(new PathPart() { PartId = 7, PartsArr = new TrackCircuit[] { tcsw_6_8bot, tcsw10 } });
-                parts.Add(new PathPart() { PartId = 8, PartsArr = new TrackCircuit[] { tcsw16, tc2 } });
-                parts.Add(new PathPart() { PartId = 9, PartsArr = new TrackCircuit[] { tc2, tcsw15 } });
-                parts.Add(new PathPart() { PartId = 10, PartsArr = new TrackCircuit[] { tcsw15, tcsw_7_9top } });
-                parts.Add(new PathPart() { PartId = 11, PartsArr = new TrackCircuit[] { tcsw16, tcI_16_15 } });
-                parts.Add(new PathPart() { PartId = 12, PartsArr = new TrackCircuit[] { tcI_16_15, tcsw15 } });
-                parts.Add(new PathPart() { PartId = 13, PartsArr = new TrackCircuit[] { tcsw10, tc3 } });
-                parts.Add(new PathPart() { PartId = 14, PartsArr = new TrackCircuit[] { tc3, tcsw11 } });
-                parts.Add(new PathPart() { PartId = 15, PartsArr = new TrackCircuit[] { tcsw10, tcsw12 } });
-                parts.Add(new PathPart() { PartId = 16, PartsArr = new TrackCircuit[] { tcsw12, tc4 } });
-                parts.Add(new PathPart() { PartId = 17, PartsArr = new TrackCircuit[] { tc4, tcsw13 } });
-                parts.Add(new PathPart() { PartId = 18, PartsArr = new TrackCircuit[] { tcsw12, tcsw14 } });
-                parts.Add(new PathPart() { PartId = 19, PartsArr = new TrackCircuit[] { tcsw14, tc5 } });
-                parts.Add(new PathPart() { PartId = 20, PartsArr = new TrackCircuit[] { tc5, tcsw13 } });
-                parts.Add(new PathPart() { PartId = 21, PartsArr = new TrackCircuit[] { tcsw22, tc10 } });
-                parts.Add(new PathPart() { PartId = 22, PartsArr = new TrackCircuit[] { tcsw_7_9top, tcsw_1_3top } });
-                parts.Add(new PathPart() { PartId = 23, PartsArr = new TrackCircuit[] { tcsw_7_9top, tcsw_7_9bot } });
-                parts.Add(new PathPart() { PartId = 24, PartsArr = new TrackCircuit[] { tcsw_7_9bot, tcsw_5_17top } });
-                parts.Add(new PathPart() { PartId = 25, PartsArr = new TrackCircuit[] { tcsw_1_3top, tcI_1_N } });
-                parts.Add(new PathPart() { PartId = 26, PartsArr = new TrackCircuit[] { tcI_1_N, tcI_N } });
-                parts.Add(new PathPart() { PartId = 27, PartsArr = new TrackCircuit[] { tcsw_5_17top, tcsw_1_3bot } });
-                parts.Add(new PathPart() { PartId = 28, PartsArr = new TrackCircuit[] { tcsw_5_17top, tcsw_5_17bot } });
-                parts.Add(new PathPart() { PartId = 29, PartsArr = new TrackCircuit[] { tcsw_5_17bot, tc12 } });
-                parts.Add(new PathPart() { PartId = 30, PartsArr = new TrackCircuit[] { tcsw_1_3bot, tcsw_1_3top } });
-                parts.Add(new PathPart() { PartId = 31, PartsArr = new TrackCircuit[] { tc8, tcsw_5_17bot } });
-                parts.Add(new PathPart() { PartId = 32, PartsArr = new TrackCircuit[] { tcsw13, tcsw11 } });
-                parts.Add(new PathPart() { PartId = 33, PartsArr = new TrackCircuit[] { tcsw11, tcsw_7_9bot } });
-                parts.Add(new PathPart() { PartId = 34, PartsArr = new TrackCircuit[] { tcsw_1_3bot, tc7 } });
-                parts.Add(new PathPart() { PartId = 35, PartsArr = new TrackCircuit[] { tcsw_6_8top, tcsw16 } });
-                parts.Add(new PathPart() { PartId = 36, PartsArr = new TrackCircuit[] { tc10, tcsw18 } });
-                parts.Add(new PathPart() { PartId = 37, PartsArr = new TrackCircuit[] { tcsw18, tc9 } });
-                parts.Add(new PathPart() { PartId = 38, PartsArr = new TrackCircuit[] { tcsw18, tcsw20 } });
-                parts.Add(new PathPart() { PartId = 39, PartsArr = new TrackCircuit[] { tcsw20, tc10_10 } });
-                parts.Add(new PathPart() { PartId = 90, PartsArr = new TrackCircuit[] { tcsw20, tc11 } });
-                parts.Add(new PathPart() { PartId = 91, PartsArr = new TrackCircuit[] { tc12, tcsw19 } });
-                parts.Add(new PathPart() { PartId = 92, PartsArr = new TrackCircuit[] { tcsw19, tc12_12 } });
-                parts.Add(new PathPart() { PartId = 93, PartsArr = new TrackCircuit[] { tc12_12, tcsw21 } });
-                parts.Add(new PathPart() { PartId = 94, PartsArr = new TrackCircuit[] { tcsw21, tc12A } });
-                parts.Add(new PathPart() { PartId = 95, PartsArr = new TrackCircuit[] { tcsw19, tc13 } });
-                parts.Add(new PathPart() { PartId = 96, PartsArr = new TrackCircuit[] { tc13, tcsw21 } });
-                parts.Add(new PathPart() { PartId = 97, PartsArr = new TrackCircuit[] { tc14, tcsw22 } });
-                parts.Add(new PathPart() { PartId = 98, PartsArr = new TrackCircuit[] { tcsw14, tcsw22 } });
-
-            }
-            if (!IsPathCheckingForward)
-            {
-                //backward parts
-                parts.Add(new PathPart() { PartId = 40, PartsArr = new TrackCircuit[] { tcI_1_N, tcI_N } });
-                parts.Add(new PathPart() { PartId = 41, PartsArr = new TrackCircuit[] { tcI_N, tcsw_1_3top } });
-                parts.Add(new PathPart() { PartId = 42, PartsArr = new TrackCircuit[] { tcsw_1_3top, tcsw_7_9top } });
-                parts.Add(new PathPart() { PartId = 43, PartsArr = new TrackCircuit[] { tcsw_1_3top, tcsw_1_3bot } });
-                parts.Add(new PathPart() { PartId = 44, PartsArr = new TrackCircuit[] { tc7, tcsw_1_3bot } });
-                parts.Add(new PathPart() { PartId = 45, PartsArr = new TrackCircuit[] { tcsw_1_3bot, tcsw_5_17top } });
-                parts.Add(new PathPart() { PartId = 46, PartsArr = new TrackCircuit[] { tc12, tcsw_5_17bot } });
-                parts.Add(new PathPart() { PartId = 47, PartsArr = new TrackCircuit[] { tcsw_5_17bot, tcsw_5_17top } });
-                parts.Add(new PathPart() { PartId = 48, PartsArr = new TrackCircuit[] { tcsw_5_17bot, tc8 } });
-                parts.Add(new PathPart() { PartId = 49, PartsArr = new TrackCircuit[] { tcsw_5_17top, tcsw_7_9bot } });
-                parts.Add(new PathPart() { PartId = 50, PartsArr = new TrackCircuit[] { tcsw_7_9bot, tcsw_7_9top } });
-                parts.Add(new PathPart() { PartId = 51, PartsArr = new TrackCircuit[] { tcsw_7_9bot, tcsw11 } });
-                parts.Add(new PathPart() { PartId = 52, PartsArr = new TrackCircuit[] { tcsw_7_9top, tcsw15 } });
-                parts.Add(new PathPart() { PartId = 53, PartsArr = new TrackCircuit[] { tcsw15, tc2 } });
-                parts.Add(new PathPart() { PartId = 54, PartsArr = new TrackCircuit[] { tc2, tcsw16 } });
-                parts.Add(new PathPart() { PartId = 55, PartsArr = new TrackCircuit[] { tcsw15, tcI_16_15 } });
-                parts.Add(new PathPart() { PartId = 56, PartsArr = new TrackCircuit[] { tcI_16_15, tcsw16 } });
-                parts.Add(new PathPart() { PartId = 57, PartsArr = new TrackCircuit[] { tcsw16, tcsw_6_8top } });
-                parts.Add(new PathPart() { PartId = 58, PartsArr = new TrackCircuit[] { tcsw_6_8top, tcsw_6_8bot } });
-                parts.Add(new PathPart() { PartId = 59, PartsArr = new TrackCircuit[] { tcsw_6_8top, tcsw_2_4top } });
-                parts.Add(new PathPart() { PartId = 60, PartsArr = new TrackCircuit[] { tcsw_2_4top, tcI_CH_2 } });
-                parts.Add(new PathPart() { PartId = 61, PartsArr = new TrackCircuit[] { tcI_CH_2, tcI_CH } });
-                parts.Add(new PathPart() { PartId = 62, PartsArr = new TrackCircuit[] { tcsw11, tc3 } });
-                parts.Add(new PathPart() { PartId = 63, PartsArr = new TrackCircuit[] { tc3, tcsw10 } });
-                parts.Add(new PathPart() { PartId = 64, PartsArr = new TrackCircuit[] { tcsw10, tcsw_6_8bot } });
-                parts.Add(new PathPart() { PartId = 65, PartsArr = new TrackCircuit[] { tcsw_6_8bot, tcsw_2_4bot } });
-                parts.Add(new PathPart() { PartId = 66, PartsArr = new TrackCircuit[] { tcsw_2_4bot, tcsw_2_4top } });
-                parts.Add(new PathPart() { PartId = 67, PartsArr = new TrackCircuit[] { tcsw_2_4bot, tc6 } });
-                parts.Add(new PathPart() { PartId = 68, PartsArr = new TrackCircuit[] { tcsw11, tcsw13 } });
-                parts.Add(new PathPart() { PartId = 69, PartsArr = new TrackCircuit[] { tcsw13, tc4 } });
-                parts.Add(new PathPart() { PartId = 70, PartsArr = new TrackCircuit[] { tc4, tcsw12 } });
-                parts.Add(new PathPart() { PartId = 71, PartsArr = new TrackCircuit[] { tcsw12, tcsw10 } });
-                parts.Add(new PathPart() { PartId = 72, PartsArr = new TrackCircuit[] { tcsw13, tc5 } });
-                parts.Add(new PathPart() { PartId = 73, PartsArr = new TrackCircuit[] { tc5, tcsw14 } });
-                parts.Add(new PathPart() { PartId = 74, PartsArr = new TrackCircuit[] { tcsw14, tcsw12 } });
-                parts.Add(new PathPart() { PartId = 75, PartsArr = new TrackCircuit[] { tc10, tcsw22 } });
-                parts.Add(new PathPart() { PartId = 76, PartsArr = new TrackCircuit[] { tc12A, tcsw21 } });
-                parts.Add(new PathPart() { PartId = 77, PartsArr = new TrackCircuit[] { tcsw21, tc12_12 } });
-                parts.Add(new PathPart() { PartId = 78, PartsArr = new TrackCircuit[] { tc12_12, tcsw19 } });
-                parts.Add(new PathPart() { PartId = 79, PartsArr = new TrackCircuit[] { tcsw19, tc12 } });
-                parts.Add(new PathPart() { PartId = 80, PartsArr = new TrackCircuit[] { tcsw21, tc13 } });
-                parts.Add(new PathPart() { PartId = 81, PartsArr = new TrackCircuit[] { tc13, tcsw19 } });
-                parts.Add(new PathPart() { PartId = 82, PartsArr = new TrackCircuit[] { tc9, tcsw18 } });
-                parts.Add(new PathPart() { PartId = 83, PartsArr = new TrackCircuit[] { tcsw18, tc10 } });
-                parts.Add(new PathPart() { PartId = 84, PartsArr = new TrackCircuit[] { tc10_10, tcsw20 } });
-                parts.Add(new PathPart() { PartId = 85, PartsArr = new TrackCircuit[] { tcsw20, tcsw18 } });
-                parts.Add(new PathPart() { PartId = 86, PartsArr = new TrackCircuit[] { tc11, tcsw20 } });
-                parts.Add(new PathPart() { PartId = 87, PartsArr = new TrackCircuit[] { tcsw22, tcsw14 } });
-                parts.Add(new PathPart() { PartId = 88, PartsArr = new TrackCircuit[] { tcsw22, tc14 } });
             }
 
-
-            if (sw2_4.IsSwitchStraight)
+            
+            if (_direction == 1)
             {
-                parts.Remove(new PathPart() { PartId = 3 });
-                parts.Remove(new PathPart() { PartId = 66 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 2 });
-                parts.Remove(new PathPart() { PartId = 4 });
-                parts.Remove(new PathPart() { PartId = 59 });
-            }
-
-            if (sw6_8.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 6 });
-                parts.Remove(new PathPart() { PartId = 58 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 4 });
-                parts.Remove(new PathPart() { PartId = 7 });
-                parts.Remove(new PathPart() { PartId = 59 });
-                parts.Remove(new PathPart() { PartId = 64 });
-            }
-
-            if (sw16.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 8 });
-                parts.Remove(new PathPart() { PartId = 54 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 11 });
-                parts.Remove(new PathPart() { PartId = 56 });
-            }
-
-            if (sw10.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 15 });
-                parts.Remove(new PathPart() { PartId = 71 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 13 });
-                parts.Remove(new PathPart() { PartId = 63 });
-            }
-
-            if (sw12.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 16 });
-                parts.Remove(new PathPart() { PartId = 70 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 18 });
-                parts.Remove(new PathPart() { PartId = 74 });
-            }
-
-            if (sw14.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 19 });
-                parts.Remove(new PathPart() { PartId = 73 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 21 });
-                parts.Remove(new PathPart() { PartId = 75 });
-            }
-
-            if (sw22.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 97 });
-                parts.Remove(new PathPart() { PartId = 88 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 98 });
-                parts.Remove(new PathPart() { PartId = 87 });
-            }
-
-            if (sw13.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 17 });
-                parts.Remove(new PathPart() { PartId = 69 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 20 });
-                parts.Remove(new PathPart() { PartId = 72 });
-            }
-
-            if (sw15.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 9 });
-                parts.Remove(new PathPart() { PartId = 53 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 12 });
-                parts.Remove(new PathPart() { PartId = 55 });
-            }
-
-            if (sw11.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 32 });
-                parts.Remove(new PathPart() { PartId = 68 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 14 });
-                parts.Remove(new PathPart() { PartId = 62 });
-            }
-
-            if (sw7_9.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 23 });
-                parts.Remove(new PathPart() { PartId = 50 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 22 });
-                parts.Remove(new PathPart() { PartId = 33 });
-                parts.Remove(new PathPart() { PartId = 42 });
-                parts.Remove(new PathPart() { PartId = 51 });
-            }
-
-            if (sw5_17.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 28 });
-                parts.Remove(new PathPart() { PartId = 47 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 27 });
-                parts.Remove(new PathPart() { PartId = 31 });
-                parts.Remove(new PathPart() { PartId = 45 });
-                parts.Remove(new PathPart() { PartId = 48 });
-            }
-
-            if (sw1_3.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 30 });
-                parts.Remove(new PathPart() { PartId = 43 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 22 });
-                parts.Remove(new PathPart() { PartId = 34 });
-                parts.Remove(new PathPart() { PartId = 42 });
-                parts.Remove(new PathPart() { PartId = 44 });
-            }
-
-            if (sw18.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 37 });
-                parts.Remove(new PathPart() { PartId = 82 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 38 });
-                parts.Remove(new PathPart() { PartId = 85 });                
-            }
-
-            if (sw20.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 90 });
-                parts.Remove(new PathPart() { PartId = 86 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 39 });
-                parts.Remove(new PathPart() { PartId = 84 });
-            }
-
-            if (sw19.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 95 });
-                parts.Remove(new PathPart() { PartId = 81 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 92 });
-                parts.Remove(new PathPart() { PartId = 78 });
-            }
-
-            if (sw21.IsSwitchStraight)
-            {
-                parts.Remove(new PathPart() { PartId = 96 });
-                parts.Remove(new PathPart() { PartId = 80 });
-            }
-            else
-            {
-                parts.Remove(new PathPart() { PartId = 93 });
-                parts.Remove(new PathPart() { PartId = 77 });
-            }
-
-
-            //find start point
-            foreach (var item in parts)
-            {
-                if (item.PartsArr.First() == startTrack)
-                    FullPath = item.PartsArr;
-            }
-            Debug.Log("startPoint " + startTrack);
-
-            // make full path
-            foreach (var p in parts)
-            {
-                foreach (var part in parts)
+                foreach (var tr in FullPath)
                 {
-                    if (FullPath != null)
+
+                    if (tr.TrackLights[1] && tr.TrackLights[1].IsClosed)
                     {
-                        if (part.PartsArr.First() == FullPath.Last())
-                        {
-                            FullPath = FullPath.Union(part.PartsArr);
-                        }
-                    }                    
-                }
-
-            }
-
-            // print full path
-            string res = "";
-            if (FullPath != null)
-            {
-                foreach (var item in FullPath)
-                {
-
-                    res += " -> " + item.name;
-
-                }
-                Debug.Log(res);
-                OccupiedTrack = null;
-                foreach (var track in FullPath)
-                {
-                    if (track.IsCarPresence > 0 && track != FullPath.First())
-                    {
-                        OccupiedTrack = track;                        
+                        LastRouteTrackForward = tr;
                         break;
                     }
-                    if(OccupiedTrack == null)
-                        OccupiedTrack = FullPath.Last();    
+
+                }
+
+                if (LastRouteTrackForward)
+                {
+                    if (LastRouteTrackForward == tcsw14)
+                    {
+                        if (switch22.IsSwitchStraight)
+                            LastRouteTrackForward = tc10_10;
+                        else
+                            LastRouteTrackForward = tcsw14;
+                    }
+
+                    if (LastRouteTrackForward == tc14)
+                    {
+                        if (switch22.IsSwitchStraight)
+                            LastRouteTrackForward = tc14;
+                        else
+                            LastRouteTrackForward = tc10_10;
+                    }
+
+                    if (LastRouteTrackForward == tc12 || LastRouteTrackForward == tcsw19)
+                    {
+                        if (switch19.IsSwitchStraight)
+                            LastRouteTrackForward = tc12_12;
+                        else
+                            LastRouteTrackForward = tc13;
+                    }
+
+                    if (LastRouteTrackForward == tc13)
+                    {
+                        if (switch19.IsSwitchStraight)
+                            LastRouteTrackForward = tc13;
+                        else
+                            LastRouteTrackForward = tc12A;
+                    }
+                    if (LastRouteTrackForward == tc12_12)
+                    {
+                        if (switch19.IsSwitchStraight)
+                            LastRouteTrackForward = tc12A;
+                        else
+                            LastRouteTrackForward = tc12_12;
+                    }
+
+                }
+               
+            }
+
+            if (_direction == -1)
+            {
+                foreach (var tr in FullPath)
+                {
+
+                    if (tr.TrackLights[0] != null && tr.TrackLights[0].IsClosed)
+                    {
+                        LastRouteTrackBackward = tr;
+                        break;
+                    }
+                }
+
+                if (LastRouteTrackBackward)
+                {
+                    if (LastRouteTrackBackward == tc10_10)
+                    {
+                        if (switch18.IsSwitchStraight && switch20.IsSwitchStraight)
+                            LastRouteTrackBackward = tcsw22;
+                        else
+                            LastRouteTrackBackward = tc10_10;
+                    }
+
+                    if (LastRouteTrackBackward == tc9)
+                    {
+                        if (switch18.IsSwitchStraight)
+                            LastRouteTrackBackward = tc9;
+                        else
+                            LastRouteTrackBackward = tcsw22;
+                    }
+
+                    if (LastRouteTrackBackward == tc11)
+                    {
+                        if (!switch20.IsSwitchStraight && switch18.IsSwitchStraight)
+                            LastRouteTrackBackward = tcsw22;
+                        else
+                            LastRouteTrackBackward = tc11;
+                    }
+
+                    if (LastRouteTrackBackward == tc10)
+                    {
+                        if (switch22.IsSwitchStraight)
+                            LastRouteTrackBackward = tcsw22;
+                        else
+                            LastRouteTrackBackward = tc14;
+                    }
+
+                    if (LastRouteTrackBackward == tc12A)
+                    {
+                        if (switch21.IsSwitchStraight)
+                            LastRouteTrackBackward = tc12_12;
+                        else
+                            LastRouteTrackBackward = tc13;
+                    }
+
+                    if (LastRouteTrackBackward == tc12_12)
+                    {
+                        if (switch19.IsSwitchStraight)
+                            LastRouteTrackBackward = tc12;
+                        else
+                            LastRouteTrackBackward = tc12_12;
+                    }
+                    if (LastRouteTrackBackward == tc13)
+                    {
+                        if (switch19.IsSwitchStraight)
+                            LastRouteTrackBackward = tc13;
+                        else
+                            LastRouteTrackBackward = tc12;
+                    }
+
+                    if (LastRouteTrackBackward == tcsw22 || LastRouteTrackBackward == tcsw18 || LastRouteTrackBackward == tcsw20)
+                    {
+                        if (switch22.IsSwitchStraight)
+                            LastRouteTrackBackward = tcsw22;
+                        else
+                            LastRouteTrackBackward = tc14;
+                    }
                 }
             }
-            else
-                OccupiedTrack = startTrack;
-            Debug.Log("Occupied  " + OccupiedTrack);
-        }        
+        }
+        else
+        {
+            OccupiedTrack = startTrack;
+            if(_direction == 1)
+                LastRouteTrackForward = startTrack;
+            else if (_direction == -1)
+                LastRouteTrackBackward = startTrack;            
+        }
+        Debug.Log("OccupiedTrack  " + OccupiedTrack);
+        Debug.Log("LastRouteTrackForward  " + LastRouteTrackForward);
+        Debug.Log("LastRouteTrackBackward  " + LastRouteTrackBackward);
         
-
     }
 
 
-    void Start()
+    
+
+    public void MakePathInBothDirections()
     {
-        routes = new List<RouteObject>();
-        engine = GameObject.Find("Engine").GetComponent<Engine>();
-        Invoke("MakePath", 0.1f);        
-
-
+        MakePath(1);
+        MakePath(-1);
     }
 
     private void FixedUpdate()
@@ -561,7 +729,7 @@ public class Route : Singleton<Route> {
         }
         else Debug.Log("Duplicate");
 
-        MakePath();
+        MakePathInBothDirections();
     }      
 
     private void RouteManage(RouteObject ro,  string routeName)
@@ -1253,5 +1421,30 @@ public class Route : Singleton<Route> {
         }
     }
 
+    public TrackCircuit LastRouteTrackForward
+    {
+        get
+        {
+            return lastRouteTrackForward;
+        }
+
+        set
+        {
+            lastRouteTrackForward = value;
+        }
+    }
+
+    public TrackCircuit LastRouteTrackBackward
+    {
+        get
+        {
+            return lastRouteTrackBackward;
+        }
+
+        set
+        {
+            lastRouteTrackBackward = value;
+        }
+    }
 }
 

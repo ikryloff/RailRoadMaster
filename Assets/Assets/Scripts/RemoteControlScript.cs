@@ -8,9 +8,7 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
     [SerializeField]
     private GameObject remoteControll;
     [SerializeField]
-    private GameObject gamePanels;
-    [SerializeField]
-    private GameObject joystickObject;
+    private GameObject gamePanels;   
     [SerializeField]
     private GameObject remoteControlPanel;
     [SerializeField]
@@ -72,7 +70,6 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
         {
             remoteControll.gameObject.SetActive(false);
             gamePanels.gameObject.SetActive(true);
-            joystickObject.gameObject.SetActive(true);
             remoteControlPanel.gameObject.SetActive(false);
             IsRemoteControllerOn = false;
             cc.CanMoveCamera = true;
@@ -81,7 +78,6 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
         {
             remoteControll.gameObject.SetActive(true);
             gamePanels.gameObject.SetActive(false);
-            joystickObject.gameObject.SetActive(false);
             remoteControlPanel.gameObject.SetActive(true);
             IsRemoteControllerOn = true;
             cc.CanMoveCamera = false;

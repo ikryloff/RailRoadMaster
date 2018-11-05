@@ -25,6 +25,7 @@ public class TrackCircuit : MonoBehaviour {
     private void Awake()
     {
         trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
+        
     }
 
 
@@ -42,7 +43,7 @@ public class TrackCircuit : MonoBehaviour {
             allCells[2] = cellsTurn;
         }
         SetCellsLight(allCells, Constants.TC_DEFAULT);
-
+        GetTrackLightsByTrack(this);
     }
 
 
@@ -194,7 +195,7 @@ public class TrackCircuit : MonoBehaviour {
     }
     public void GetTrackLightsByTrack(TrackCircuit track)
     {
-        if (track.name == "Track_10_14_18" || track.name == "TrackCircuitSw18" || track.name == "TrackCircuitSw20" || track.name == "TrackCircuitSw22")
+        if (track.name == "Track_10_14_18" || track.name == "TrackCircuitSw18" || track.name == "TrackCircuitSw20" || track.name == "TrackCircuitSw22" || track.name == "Track_9" )
         {
             TrackLightsNames = new string[] { "M3", "End10" };
         }
@@ -202,7 +203,11 @@ public class TrackCircuit : MonoBehaviour {
         {
             TrackLightsNames = new string[] { "End10_11", "End10" };
         }
-        if (track.name == "Track_12" || track.name == "Track_13")
+        if (track.name == "Track_12" )
+        {
+            TrackLightsNames = new string[] { "End12_13N", "End12_13CH" };
+        }
+        if (track.name == "Track_13")
         {
             TrackLightsNames = new string[] { "End12_13N", "End12_13CH" };
         }
@@ -213,7 +218,7 @@ public class TrackCircuit : MonoBehaviour {
         if (track.name == "Track_6")
         {
             TrackLightsNames = new string[] { "End6", "M2" };
-        }
+        }        
         if (track.name == "Track_2")
         {
             TrackLightsNames = new string[] { "N2", "CH2" };
@@ -255,17 +260,18 @@ public class TrackCircuit : MonoBehaviour {
             TrackLightsNames = new string[] { "End14", "End14SW" };
         }
 
-        if (track.name == "TrackCircuitSw14" || track.name == "TrackCircuitSw12" || track.name == "TrackCircuitSw10")
+        if (track.name == "TrackCircuitSw14" )
         {
             TrackLightsNames = new string[] { "End6", "End14SW" };
-        }
-
+        }     
 
         TrackLights = new TrafficLights[2];
 
         for (int i = 0; i < TrackLightsNames.Length; i++)
         {
             TrackLights[i] = trafficLightsManager.GetTrafficLightByName(TrackLightsNames[i]);
+            if (TrackLightsNames[i] == "End12_13N" && track.name == "Track_12")
+                Debug.Log(TrackLights[i]);
         }        
     }
 }

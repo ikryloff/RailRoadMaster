@@ -10,6 +10,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private string endRoute;
     private TrafficLights startLight;
     private TrafficLights endLight;
+    [SerializeField]
     public TrafficLights[] trafficLights;
     private TrafficLights tempLight = null;
     [SerializeField]
@@ -210,10 +211,12 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     {
         foreach (TrafficLights tl in trafficLights)
         {
-            if (lightName == tl.Name)
+            if (tl.name.Equals(lightName))
+            {                
                 return tl;
+            }            
         }
-        return null;
+        return null;  
     }
 
 

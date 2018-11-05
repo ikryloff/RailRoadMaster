@@ -14,6 +14,7 @@ public class Switch : MonoBehaviour {
     private SpriteRenderer straightIndicator;
     private SwitchManager switchManager;    
     private int timesLocked = 0;
+    Route route;
 
     [SerializeField]
     private bool isSwitchStraight;
@@ -25,7 +26,7 @@ public class Switch : MonoBehaviour {
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();
         IsSwitchStraight = true;
         DirectionStraight();
-        
+        route = GameObject.Find("Route").GetComponent<Route>();
     }
     
 
@@ -55,7 +56,8 @@ public class Switch : MonoBehaviour {
             else
             {
                 DirectionStraight();
-            }            
+            }
+            route.MakePathInBothDirections();
         }
         else Debug.Log("Locked");
     } 

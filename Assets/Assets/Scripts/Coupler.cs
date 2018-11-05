@@ -12,7 +12,7 @@ public class Coupler : MonoBehaviour
     private bool isActiveCoupler;
     [SerializeField]
     private bool isPassiveCoupleConnected;
-    private HingeJoint2D jointCar;
+    private FixedJoint2D jointCar;    
     [SerializeField]
     private Coupler connectedToActive;
     private CompositionManager cm;
@@ -28,7 +28,7 @@ public class Coupler : MonoBehaviour
             {
                 otherCouplerRB = OtherCoupler.GetComponent<Rigidbody2D>();
                 otherRollingStock = OtherCoupler.transform.parent.GetComponent<RollingStock>();
-                jointCar = gameObject.AddComponent<HingeJoint2D>();
+                jointCar = gameObject.AddComponent<FixedJoint2D>();
                 jointCar.connectedBody = otherCouplerRB;
                 jointCar.anchor = new Vector2(10, 0); //hardcoded joint point                
                 jointCar.autoConfigureConnectedAnchor = true;
@@ -58,7 +58,7 @@ public class Coupler : MonoBehaviour
 
                 if (hitPoint.point.x - gameObject.transform.position.x > 0)
                 {
-                    jointCar = gameObject.AddComponent<HingeJoint2D>();
+                    jointCar = gameObject.AddComponent<FixedJoint2D>();
                     jointCar.connectedBody = otherCouplerRB;
                     jointCar.anchor = new Vector2(10, 0); //hardcoded joint point                
                     jointCar.autoConfigureConnectedAnchor = true;
@@ -79,7 +79,7 @@ public class Coupler : MonoBehaviour
     }
 
 
-    public HingeJoint2D JointCar
+    public FixedJoint2D JointCar
     {
         get
         {

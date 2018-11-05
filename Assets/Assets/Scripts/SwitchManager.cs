@@ -62,7 +62,7 @@ public class SwitchManager : Singleton<SwitchManager>
                         switchObject = hit.collider.transform.parent.gameObject;
                         Switch sw = switchObject.GetComponent<Switch>();
                         sw.ChangeDirection();                        
-                        route.MakePath();
+                        route.MakePath(engine.Direction);
                         engine.GetAllExpectedCarsByDirection(engine.Direction);
                         engine.GetExpectedCar();
                     }

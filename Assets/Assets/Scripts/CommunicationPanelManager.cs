@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class RequestRouteManager : Singleton<RequestRouteManager> {
+public class CommunicationPanelManager : Singleton<CommunicationPanelManager>
+{
     [SerializeField]
     private GameObject communicationList;
     [SerializeField]
@@ -17,7 +18,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
     [SerializeField]
     private GameObject cancelBtn;
     [SerializeField]
-    private Button [] routeButtons;
+    private Button[] routeButtons;
     private bool isRouteRequestRun;
     private string resultRoute = "";
     private TrafficLightsManager tlm;
@@ -28,9 +29,9 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
     private TrafficLights startLight;
     private TrafficLights endLight;
     [SerializeField]
-    private List <Button> routeBtns;
-    private string [] routes;
-    private string report;
+    private List<Button> routeBtns;
+    private string[] routes;
+    
 
     private void Awake()
     {
@@ -43,7 +44,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         {
             Button tBtn = btn.GetComponent<Button>();
             routeBtns.Add(tBtn);
-            tBtn.gameObject.SetActive(false);            
+            tBtn.gameObject.SetActive(false);
         }
     }
 
@@ -53,7 +54,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         IsRouteRequestRun = false;
         CommunicationList.SetActive(true);
         RouteButtonsList.SetActive(false);
-        EngineerList.SetActive(false);
+        EngineerList.SetActive(true);
         CancelRouteList.SetActive(false);
     }
 
@@ -64,7 +65,6 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         IsRouteRequestRun = false;
         ResultRoute = "";
         RouteButtonsList.SetActive(false);
-        EngineerList.SetActive(false);
         CancelRouteList.SetActive(false);
     }
     public void ShowRouteList()
@@ -73,7 +73,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         IsRouteRequestRun = true;
         RouteButtonsList.SetActive(true);
         CommunicationList.SetActive(false);
-       
+
     }
 
     public void ShowCancelRouteList()
@@ -97,78 +97,14 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
                 routeBtns.ElementAt(index).GetComponentInChildren<Text>().text = ro.RouteName;
                 routes[index] = ro.RouteName;
                 index++;
-                
+
             }
 
         }
     }
 
-    public void GetTheDistanceToStop()
-    {
-        report = "";
-        int pastDirection = engine.Direction;
-        bool pastPathChecking = route.IsPathCheckingForward;
-        GetDistanceToStopByDirection(1);
-        GetDistanceToStopByDirection(-1);
-        engine.Direction = pastDirection;
-        route.IsPathCheckingForward = pastPathChecking;
-    }
+    
 
-    public void GetDistanceToStopByDirection(int _direction)
-    {
-        int trackLightNum;
-        engine.GetTrack();        
-        engine.Direction = _direction;
-        route.IsPathCheckingForward = _direction == 1 ? true : false;
-        trackLightNum = _direction == 1 ? 1 : 0;
-        route.MakePath();
-        engine.GetAllExpectedCarsByDirection(_direction);
-        engine.GetExpectedCar();
-        float distanceToCar = engine.NearestCar ? engine.DistanceToCar : float.MaxValue;
-        float distanceToLight = float.MaxValue;
-
-
-        if (engine.Track.TrackLights[trackLightNum] && engine.Track.TrackLights[trackLightNum].IsClosed && engine.IsEngineGoesAheadByDirection(_direction))
-        {
-            engine.GetDistanceToLight(engine.Track.TrackLights[trackLightNum]);
-            distanceToLight = engine.DistanceToLight;            
-        } 
-        else
-        {
-            distanceToLight = float.MaxValue;            
-        }
-        ShowDistanceToStop(_direction, distanceToCar, distanceToLight);
-    }
-
-    public void ShowDistanceToStop(int _direction, float dToCar, float dToLight)
-    {
-        if (_direction == 1)
-        {
-            
-            if (dToCar < dToLight)
-               report += " Disance to Car forward " + ((dToCar - 300) / 300);
-            else if (dToCar > dToLight)
-               report += " Disance to signal forward " + ((dToLight - 150) / 300);
-            else
-                report += " Forward can't say!";
-
-        }
-
-        if (_direction == -1)
-        {
-
-            if (dToCar < dToLight)
-                report += " Disance to Car backward " + ((dToCar - 300) / 300);
-            else if(dToCar > dToLight)
-                report += " Disance to signal backward " + ((dToLight - 150 ) / 300);
-             else
-                report += " Backward can't say!!";
-        }
-
-        Debug.Log(report);
-        
-    }
-        
 
     public void CancelRouteByButton(Button button)
     {
@@ -181,21 +117,14 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
             route.DestroyRouteByRouteName(routes[2]);
     }
 
-    public void ShowEngineerList()
-    {
-        CommunicationList.SetActive(false);        
-        RouteButtonsList.SetActive(false);
-        EngineerList.SetActive(true);
-        CancelRouteList.SetActive(false);
-    }
 
 
     public void GetStringRoute(Button placeBtn)
-    {        
+    {
         if (IsRouteRequestRun)
         {
             ResultRoute += placeBtn.name;
-            placeBtn.interactable = false;            
+            placeBtn.interactable = false;
             IsRouteRequestRun = false;
             LeavePossibleRoutesButtons(placeBtn);
         }
@@ -203,7 +132,6 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         {
             IsRouteRequestRun = true;
             ResultRoute += placeBtn.name;
-            Debug.Log("result " + ResultRoute);
             MakeRouteForConductor(ResultRoute);
             foreach (Button btn in RouteButtons)
             {
@@ -215,7 +143,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
 
     private void MakeRouteForConductor(string routeAsk)
     {
-        
+
         foreach (string[] light in routeParseList)
         {
             if (light[0].Equals(routeAsk))
@@ -223,7 +151,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
                 startLight = tlm.GetTrafficLightByName(light[1]);
                 endLight = tlm.GetTrafficLightByName(light[2]);
                 tlm.MakeRouteIfPossible(startLight, endLight);
-            }   
+            }
         }
 
 
@@ -232,26 +160,26 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
 
     private void LeavePossibleRoutesButtons(Button button)
     {
-        if(button.name == "6")
-            FindPossibleRoutesButtons(new string[] { "6", "7", "T", "8" });    
+        if (button.name == "6")
+            FindPossibleRoutesButtons(new string[] { "6", "7", "T", "8" });
         else if (button.name == "S")
-            FindPossibleRoutesButtons(new string[] { "S", "8", "T", "I", "2", "3", "4", "5", "7" });        
-        else if (button.name == "T" )
+            FindPossibleRoutesButtons(new string[] { "S", "8", "T", "I", "2", "3", "4", "5", "7" });
+        else if (button.name == "T")
             FindPossibleRoutesButtons(new string[] { "6", "7", "S", "T" });
         else if (button.name == "7")
             FindPossibleRoutesButtons(new string[] { "6", "S", "8", "T", "7" });
         else if (button.name == "8")
-            FindPossibleRoutesButtons(new string[] { "S", "7", "I", "2", "3", "4", "5", "6", "8" });        
-        else 
-            FindPossibleRoutesButtons(new string[] { "S", "I", "2", "3", "4", "5", "8" });       
+            FindPossibleRoutesButtons(new string[] { "S", "7", "I", "2", "3", "4", "5", "6", "8" });
+        else
+            FindPossibleRoutesButtons(new string[] { "S", "I", "2", "3", "4", "5", "8" });
     }
 
 
-    private void FindPossibleRoutesButtons(string [] btnFalseArr)
+    private void FindPossibleRoutesButtons(string[] btnFalseArr)
     {
         foreach (Button btn in RouteButtons)
-        {            
-                btn.interactable = true;            
+        {
+            btn.interactable = true;
         }
 
         foreach (string fButton in btnFalseArr)
@@ -261,13 +189,13 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
                 if (btn.name == fButton)
                 {
                     btn.interactable = false;
-                }               
+                }
             }
         }
-        
+
     }
 
-  
+
 
     public GameObject CommunicationList
     {
@@ -295,7 +223,7 @@ public class RequestRouteManager : Singleton<RequestRouteManager> {
         }
     }
 
-    public GameObject CancelBtn{ get; set; }
+    public GameObject CancelBtn { get; set; }
 
     public bool IsRouteRequestRun { get; set; }
 
