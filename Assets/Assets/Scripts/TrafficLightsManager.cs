@@ -166,20 +166,18 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
        
 
     // Check possible Routes By Lights
-    public bool IsPossibleLight (String[,] arr, TrafficLights first, TrafficLights second )
+    public bool IsPossibleLight (String[][] arr, TrafficLights first, TrafficLights second )
     {
         string start = first.Name;
         string end = second.Name;
-
-        int n = arr.GetLength(0);
-        int m = arr.GetLength(1);        
-        for (int i = 0; i < n; i++)
+             
+        for (int i = 0; i < arr.Length; i++)
         {
-            if (start == arr[i, 0])
+            if (start == arr[i][0])
             {
-                for (int j = 1; j < m; j++)
+                for (int j = 1; j < arr[i].Length; j++)
                 {
-                    if (end == arr[i, j])
+                    if (end == arr[i][j])
                         return true;
                 }                
             }

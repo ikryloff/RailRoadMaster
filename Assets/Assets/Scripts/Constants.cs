@@ -24,27 +24,27 @@ public class Constants {
     public static int TC_OVER = 1;
     public static int TC_USED = 2;
 
-    public static string[,] POSSIBLE_LIGHTS = new string[,]
+    public static string [][] POSSIBLE_LIGHTS = new []
     {
        //Even part
-        {"NI", "M2", "CH","","","",""},
-        {"N2", "M2", "CH","","","",""},
-        {"N3", "M2", "CH","","","",""},
-        {"N4", "M2", "CH","","","",""},
-        {"N5", "M2", "CH","","","",""},
-        {"M3", "M2", "", "", "","", ""},
-        {"M2", "N2", "NI", "N3", "N4","N5","M3"},
-        {"CH", "CH2", "CHI", "CH3", "CH4","CH5", ""},
+        new string[] {"NI", "M2", "CH"},
+        new string[]{"N2", "M2", "CH"},
+        new string[]{"N3", "M2", "CH"},
+        new string[]{"N4", "M2", "CH"},
+        new string[]{"N5", "M2", "CH"},
+        new string[]{"M3", "M2"},
+        new string[]{"M2", "N2", "NI", "N3", "N4","N5","M3"},
+        new string[]{"CH", "CH2", "CHI", "CH3", "CH4","CH5"},
         //Odd part
-        {"CHI", "M1", "N","M5","","",""},
-        {"CH2", "M1", "N","M5","","",""},
-        {"CH3", "M1", "N","M5","","",""},
-        {"CH4", "M1", "N","M5","","",""},
-        {"CH5", "M1", "N","M5","","",""},
-        {"M1", "CH2", "CHI", "CH3", "CH4","CH5", ""},
-        {"M5", "CH2", "CHI", "CH3", "CH4","CH5", "M4"},
-        {"M4", "M5", "", "", "","",""},
-        {"N", "N2", "NI", "N3", "N4","N5", ""},
+        new string[]{"CHI", "M1", "N","M5"},
+        new string[]{"CH2", "M1", "N","M5"},
+        new string[]{"CH3", "M1", "N","M5"},
+        new string[]{"CH4", "M1", "N","M5"},
+        new string[]{"CH5", "M1", "N","M5"},
+        new string[]{"M1", "CH2", "CHI", "CH3", "CH4","CH5"},
+        new string[]{"M5", "CH2", "CHI", "CH3", "CH4","CH5", "M4"},
+        new string[]{"M4", "M5"},
+        new string[]{"N", "N2", "NI", "N3", "N4","N5"},
 
     };
     public static List <string[]> CONDUCTOR_ROUTE_ASK = new List<string[]>()

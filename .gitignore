@@ -333,3 +333,200 @@ Assets/Virtual Joystick Pack/Scripts/Joysticks/FloatingJoystick.cs
 Assets/Virtual Joystick Pack/Scripts/Joysticks/VariableJoystick.cs
 Assets/Virtual Joystick Pack/Examples/3D Example/Player3DExample.cs
 Assets/Virtual Joystick Pack/Examples/2D Example/Player2DExample.cs
+Assets/SVG Importer/changelog.txt
+Assets/SVG Importer/Editor/AssetPostprocessor/SVGPostprocessor.cs
+Assets/SVG Importer/Editor/Core/SVGAssetEditor.cs
+Assets/SVG Importer/Editor/Core/SVGColliderEditor.cs
+Assets/SVG Importer/Editor/Core/SVGFrameAnimatorEditor.cs
+Assets/SVG Importer/Editor/Core/SVGImageEditor.cs
+Assets/SVG Importer/Editor/Core/SVGImporterEditor.cs
+Assets/SVG Importer/Editor/Core/SVGRendererEditor.cs
+Assets/SVG Importer/Editor/Core/SVGUVModifierEditor.cs
+Assets/SVG Importer/Editor/Debug/SVGDebugMeshEditor.cs
+Assets/SVG Importer/Editor/PropertyDrawers/SVGBoundsPropertyDrawer.cs
+Assets/SVG Importer/Editor/Shader/StandardSVGShaderGUI.cs
+Assets/SVG Importer/Editor/Utils/Coroutines/EditorCoroutine.cs
+Assets/SVG Importer/Editor/Utils/MenuOptions.cs
+Assets/SVG Importer/Editor/Utils/SVGEditorHandles.cs
+Assets/SVG Importer/Editor/Utils/SVGGizmos.cs
+Assets/SVG Importer/Editor/Utils/SVGHandles.cs
+Assets/SVG Importer/Editor/Utils/SVGImporterLaunchEditor.cs
+Assets/SVG Importer/Editor/Utils/SVGImporterSettingsEditor.cs
+Assets/SVG Importer/Editor/Windows/ModalWindow.cs
+Assets/SVG Importer/Editor/Windows/SVGAboutWindow.cs
+Assets/SVG Importer/Editor/Windows/SVGEditorUtility.cs
+Assets/SVG Importer/Editor/Windows/SVGEditorWindow.cs
+Assets/SVG Importer/Editor/Windows/SVGReportBugWindow.cs
+Assets/SVG Importer/Editor/Windows/SVGUtilityWindow.cs
+Assets/SVG Importer/Example Project/Curves Demo/Animation/City.controller
+Assets/SVG Importer/Example Project/Curves Demo/Animation/CityAnimation.anim
+Assets/SVG Importer/Example Project/Curves Demo/Animation/Space.controller
+Assets/SVG Importer/Example Project/Curves Demo/Animation/SpaceAnimation.anim
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/CanvasController.controller
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/CanvasDefault.anim
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/CanvasEnd.anim
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/CanvasRed.anim
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/CanvasStart.anim
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/Circle Octagon.controller
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/Circle Quadrant.controller
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/Circles.anim
+Assets/SVG Importer/Example Project/Curves Demo/Animation/UI/Circles.controller
+Assets/SVG Importer/Example Project/Curves Demo/Graphics/Particles/OpaqueParticles.mat
+Assets/SVG Importer/Example Project/Curves Demo/Music/bensound-dubstep.mp3
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Animation/AnimationActions.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Animation/Editor/AnimationActionPropertyDrawer.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Animation/Editor/AnimationActionsEditor.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Audio/AudioCameraZoom.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Audio/AudioColor.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Audio/AudioEvent.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Audio/AudioMove.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Audio/AudioRotate.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Audio/AudioScale.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Audio/AudioSpectrum.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Camera/CameraSorting.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Layout/Instanced.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Layout/Instancer.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Layout/InstancerGrid.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Layout/InstancerSpiral.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Utils/OpenUrl.cs
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Utils/Reorderable List Field/Editor/Editor.ReorderableList.dll
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Utils/Reorderable List Field/Editor/Editor.ReorderableList.xml
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Utils/Reorderable List Field/LICENSE.txt
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Utils/Reorderable List Field/README.txt
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Utils/Reorderable List Field/Support/API Reference.chm
+Assets/SVG Importer/Example Project/Curves Demo/Scripts/Utils/Reorderable List Field/Support/API Reference.chw
+Assets/SVG Importer/Example Project/Realtime Import Demo/Scripts/RealtimeImportDemo.cs
+Assets/SVG Importer/Plugins/Clipper/clipper.cs
+Assets/SVG Importer/Plugins/Clipper/SVGClipPath.cs
+Assets/SVG Importer/Plugins/Core/Animation/SVGFrameAnimator.cs
+Assets/SVG Importer/Plugins/Core/Animation/SVGLegacyAnimator.cs
+Assets/SVG Importer/Plugins/Core/Data/QuadTree.cs
+Assets/SVG Importer/Plugins/Core/Data/SVGDepthTree.cs
+Assets/SVG Importer/Plugins/Core/Data/SVGImporterSettings.cs
+Assets/SVG Importer/Plugins/Core/Data/SVGLineData.cs
+Assets/SVG Importer/Plugins/Core/Fills/CCGradient.cs
+Assets/SVG Importer/Plugins/Core/Fills/SVGFill.cs
+Assets/SVG Importer/Plugins/Core/Implementation/CSS/CSSParser.cs
+Assets/SVG Importer/Plugins/Core/Implementation/RenderingEngine/SVGConicalGradientBrush.cs
+Assets/SVG Importer/Plugins/Core/Implementation/RenderingEngine/SVGGraphics.cs
+Assets/SVG Importer/Plugins/Core/Implementation/RenderingEngine/SVGLinearGradientBrush.cs
+Assets/SVG Importer/Plugins/Core/Implementation/RenderingEngine/SVGRadialGradientBrush.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicShapes/SVGCircleElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicShapes/SVGEllipseElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicShapes/SVGLineElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicShapes/SVGPolygonElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicShapes/SVGPolylineElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicShapes/SVGRectElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicTypes/SVGColor.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicTypes/SVGLength.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicTypes/SVGPaintable.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicTypes/SVGParentable.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/BasicTypes/SVGTransformable.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Coordinate_Transform_Units/SVGMatrix.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Coordinate_Transform_Units/SVGTransform.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Coordinate_Transform_Units/SVGTransformList.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/DocumentStructure/SVGDocument.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/DocumentStructure/SVGElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/GradientsNPatterns/SVGConicalGradientElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/GradientsNPatterns/SVGGradientElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/GradientsNPatterns/SVGLinearGradientElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/GradientsNPatterns/SVGRadialGradientElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/GradientsNPatterns/SVGStopElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Others/SVGClipPathElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/Interfaces/ISVGDrawable.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathElement.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSeg.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegArcAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegArcRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegClosePath.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoCubic.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoCubicAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoCubicRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoCubicSmoothAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoCubicSmoothRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoQuadratic.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoQuadraticAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoQuadraticRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoQuadraticSmoothAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegCurvetoQuadraticSmoothRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegLinetoAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegLinetoHorizontalAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegLinetoHorizontalRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegLinetoRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegLinetoVerticalAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegLinetoVerticalRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegList.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegMovetoAbs.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Paths/SVGPathSegMovetoRel.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Utilities/DOMException.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Utilities/LiteStack.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Utilities/SVGColorExtractor.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Utilities/SVGException.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Utilities/SVGLengthConvertor.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Utilities/SVGStringExtractor.cs
+Assets/SVG Importer/Plugins/Core/Implementation/SVG/DOM/Utilities/SVGViewport.cs
+Assets/SVG Importer/Plugins/Core/Implementation/XML Parser/AttributeList.cs
+Assets/SVG Importer/Plugins/Core/Implementation/XML Parser/SmallXmlParser.cs
+Assets/SVG Importer/Plugins/Core/Implementation/XML Parser/SVGParser.cs
+Assets/SVG Importer/Plugins/Core/Interfaces/ISVGModify.cs
+Assets/SVG Importer/Plugins/Core/Interfaces/ISVGRenderer.cs
+Assets/SVG Importer/Plugins/Core/Interfaces/ISVGShape.cs
+Assets/SVG Importer/Plugins/Core/Math/SVGBezier.cs
+Assets/SVG Importer/Plugins/Core/Math/SVGBounds.cs
+Assets/SVG Importer/Plugins/Core/Math/SVGGeom.cs
+Assets/SVG Importer/Plugins/Core/Math/SVGMath.cs
+Assets/SVG Importer/Plugins/Core/Mesh/SVGCombineMesh.cs
+Assets/SVG Importer/Plugins/Core/Mesh/SVGGeomUtils.cs
+Assets/SVG Importer/Plugins/Core/Mesh/SVGLineUtils.cs
+Assets/SVG Importer/Plugins/Core/Mesh/SVGMesh.cs
+Assets/SVG Importer/Plugins/Core/Mesh/SVGMeshCutter.cs
+Assets/SVG Importer/Plugins/Core/Mesh/SVGMeshUtils.cs
+Assets/SVG Importer/Plugins/Core/Mesh/SVGSimplePath.cs
+Assets/SVG Importer/Plugins/Core/Modifiers/SVGUVModifier.cs
+Assets/SVG Importer/Plugins/Core/SVGAsset.cs
+Assets/SVG Importer/Plugins/Core/SVGAssetImport.cs
+Assets/SVG Importer/Plugins/Core/SVGAtlas.cs
+Assets/SVG Importer/Plugins/Core/SVGCollider2D.cs
+Assets/SVG Importer/Plugins/Core/SVGDocumentAsset.cs
+Assets/SVG Importer/Plugins/Core/SVGImage.cs
+Assets/SVG Importer/Plugins/Core/SVGPath.cs
+Assets/SVG Importer/Plugins/Core/SVGRenderer.cs
+Assets/SVG Importer/Plugins/Core/SVGRenderTexture.cs
+Assets/SVG Importer/Plugins/Core/SVGSorter.cs
+Assets/SVG Importer/Plugins/Core/SVGStrokeRenderer.cs
+Assets/SVG Importer/Plugins/Debug/SVGDebug.cs
+Assets/SVG Importer/Plugins/Debug/SVGDebugMesh.cs
+Assets/SVG Importer/Plugins/Debug/SVGDebugPoints.cs
+Assets/SVG Importer/Plugins/LibTessDotNet/Dict.cs
+Assets/SVG Importer/Plugins/LibTessDotNet/Geom.cs
+Assets/SVG Importer/Plugins/LibTessDotNet/LibTessDotNet-LICENSE.txt
+Assets/SVG Importer/Plugins/LibTessDotNet/Mesh.cs
+Assets/SVG Importer/Plugins/LibTessDotNet/MeshUtils.cs
+Assets/SVG Importer/Plugins/LibTessDotNet/PriorityHeap.cs
+Assets/SVG Importer/Plugins/LibTessDotNet/PriorityQueue.cs
+Assets/SVG Importer/Plugins/LibTessDotNet/Sweep.cs
+Assets/SVG Importer/Plugins/LibTessDotNet/Tess.cs
+Assets/SVG Importer/Plugins/Materials/Standard SVG Opaque.mat
+Assets/SVG Importer/Plugins/Materials/Standard SVG Transparent.mat
+Assets/SVG Importer/Plugins/Shaders/Resources/Gradient Fill/GradientColorAdditive.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Gradient Fill/GradientColorAlphaBlended.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Gradient Fill/GradientColorMultiply.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Gradient Fill/GradientColorOpaque.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Solid Fill/SolidColorAdditive.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Solid Fill/SolidColorAlphaBlended.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Solid Fill/SolidColorDiffuseAlphaBlended.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Solid Fill/SolidColorDiffuseOpaque.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Solid Fill/SolidColorMultiply.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Solid Fill/SolidColorOpaque.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Standard/StandardSpecularSVG.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Standard/StandardSVG.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/Standard/UnitySVG.cginc
+Assets/SVG Importer/Plugins/Shaders/Resources/UI/UI.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/UI/UILegacy.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/UI/UIMask.shader
+Assets/SVG Importer/Plugins/Shaders/Resources/UI/UIMaskLegacy.shader
+Assets/SVG Importer/Plugins/Utils/FileSizeFormatProvider.cs
+Assets/SVG Importer/Plugins/Utils/SVGArrayUtils.cs
+Assets/SVG Importer/Plugins/Utils/SVGShader.cs
+Assets/SVG Importer/Plugins/Utils/SVGTransform2D.cs
+Assets/SVG Importer/Plugins/Utils/SVGUtils.cs
