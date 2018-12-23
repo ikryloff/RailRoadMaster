@@ -31,10 +31,11 @@ public class CommunicationPanelManager : Singleton<CommunicationPanelManager>
     [SerializeField]
     private List<Button> routeBtns;
     private string[] routes;
-    
+    private TextBuilder textBuilder;
 
     private void Awake()
     {
+        textBuilder = GameObject.FindObjectOfType<TextBuilder>();
         tlm = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
         route = GameObject.Find("Route").GetComponent<Route>();
         routeParseList = Constants.CONDUCTOR_ROUTE_ASK;
@@ -143,19 +144,25 @@ public class CommunicationPanelManager : Singleton<CommunicationPanelManager>
 
     private void MakeRouteForConductor(string routeAsk)
     {
-
+     
         foreach (string[] light in routeParseList)
         {
             if (light[0].Equals(routeAsk))
             {
                 startLight = tlm.GetTrafficLightByName(light[1]);
                 endLight = tlm.GetTrafficLightByName(light[2]);
+                //Message
+                if (startLight && endLight)
+                {
+                    string messageText = string.Format("YM, need a route from {0} to {1}", routeAsk.Substring(0, 1), routeAsk.Substring(1, 1));
+                    textBuilder.PrintMessage(messageText, "Conductor:");
+                }
+                ///
                 tlm.MakeRouteIfPossible(startLight, endLight);
             }
         }
 
-
-
+        
     }
 
     private void LeavePossibleRoutesButtons(Button button)

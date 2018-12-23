@@ -269,9 +269,7 @@ public class TrackCircuit : MonoBehaviour {
 
         for (int i = 0; i < TrackLightsNames.Length; i++)
         {
-            TrackLights[i] = trafficLightsManager.GetTrafficLightByName(TrackLightsNames[i]);
-            if (TrackLightsNames[i] == "End12_13N" && track.name == "Track_12")
-                Debug.Log(TrackLights[i]);
+            TrackLights[i] = trafficLightsManager.GetTrafficLightByName(TrackLightsNames[i]);            
         }        
     }
 }

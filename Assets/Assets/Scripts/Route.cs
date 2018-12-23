@@ -79,10 +79,12 @@ public class Route : Singleton<Route> {
     [SerializeField]
     private Button cancelRouteButton;
     SwitchManager switchManager;
-
+    private TextBuilder textBuilder;
+    private string messageText;
 
     private void Awake()
     {
+        textBuilder = GameObject.FindObjectOfType<TextBuilder>();
         TrackCircuit[] tempArr = GameObject.FindObjectsOfType<TrackCircuit>();
         trackCircuits = new List<TrackCircuit>();
         for (int i = 0; i < tempArr.Length; i++)
@@ -712,22 +714,31 @@ public class Route : Singleton<Route> {
     {
                 
         routeName = startLight.Name + endLight.Name;
-        Debug.Log(routeName);
-        if (CheckRouteForDuplicates(routeName))
+        if (CheckRouteForDuplicates(startLight.Name))
         {
             TrafficLights[] tl = new TrafficLights[] { startLight, endLight };
-            route = gameObject.AddComponent<RouteObject>();
-            Debug.Log("Made route");
+            route = gameObject.AddComponent<RouteObject>();            
             route.TrafficLights = tl;
             routes.Add(route);
             route.RouteName = routeName;
 
+            //Message
+            messageText = string.Format("OK, prepare route from {0} at {1}", startLight.name, endLight.name);
+            textBuilder.PrintMessage(messageText, "Yardmaster:");
+            //
             RouteLightsManage(tl, true);
-            Debug.Log(route.RouteName);
             RouteManage(route, routeName);
             cancelRouteButton.interactable = true;
         }
-        else Debug.Log("Duplicate");
+        else
+        {
+            //Message
+            messageText = string.Format("We have another route from {0} ", startLight.name);
+            textBuilder.PrintMessage(messageText, "Yardmaster:");
+            ///
+            Debug.Log("Duplicate");
+        }
+            
 
         MakePathInBothDirections();
     }      
@@ -1113,25 +1124,32 @@ public class Route : Singleton<Route> {
                     // if the track of reception of train is NOT used in other route
                     if((!IsShunting(ro.TrafficLights) && ro.TrackCircuits.Last().UseMode != Constants.TC_WAIT) || IsShunting(ro.TrafficLights))
                     {
-                        Debug.Log("Make route direction " + ro.RouteName);
+                       // Debug.Log("Make route direction " + ro.RouteName);
                         RouteDirection(ro.SwitchesStr, Constants.DIR_STR);
                         RouteDirection(ro.SwitchesTurn, Constants.DIR_TURN);
                         foreach (TrackCircuit tc in ro.TrackCircuits)
                         {
                             tc.UseMode = Constants.TC_WAIT;
-                        }                        
-                        Debug.Log("Route Locked " + ro.RouteName);
+                        }
+                        //Debug.Log("Route Locked " + ro.RouteName);
+                        //Message
+                        messageText = string.Format("Route {0} is ready. You can go as will", ro.RouteName);
+                        textBuilder.PrintMessage(messageText, "Yardmaster:");
+                        //
                     }
                     else
                     {
-                        Debug.Log("Counter route");
+                        //Debug.Log("Counter route");
                         DestroyRoute(ro, false);
                     }
                         
                 }
                 else
                 {
-                    Debug.Log("Danger cross route");                    
+                    //Message
+                    messageText = string.Format("Can't do that, danger cross route");
+                    textBuilder.PrintMessage(messageText, "Yardmaster:");
+                    ///
                     DestroyRoute(ro, false);
                 }   
             }
@@ -1151,7 +1169,7 @@ public class Route : Singleton<Route> {
 
     private void DestroyRoute(RouteObject ro, bool withUnlock = true)
     {
-        Debug.Log("Destroy");
+        //Debug.Log("Destroy");        
         lightText.text = "None";
         RouteLightsManage(ro.TrafficLights, false);
         if (withUnlock)
@@ -1162,7 +1180,7 @@ public class Route : Singleton<Route> {
             {
                 tc.UseMode = Constants.TC_DEFAULT;
             }
-            Debug.Log("Unlock");
+            //Debug.Log("Unlock");
         }        
         routes.Remove(ro);
         Destroy(ro);
@@ -1207,13 +1225,13 @@ public class Route : Singleton<Route> {
     }
 
     // return true if the name is unique
-    private bool CheckRouteForDuplicates(String _routeName)
+    private bool CheckRouteForDuplicates(string startLight)
     {
         if (routes != null)
         {
             foreach (RouteObject ro in routes)
             {
-                if (_routeName == ro.RouteName )
+                if (startLight.Equals(ro.StartLight.Name))
                 {
                     return false;
                 }
@@ -1239,12 +1257,12 @@ public class Route : Singleton<Route> {
             }
                 
         }
-        Debug.Log("Not presence path ="  + dangerPresence);
-        Debug.Log("is Shunting: "  + IsShunting(trafficLights));
+       // Debug.Log("Not presence path ="  + dangerPresence);
+       // Debug.Log("is Shunting: "  + IsShunting(trafficLights));
         //if it is a train route, all tracks must be free
         if (!IsShunting(trafficLights) && last.IsCarPresence > 0)
             dangerPresence = false;
-        Debug.Log(" Not presence track =" + dangerPresence);
+        //Debug.Log(" Not presence track =" + dangerPresence);
         return dangerPresence;
     }
 

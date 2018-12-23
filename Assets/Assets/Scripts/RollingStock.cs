@@ -136,10 +136,10 @@ public class RollingStock : MonoBehaviour
 
         if (Brakes)
         {
-            if (rollingStockRB.velocity.x > 3f)
-                rollingStockRB.AddRelativeForce(new Vector2(-600, 0), ForceMode2D.Force);
-            else if (rollingStockRB.velocity.x < -3f)
-                rollingStockRB.AddRelativeForce(new Vector2(600, 0), ForceMode2D.Force);
+            if (rollingStockRB.velocity.x > 0.3f)
+                rollingStockRB.AddRelativeForce(new Vector2(-60, 0), ForceMode2D.Force);
+            else if (rollingStockRB.velocity.x < -0.3f)
+                rollingStockRB.AddRelativeForce(new Vector2(60, 0), ForceMode2D.Force);
             else
                 rollingStockRB.velocity = new Vector2(0, 0);
             
@@ -148,12 +148,12 @@ public class RollingStock : MonoBehaviour
         {
             if (rollingStockRB.velocity.x > 0)
             {
-                rollingStockRB.AddRelativeForce(new Vector2(-50f, 0), ForceMode2D.Force);
+                rollingStockRB.AddRelativeForce(new Vector2(-5f, 0), ForceMode2D.Force);
             }
             else if (rollingStockRB.velocity.x < 0)
-                rollingStockRB.AddRelativeForce(new Vector2(50f, 0), ForceMode2D.Force);
+                rollingStockRB.AddRelativeForce(new Vector2(5f, 0), ForceMode2D.Force);
 
-            rollingStockRB.AddRelativeForce(new Vector2(-80f, 0));
+            //rollingStockRB.AddRelativeForce(new Vector2(-8f, 0));
         }
 
     } 

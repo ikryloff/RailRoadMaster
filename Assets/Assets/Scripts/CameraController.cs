@@ -3,22 +3,77 @@ using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour {
     
-    private float mapMovingSpeed = 380f;
+    private float mapMovingSpeed = 38f;
     public Vector2 mapBorder;
-    public Vector2 mapLimit; 
+    public Vector3 mapLimit; 
     [SerializeField]
     private Rigidbody2D cameraTarget;   
     [SerializeField]
     private Rigidbody2D startPos;   
-    private Vector2 desiredPosition;
-    Vector2 smoothedPosition;
-    private float smoothSpeed = 10f;
+    private Vector3 desiredPosition;
+    Vector3 smoothedPosition;
+    private float smoothSpeed = 5f;
     private float lastTime;
     private bool myUpdate;
     private bool canMoveCamera = true;
     public float cameraSize;
     public Texture2D cursorForFocus;
     private bool isFocusModeIsOn;
+
+    float scrollSpeed = 20f;
+
+    private void Start()
+    {
+        IsFocusModeIsOn = false;
+        lastTime = Time.realtimeSinceStartup;
+        transform.position = startPos.position - new Vector2(0, 30f);
+        
+    }
+
+
+
+    void FixedUpdate()
+    {
+        MoveCamera(Time.deltaTime);
+       
+
+    }
+
+    private void LateUpdate()
+    {
+        if (MyUpdate)
+        {
+            float deltaTime = Time.realtimeSinceStartup - lastTime;
+            MoveCamera(deltaTime);
+            lastTime = Time.realtimeSinceStartup;
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            PauseGame();
+        }
+
+        if (IsFocusModeIsOn)
+        {
+            Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
+
+            if (hit.collider != null && hit.collider.tag == "FocusCarCollider")
+            {
+                Cursor.SetCursor(cursorForFocus, Vector2.zero, CursorMode.Auto);
+
+                if (Input.GetMouseButtonDown(1))
+                {
+                    CameraTarget = hit.collider.GetComponentInParent<Rigidbody2D>();
+                }
+            }
+        }
+        else if (!IsFocusModeIsOn)
+        {
+            CameraTarget = null;
+        }
+
+
+    }
 
     public Rigidbody2D CameraTarget
     {
@@ -72,57 +127,7 @@ public class CameraController : MonoBehaviour {
         }
     }
 
-    private void Start()
-    {
-        IsFocusModeIsOn = false;
-        lastTime = Time.realtimeSinceStartup;
-        transform.position = startPos.position;
-    }
-
    
-
-    void FixedUpdate ()
-    {
-        MoveCamera(Time.deltaTime);
-        
-    }
-
-    private void Update()
-    {
-        if (MyUpdate)
-        {
-            float deltaTime = Time.realtimeSinceStartup - lastTime;
-            MoveCamera(deltaTime);
-            lastTime = Time.realtimeSinceStartup;
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            PauseGame();
-        }
-
-        if (IsFocusModeIsOn)
-        {
-            Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-            //Debug.Log(hit.collider.name);
-
-            if (hit.collider != null && hit.collider.tag == "FocusCarCollider")
-            {
-                Cursor.SetCursor(cursorForFocus, Vector2.zero, CursorMode.Auto);
-
-                if (Input.GetMouseButtonDown(1))
-                {
-                    CameraTarget = hit.collider.GetComponentInParent<Rigidbody2D>();
-                    Debug.Log(CameraTarget.name);
-                }
-            }
-        }
-        else if (!IsFocusModeIsOn)
-        {
-            CameraTarget = null;
-        }
-        
-    }
 
     public void PauseGame()
     {
@@ -132,25 +137,11 @@ public class CameraController : MonoBehaviour {
 
     public void CameraZoomIn()
     {
-        if(GetComponent<Camera>().orthographicSize > 250)
-        {
-            GetComponent<Camera>().orthographicSize -= 100f;
-            mapLimit.x += 180;
-            mapLimit.y += 100;           
-            mapMovingSpeed -= 60;
-        }
-            
+        GetComponent<Camera>().fieldOfView -= 10;
     }
     public void CameraZoomOut()
     {
-        if (GetComponent<Camera>().orthographicSize < 1900)
-        {
-            GetComponent<Camera>().orthographicSize += 100f;
-            mapLimit.x -= 180;            
-            mapLimit.y -= 20;            
-            mapMovingSpeed += 60;
-        }
-            
+        GetComponent<Camera>().fieldOfView += 10;
     }
 
     public void RunFocusMode()
@@ -172,7 +163,7 @@ public class CameraController : MonoBehaviour {
           
             if (Input.GetKey(KeyCode.W) )
             {
-                desiredPosition.y += mapMovingSpeed;
+                desiredPosition.y += mapMovingSpeed;                
             }
             if (Input.GetKey(KeyCode.S) )
             {
@@ -186,12 +177,15 @@ public class CameraController : MonoBehaviour {
             {
                 desiredPosition.x += mapMovingSpeed;
             }
-                      
-          
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            desiredPosition.z += scroll * 100 * scrollSpeed;
+
             desiredPosition.x = Mathf.Clamp(desiredPosition.x, -mapLimit.x, mapLimit.x);
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, -mapLimit.y, mapLimit.y);
-            smoothedPosition = Vector2.Lerp(transform.position, desiredPosition, smoothSpeed * dt);
+            desiredPosition.z = Mathf.Clamp(desiredPosition.z, -mapLimit.z, mapLimit.z);
+            smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * dt);
             transform.position = smoothedPosition;
+
         }
         
     }

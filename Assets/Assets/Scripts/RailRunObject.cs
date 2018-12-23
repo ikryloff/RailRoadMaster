@@ -215,25 +215,25 @@ public class RailRunObject : MonoBehaviour {
             if (Mathf.Abs(Distance) > 4000)
             {
                 if (MSpeed < 10)
-                    Engine.ControllerPosition = 1 * Direction;
+                    Engine.controllerPosition = 1 * Direction;
                 if(MSpeed >= 10 && MSpeed < 15)
-                    Engine.ControllerPosition = 2 * Direction;
+                    Engine.controllerPosition = 2 * Direction;
                 if (MSpeed >= 15 && MSpeed < 25)
-                    Engine.ControllerPosition = 4 * Direction;
+                    Engine.controllerPosition = 4 * Direction;
                 if (MSpeed >= 25 )
-                    Engine.ControllerPosition = 8 * Direction;
+                    Engine.controllerPosition = 8 * Direction;
                 
                 MaxSpeed = maxSpeed;
             }
             if (Mathf.Abs(Distance) < 4000 && Mathf.Abs(Distance) > 1500)
             {
                 MaxSpeed = 25;
-                Engine.ControllerPosition = 4 * Direction;
+                Engine.controllerPosition = 4 * Direction;
             }
             if (Mathf.Abs(Distance) < 1500 && Mathf.Abs(Distance) > 500)
             {
                 MaxSpeed = 15;
-                Engine.ControllerPosition = 2 * Direction;
+                Engine.controllerPosition = 2 * Direction;
             }
             if (Mathf.Abs(Distance) <= 500)
             {
@@ -242,7 +242,7 @@ public class RailRunObject : MonoBehaviour {
                     if (Mathf.Abs(Distance) > 150)
                     {
                         MaxSpeed = 5;
-                        Engine.ControllerPosition = 1 * Direction;
+                        Engine.controllerPosition = 1 * Direction;
                     }
                     if (Mathf.Abs(Distance) <= 150)
                     {
@@ -262,7 +262,7 @@ public class RailRunObject : MonoBehaviour {
                     else
                     {
                         MaxSpeed = 5;
-                        Engine.ControllerPosition = 1 * Direction;
+                        Engine.controllerPosition = 1 * Direction;
                     }                        
                 }
                 if (MSpeed == 0)
