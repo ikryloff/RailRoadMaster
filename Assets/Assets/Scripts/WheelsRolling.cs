@@ -13,6 +13,6 @@ public class WheelsRolling : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         
-        transform.Rotate(-car.velocity.x * 0.7f, 0, 0);
+        transform.Rotate(-car.velocity.x * 0.3f, 0, 0);
 	}
 }
