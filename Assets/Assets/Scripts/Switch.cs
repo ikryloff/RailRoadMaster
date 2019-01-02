@@ -14,21 +14,30 @@ public class Switch : MonoBehaviour {
     private SpriteRenderer straightIndicator;
     private SwitchManager switchManager;    
     private int timesLocked = 0;
+    [SerializeField]
+    TrackCircuit[] trackCircuits;
+    
     Route route;
 
     [SerializeField]
     private bool isSwitchStraight;
+   
         
 
-    void Awake () {
+    void Awake ()
+    {
+        trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
         switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();        
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
-        straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();
-        IsSwitchStraight = true;
-        DirectionStraight();
+        straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();        
         route = GameObject.Find("Route").GetComponent<Route>();
     }
-    
+    private void Start()
+    {
+        IsSwitchStraight = true;
+        DirectionStraight();
+    }
+
 
     private void OnGUI()
     {
@@ -56,7 +65,7 @@ public class Switch : MonoBehaviour {
             else
             {
                 DirectionStraight();
-            }
+            }            
             route.MakePathInBothDirections();
         }
         else Debug.Log("Locked");
@@ -94,6 +103,7 @@ public class Switch : MonoBehaviour {
         turnIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
         straightIndicator.sortingLayerName = Constants.INDICATION_LAYER;
         IsSwitchStraight = true;
+        
     }
     public void DirectionTurn()
     {
@@ -101,7 +111,8 @@ public class Switch : MonoBehaviour {
         switchPhysicsTurn.SetActive(true);
         turnIndicator.sortingLayerName = Constants.INDICATION_LAYER;
         straightIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
-        IsSwitchStraight = false;        
+        IsSwitchStraight = false;
+        
     }   
 
 }

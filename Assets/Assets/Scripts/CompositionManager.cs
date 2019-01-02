@@ -87,7 +87,7 @@ public class CompositionManager : Singleton<CompositionManager>
         {
             foreach (RollingStock item in CompositionsList[i])
             {
-                Debug.Log("In comp #" + i + " car " + item.Number);
+                print("In comp #" + i + " car " + item.Number);
             }
         }
         
@@ -138,7 +138,7 @@ public class CompositionManager : Singleton<CompositionManager>
                 tempStr += compNum[i];
                 if((i + 1) % 4 == 0)
                 {
-                    //Debug.Log(tempStr);
+                    //print(tempStr);
                     tempArr[index] = GetRollingStockByNumber(tempStr);
                     tempStr = "";
                     index++;
@@ -178,7 +178,7 @@ public class CompositionManager : Singleton<CompositionManager>
         if (!rs.ConnectedToPassive)
         {
             CompositionNumber = CompositionNumberFromCars(rs);
-            //Debug.Log( "Comp # = " + CompositionNumber);
+            //print( "Comp # = " + CompositionNumber);
             Compositions.Add(CompositionNumber);
         }
 

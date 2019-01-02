@@ -107,6 +107,7 @@ public class Engine : MonoBehaviour
     TrafficLights tlBackward;
     [SerializeField]
     private int movingDirection;
+    public PathMaker pathmaker;
 
 
 
@@ -116,6 +117,7 @@ public class Engine : MonoBehaviour
         route = GameObject.Find("Route").GetComponent<Route>();
         cars = FindObjectsOfType<RollingStock>();
         ExpectedСars = new List<RollingStock>();
+        EngineRS = GetComponent<RollingStock>();
 
         // Cashing hand switches
 
@@ -127,60 +129,25 @@ public class Engine : MonoBehaviour
         switch10 = route.GetSwitchByName("Switch_10");
         switch12 = route.GetSwitchByName("Switch_12");
         switch14 = route.GetSwitchByName("Switch_14");
-
+        GetTrack();
     }
 
     void Start()
     {
 
-        engine = GetComponent<Rigidbody2D>();
-        EngineRS = GetComponent<RollingStock>();
+        engine = GetComponent<Rigidbody2D>();        
         // conductor mode
         IsDrivingByInstructionsIsOn = true;
         InformationUpdateFunction();
         InvokeRepeating("InformationUpdateFunction", 0.5f, 0.5f);
-        GetTrack();        
 
+        
 
 
     }
     public void MoveEngine()
     {
-        /*
-        switch (AbsControllerPosition())
-        {
-            case 8:
-                power = MSpeed < 100 ? power += 3f : power;
-                break;
-            case 7:
-                power = MSpeed < 60 ? power += 3f : power;
-                break;
-            case 6:
-                power = MSpeed < 40 ? power += 3f : power;
-                break;
-            case 5:
-                power = MSpeed < 25 ? power += 3f : power;
-                break;
-            case 4:
-                power = MSpeed < 15 ? power += 2f : power;
-                break;
-            case 3:
-                power = MSpeed < 10 ? power += 2f : power;
-                break;
-
-            case 2:
-                power = MSpeed < 5 ? power += 1f : power;
-                break;
-
-            case 1:
-                power = MSpeed < 3 ? power += 1f : power;                
-                break;
-            default:
-                power = 0;
-                brakes = true;
-                break;
-        }
-        */
+       
         if (MSpeed < MaxSpeed)
             power += 0.8f;
         else
@@ -302,7 +269,11 @@ public class Engine : MonoBehaviour
         route.IsPathCheckingForward = true;
         direction = direction == -1 && direction != 0 ? -1 : 1;
         if(direction == 1 && instructionHandler == 0)
+        {
             route.MakePath(direction);
+        }
+            
+        
         GetAllExpectedCarsByDirection(direction);
         ReleaseBrakes();
         instructionHandler++;
@@ -318,7 +289,10 @@ public class Engine : MonoBehaviour
         route.IsPathCheckingForward = false;
         direction = direction == 1 && direction != 0 ? 1 : -1;
         if(direction == -1 && instructionHandler == 0)
+        {
             route.MakePath(direction);
+        }
+            
         GetAllExpectedCarsByDirection(direction);
         ReleaseBrakes();
         instructionHandler--;

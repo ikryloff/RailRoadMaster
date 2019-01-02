@@ -20,7 +20,9 @@ public class TrackCircuit : MonoBehaviour {
     private TrafficLights[] trackLights;
     [SerializeField]
     private TrafficLightsManager trafficLightsManager;
-
+    [SerializeField]
+    private int elementID;
+    
 
     private void Awake()
     {
@@ -33,6 +35,8 @@ public class TrackCircuit : MonoBehaviour {
 
     private void Start()
     {
+        
+        
         useMode = Constants.TC_DEFAULT;
         allCells = new SpriteRenderer[3];
         allCells[0] = cellsTrack;
