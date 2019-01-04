@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class PathMaker : Singleton<PathMaker> {
 
@@ -10,192 +11,145 @@ public class PathMaker : Singleton<PathMaker> {
     public int direction;
     public Route rt;
     List<Node> list;
+    //string route = " new ";
+    public Switch testSw;
+    public List<TrackCircuit> fullEnginePath;
+
+
 
     private void Awake()
     {
-        list = pathHolder.nodesList;
+       
     }
-
     // Use this for initialization
-    void Start () {
-        direction = engine.direction;
-        StartCoroutine(GetStartTrack());
+    void Start ()
+    {
+        fullEnginePath = new List<TrackCircuit>();
+        list = pathHolder.nodesList;        
+        StartCoroutine(MakePathCoroutine());        
+       
+        
     }
 	
 	// Update is called once per frame
-	void Update () {
-        direction = engine.direction;
-
+	void Update () {       
+        direction = engine.direction;       
     }
 
-    IEnumerator GetStartTrack()
+    IEnumerator MakePathCoroutine()
     {        
         yield return new WaitForSecondsRealtime(0.2f);
-        
+        MakePath(GetEngineNode(), direction);
+        //print(route);
+        //route = "";        
     }
+
+
 
     public int GetID(TrackCircuit tc)
     {
         return pathHolder.trackCircuitTC_ID[tc];
     }
-    public void ChangeSwitch(int numID)
+   
+    public List<TrackCircuit> GetFullPath(int _direction)
     {
-
-    }
-
-    public void SwitchMinus(int numID)
-    {
-
-    }
-
-    public void SwitchPlus(int numID)
-    {
-      
+        fullEnginePath.Clear();
+        MakePath(GetEngineNode(), _direction);
+        return fullEnginePath;    
     }
 
 
-    public TrackCircuit FindStart()
+    public Node GetEngineNode()
     {
-        int start = GetID(engine.Track);
+        // Find ID of Engine trackCircuit
+        int start = GetID(engine.Track);                
+        return pathHolder.nodesID_ND[start];
+    }
+
+    public Node GetNodeByID(int nodeID)
+    {       
+        return pathHolder.nodesID_ND[nodeID];
+    }
+
+    public void MakePath(Node node, int _direction)
+    {
+        //route += " -> " + node.track.name;
+        fullEnginePath.Add(node.track);
         
-        
-        return null;
-
-    }
-/*
-    public void PrintPath(int _direction)
-    {
-        string route = "new _ ";
-        int[] point = FindStart();
-
-        bool isGoing = true;
-        if(_direction >= 0)
+        Node next = null;
+        TrackCircuit nextTC = null;
+        // if we go forward or have no direction
+        if(direction >= 0)
         {
-            for (int i = point[0]; i < 8; i++)
+            if (node.track.isSwitch && !node.track.GetComponentInParent<Switch>().IsSwitchStraight)
             {
-                if (!isGoing)
-                    break;
-                for (int j = point[1]; j < 21; j++)
-                {
-                    if (stationMap[i, j] == 1000)
-                        continue;
-                    if (stationMap[i, j] < 0)
-                    {
-                        int temp = stationMap[i, j];
-                        // switches > 21
-                        if (stationMap[i, j] > -20)
-                            i += 1 * _direction;
-                        // switches > 40
-                        else if (stationMap[i, j] < -49)
-                            i -= 1 * _direction;
-                        if (Math.Abs(stationMap[i, j] - temp) > 2)
-                        {
-                            isGoing = false;
-                            break;
-                        }
-                        
-                    }
-
-                    if (stationMap[i, j] == 0)
-                    {
-                        isGoing = false;
-                        break;
-                    }
-                    rt.fullEnginePath.Add(pathHolder.trackCircuitID_TC[Math.Abs(stationMap[i, j])]);
-                    route += " -> " + stationMap[i, j];
-
-                }
-
+                nextTC = node.nextMin;
             }
-        }
-        else if(_direction < 0)
-        {
-            for (int i = point[0]; i < 8; i++)
-            {
-                // condition of quit from outter cicle
-                if (!isGoing)
-                    break;
-                for (int j = point[1]; j >= 0; j--)
-                {
-                    if (stationMap[i, j] == 1000)
-                        continue;
-                    if (stationMap[i, j] < 0)
-                    {
-                        int temp = stationMap[i, j];
-                        // switches > 21
-                        if (stationMap[i, j] > -21)
-                            i += 1 * _direction;
-                        // switches > 40
-                        else if (stationMap[i, j] < -49)
-                            i -= 1 * _direction;
-                        if (Math.Abs(stationMap[i, j] - temp) > 2)
-                        {
-                            isGoing = false;
-                            break;
-                        }
-                        
-                    }
-
-                    if (stationMap[i, j] == 0)
-                    {
-                        isGoing = false;
-                        break;
-                    }
-                    route += " -> " + stationMap[i, j];
-                    //route += " -> " + pathHolder.trackCircuitID_TC[Math.Abs(stationMap[i, j])].name;
-                    rt.fullEnginePath.Add(pathHolder.trackCircuitID_TC[Math.Abs(stationMap[i, j])]);
-                }
-
-            }
-        }  
-        print(route);
-        print( "50 " + stationMap[2, 4]);
-    }
-
-    public class StationList  // graf
-    {
-        public string list = "";
-
-        public void MakePath(Node track, int direction)
-        {
-
-            list += " -> " + track.Track;
-            track.Next = direction == 1 ? track.NextPlus : track.PrevPlus;
-            if (direction == 1)
-            {
-                if (track.NextPlus != null)
-                    track.NextPlus.PrevPlus = track;
-                if (track.IsSwitch && track.Track.Contains("-"))
-                {
-                    track.Next = track.NextMin;
-                }
-            }
-            else if (direction == -1)
-            {
-                if (track.PrevPlus != null)
-                    track.PrevPlus.NextPlus = track;
-                if (track.IsSwitch && track.Track.Contains("-"))
-                {
-                    track.Next = track.PrevMin;
-                }
-            }
-
-            if (track.Next == null)
-                return;
             else
             {
-                MakePath(track.Next, direction);
+                nextTC = node.nextPlus;
+            }
+        
+            if (nextTC != null)
+            {
+                next = GetNodeByID(nextTC.trackCircuitID);
+                // check if switch from the path is in right position
+        
+                if (nextTC.isSwitch)
+                {
+                    if (nextTC.GetComponentInParent<Switch>().IsSwitchStraight)
+                    {
+                        if (next.prevPlus != node.track)
+                            nextTC = null;
+                    }
+                    else
+                    {
+                        if (next.prevMin != node.track)
+                            nextTC = null;
+                    }
+                }
+            }
+        }
+        // if we go backward 
+        else
+        {
+            if (node.track.isSwitch && !node.track.GetComponentInParent<Switch>().IsSwitchStraight)
+            {
+                nextTC = node.prevMin;
+            }
+            else
+            {
+                nextTC = node.prevPlus;
             }
 
-        }
+            if (nextTC != null)
+            {
+                next = GetNodeByID(nextTC.trackCircuitID);
 
-        public void PrintPath(Node track, int direction)
+                // check if switch from the path is in right position
+                if (nextTC.isSwitch)
+                {
+                    if (nextTC.GetComponentInParent<Switch>().IsSwitchStraight)
+                    {
+                        if (next.nextPlus != node.track)
+                            nextTC = null;
+                    }
+                    else
+                    {
+                        if (next.nextMin != node.track)
+                            nextTC = null;
+                    }
+                }
+            }
+
+        }        
+        if (nextTC == null)
+            return;
+        else
         {
-            list = "";
-            MakePath(track, direction);
-            Console.WriteLine(list);
-
+            MakePath(next, _direction);
         }
+        
+    }
 
-    }*/
 }

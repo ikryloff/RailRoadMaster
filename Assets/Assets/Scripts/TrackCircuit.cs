@@ -20,13 +20,16 @@ public class TrackCircuit : MonoBehaviour {
     private TrafficLights[] trackLights;
     [SerializeField]
     private TrafficLightsManager trafficLightsManager;
-    [SerializeField]
-    private int elementID;
+    public PathHolder pathHolder;
+    public int trackCircuitID;
+    public bool isSwitch;
     
 
     private void Awake()
     {
         trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
+        pathHolder = GameObject.Find("PathHolder").GetComponent<PathHolder>();
+        isSwitch = GetComponentInParent<Switch>();
         
     }
 
@@ -35,8 +38,8 @@ public class TrackCircuit : MonoBehaviour {
 
     private void Start()
     {
-        
-        
+        trackCircuitID = pathHolder.trackCircuitTC_ID[this];
+
         useMode = Constants.TC_DEFAULT;
         allCells = new SpriteRenderer[3];
         allCells[0] = cellsTrack;

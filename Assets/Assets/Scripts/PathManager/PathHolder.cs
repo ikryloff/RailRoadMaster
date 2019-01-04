@@ -143,52 +143,53 @@ public class PathHolder : Singleton<PathHolder>
 
     int EMPTY = 0;    
     int SKIP = 1000;    
-    static int  TC_I_CH_ID = 16;
-    static int  TC_I_CH_2_ID = 18;
-    static int  TC_I_N_ID = 15;
-    static int  TC_I_1_N_ID = 17;
-    static int  TC_I_ID = 1;
-    static int  TC_2_ID = 2;
-    static int  TC_3_ID = 3;
-    static int  TC_4_ID = 4;
-    static int  TC_5_ID = 5;
-    static int  TC_6_ID = 6;
-    static int  TC_7_ID = 7;
-    static int  TC_8_ID = 8;
-    static int  TC_9_ID = 9;
-    static int  TC_10_ID = 19;
-    static int  TC_12A_ID = 20;
-    static int  TC_12_12_ID = 21;    
-    static int  TC_10_10_ID = 10;
-    static int  TC_11_ID = 11;
-    static int  TC_12_ID = 12;
-    static int  TC_13_ID = 13;
-    static int  TC_14_ID = 14;               
-    static int  TC_SW_2_4_TOP_ID = 23;
-    static int  TC_SW_2_4_BOT_ID = 22;            
-    static int  TC_SW_10_ID = 24;
-    static int  TC_SW_12_ID = 25;
-    static int  TC_SW_14_ID = 26;
-    static int  TC_SW_22_ID = 27;                       
-    static int  TC_SW_20_ID = 28;
-    static int  TC_SW_15_ID = 29;
-    static int  TC_SW_7_9_BOT_ID = 30;
-    static int  TC_SW_7_9_TOP_ID = 31;
-    static int  TC_SW_5_17_BOT_ID = 32;
-    static int  TC_SW_5_17_TOP_ID = 33;
-    static int  TC_SW_19_ID = 34;     
-    static int  TC_SW_6_8_BOT_ID = 50;
-    static int  TC_SW_6_8_TOP_ID = 51;
-    static int  TC_SW_16_ID = 52;
-    static int  TC_SW_18_ID = 53;
-    static int  TC_SW_13_ID = 54;
-    static int  TC_SW_11_ID = 55;            
-    static int  TC_SW_1_3_BOT_ID = 56;
-    static int  TC_SW_1_3_TOP_ID = 57;
-    static int  TC_SW_21_ID = 58;
+    public static int  TC_I_CH_ID = 16;
+    public static int  TC_I_CH_2_ID = 18;
+    public static int  TC_I_N_ID = 15;
+    public static int  TC_I_1_N_ID = 17;
+    public static int  TC_I_ID = 1;
+    public static int  TC_2_ID = 2;
+    public static int  TC_3_ID = 3;
+    public static int  TC_4_ID = 4;
+    public static int  TC_5_ID = 5;
+    public static int  TC_6_ID = 6;
+    public static int  TC_7_ID = 7;
+    public static int  TC_8_ID = 8;
+    public static int  TC_9_ID = 9;
+    public static int  TC_10_ID = 19;
+    public static int  TC_12A_ID = 20;
+    public static int  TC_12_12_ID = 21;    
+    public static int  TC_10_10_ID = 10;
+    public static int  TC_11_ID = 11;
+    public static int  TC_12_ID = 12;
+    public static int  TC_13_ID = 13;
+    public static int  TC_14_ID = 14;               
+    public static int  TC_SW_2_4_TOP_ID = 23;
+    public static int  TC_SW_2_4_BOT_ID = 22;            
+    public static int  TC_SW_10_ID = 24;
+    public static int  TC_SW_12_ID = 25;
+    public static int  TC_SW_14_ID = 26;
+    public static int  TC_SW_22_ID = 27;                       
+    public static int  TC_SW_20_ID = 28;
+    public static int  TC_SW_15_ID = 29;
+    public static int  TC_SW_7_9_BOT_ID = 30;
+    public static int  TC_SW_7_9_TOP_ID = 31;
+    public static int  TC_SW_5_17_BOT_ID = 32;
+    public static int  TC_SW_5_17_TOP_ID = 33;
+    public static int  TC_SW_19_ID = 34;     
+    public static int  TC_SW_6_8_BOT_ID = 50;
+    public static int  TC_SW_6_8_TOP_ID = 51;
+    public static int  TC_SW_16_ID = 52;
+    public static int  TC_SW_18_ID = 53;
+    public static int  TC_SW_13_ID = 54;
+    public static int  TC_SW_11_ID = 55;            
+    public static int  TC_SW_1_3_BOT_ID = 56;
+    public static int  TC_SW_1_3_TOP_ID = 57;
+    public static int  TC_SW_21_ID = 58;
 
     public Dictionary<TrackCircuit, int> trackCircuitTC_ID;
     public Dictionary<int, TrackCircuit> trackCircuitID_TC;
+    public Dictionary<int, Node> nodesID_ND;
 
     private void Awake()
     {
@@ -331,6 +332,7 @@ public class PathHolder : Singleton<PathHolder>
             { TC_SW_21_ID, tcsw21 }
         };
 
+
         //(Node prevMin, Node prevPlus, string track, Node nextPlus, Node nextMin, bool isSwitch)
 
 
@@ -374,7 +376,7 @@ public class PathHolder : Singleton<PathHolder>
         nodeSw16 = new Node(tcsw_6_8top, tcsw_6_8top, tcsw16, tcI_16_15, tc2, true, TC_SW_16_ID);
         nodeSw18 = new Node(tc10, tc10, tcsw18, tcsw20, tc9, true, TC_SW_18_ID);
         nodeSw20 = new Node(tcsw18, tcsw18, tcsw20, tc10_10, tc11, true, TC_SW_20_ID);
-        nodeSw15 = new Node(tc2, tcI_16_15, tcsw15, tc12, tc12, true, TC_SW_15_ID);
+        nodeSw15 = new Node(tc2, tcI_16_15, tcsw15, tcsw_7_9top, tcsw_7_9top, true, TC_SW_15_ID);
         nodeSw11 = new Node(tcsw13, tc3, tcsw11, tcsw_7_9bot, tcsw_7_9bot, true, TC_SW_11_ID);
         nodeSw19 = new Node(tcsw_5_17bot, tcsw_5_17bot, tcsw19, tc12, tc13, true, TC_SW_19_ID);
         nodeSw13 = new Node(tc4, tc5, tcsw13, tcsw11, tcsw11, true, TC_SW_13_ID);
@@ -426,6 +428,55 @@ public class PathHolder : Singleton<PathHolder>
             nodeSw13,
             nodeSw21
         });
+
+
+        nodesID_ND = new Dictionary<int, Node>
+        {
+            { TC_I_CH_ID,         nodeICH   },
+            { TC_I_CH_2_ID,       nodeICH2  },
+            { TC_I_N_ID,          nodeIN    },
+            { TC_I_1_N_ID,        nodeI1N   },
+            { TC_I_ID,            nodeI1615 },
+            { TC_2_ID,            node2     },
+            { TC_3_ID,            node3     },
+            { TC_4_ID,            node4     },
+            { TC_5_ID,            node5     },
+            { TC_6_ID,            node6     },
+            { TC_7_ID,            node7     },
+            { TC_8_ID,            node8     },
+            { TC_9_ID,            node9     },
+            { TC_10_10_ID,        node10    },
+            { TC_10_ID,           node10_10 },
+            { TC_11_ID,           node11    },
+            { TC_12_12_ID,        node12    },
+            { TC_12_ID,           node12_12 },
+            { TC_12A_ID,          node12A   },
+            { TC_13_ID,           node13    },
+            { TC_14_ID,           node14    },
+            { TC_SW_1_3_BOT_ID,   nodeSw_1_3bot  },
+            { TC_SW_1_3_TOP_ID,   nodeSw_1_3top  },
+            { TC_SW_2_4_TOP_ID,   nodeSw_2_4top  },
+            { TC_SW_2_4_BOT_ID,   nodeSw_2_4bot },
+            { TC_SW_7_9_TOP_ID,   nodeSw_7_9top  },
+            { TC_SW_7_9_BOT_ID,   nodeSw_7_9bot  },
+            { TC_SW_5_17_TOP_ID,  nodeSw_5_17top  },
+            { TC_SW_5_17_BOT_ID,  nodeSw_5_17bot },
+            { TC_SW_6_8_TOP_ID,   nodeSw_6_8top  },
+            { TC_SW_6_8_BOT_ID,   nodeSw_6_8bot  },
+            { TC_SW_10_ID,        nodeSw10       },
+            { TC_SW_12_ID,        nodeSw12       },
+            { TC_SW_14_ID,        nodeSw14       },
+            { TC_SW_22_ID,        nodeSw22       },
+            { TC_SW_16_ID,        nodeSw16       },
+            { TC_SW_18_ID,        nodeSw18       },
+            { TC_SW_20_ID,        nodeSw20       },
+            { TC_SW_15_ID,        nodeSw15       },
+            { TC_SW_11_ID,        nodeSw11       },
+            { TC_SW_19_ID,        nodeSw19       },
+            { TC_SW_13_ID,        nodeSw13       },
+            { TC_SW_21_ID,        nodeSw21       }
+        };
+
     }
 
     
@@ -433,11 +484,12 @@ public class PathHolder : Singleton<PathHolder>
 
     private void Start()
     {
-       // PrintArr();
+       //PrintArr();
     }
 
     public void PrintArr()
     {
+        print("ID " + nodesID_ND[5].track.name);
         string path = " Path: ";
         foreach (Node nd in nodesList)
         {
@@ -460,6 +512,12 @@ public class Node
     public TrackCircuit nextMin;
     public bool isSwitch;
     public int nodeID;
+    public Node nextNode;
+
+    public Node()
+    {
+        
+    }
 
     public Node(TrackCircuit prevMin, TrackCircuit prevPlus, TrackCircuit track, TrackCircuit nextPlus, TrackCircuit nextMin, bool isSwitch, int nodeID)
     {
@@ -469,7 +527,7 @@ public class Node
         this.nextPlus = nextPlus;
         this.nextMin = nextMin;
         this.isSwitch = isSwitch;
-        this.nodeID = nodeID;
+        this.nodeID = nodeID;        
     }    
 
    

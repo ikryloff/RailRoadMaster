@@ -72,7 +72,7 @@ public class Route : Singleton<Route> {
     private Switch[] switches;
     private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
     IEnumerable<TrackCircuit> fullPath;
-    public List<TrackCircuit> fullEnginePath;
+    public List<TrackCircuit> fullTCPath;
     private bool isRoute;
     private string routeName;
     [SerializeField]
@@ -112,7 +112,7 @@ public class Route : Singleton<Route> {
     {
         routes = new List<RouteObject>();
         engine = GameObject.Find("Engine").GetComponent<Engine>();
-        Invoke("MakePathInBothDirections", 0.1f);
+        Invoke("MakePathInBothDirections", 0.5f);
 
     }
 
@@ -132,48 +132,45 @@ public class Route : Singleton<Route> {
 
     public void MakePath(int _direction)
     {
-                    
-        fullEnginePath = new List<TrackCircuit>();
+        fullTCPath = pathMaker.GetFullPath(_direction);            
+        
         startTrack = pathMaker.engine.Track;  
         
-        print("new startPoint " + pathMaker.engine.Track);
+        print("startPoint " + pathMaker.engine.Track);
 
 
 
         // print new full path
-        string result = "new inside ";
-        if (fullEnginePath != null)
+        string result = "full path  dir:" + _direction + " -> ";
+        if (fullTCPath != null)
         {
             
-            foreach (var item in fullEnginePath)
+            foreach (var item in fullTCPath)
             {
 
-                result += " -> " + item.name;
+               result += " -> " + item.name;
 
             }
-            print(result);
+           print(result);
 
-            /*OccupiedTrack = null;
-            foreach (var track in fullEnginePath)
+            OccupiedTrack = null;
+            foreach (var track in fullTCPath)
             {
-                if (track.IsCarPresence > 0 && track != fullEnginePath.First())
+                if (track.IsCarPresence > 0 && track != fullTCPath.First())
                 {
                     OccupiedTrack = track;
                     break;
                 }
                 if (OccupiedTrack == null)
                 {
-                    print("iM here");
-                    OccupiedTrack = fullEnginePath.Last();
-                }
-                    
+                    OccupiedTrack = fullTCPath.Last();
+                }                   
 
-            }
-            */
+            }            
 
             if (_direction == 1)
             {
-                foreach (var tr in fullEnginePath)
+                foreach (var tr in fullTCPath)
                 {
 
                     if (tr.TrackLights[1] && tr.TrackLights[1].IsClosed)
@@ -231,7 +228,7 @@ public class Route : Singleton<Route> {
 
             if (_direction == -1)
             {
-                foreach (var tr in fullEnginePath)
+                foreach (var tr in fullTCPath)
                 {
 
                     if (tr.TrackLights[0] != null && tr.TrackLights[0].IsClosed)
@@ -303,7 +300,11 @@ public class Route : Singleton<Route> {
                         if (switch22.IsSwitchStraight)
                             LastRouteTrackBackward = tcsw22;
                         else
+                        {
+                            print("aM HERR!!");
                             LastRouteTrackBackward = tc14;
+                        }
+                            
                     }
                 }
             }
@@ -311,10 +312,7 @@ public class Route : Singleton<Route> {
         else
         {
             
-            OccupiedTrack = startTrack;
-            if (_direction == 1)
-                LastRouteTrackForward = startTrack;
-            else if (_direction == -1)
+            OccupiedTrack = startTrack;           
                 LastRouteTrackBackward = startTrack;
         }
 
