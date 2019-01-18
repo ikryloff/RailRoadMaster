@@ -5,44 +5,81 @@ using UnityEngine;
 using System.Linq;
 
 public class PathMaker : Singleton<PathMaker> {
-
+    [SerializeField]
+    private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
     public PathHolder pathHolder;    
     public Engine engine;
     public int direction;
     public Route rt;
     List<Node> list;
-    //string route = " new ";
-    public Switch testSw;
+    string route = " new ";
+    public TrafficLights[] ends;
     public List<TrackCircuit> fullEnginePath;
-
-
+    public TrackCircuit occupiedTrack;
+    public TrackCircuit lastRouteTrackForward;
+    public TrackCircuit lastRouteTrackBackward;
+    TrackCircuit engineTrack;
+    SwitchManager switchManager;
+    Switch[] switches;
+    [SerializeField]
+    private TrackCircuit                    
+        tc9,
+        tc10,
+        tc10_10,
+        tc11,
+        tc12,
+        tc12_12,
+        tc12A,
+        tc13,
+        tc14,        
+        tcsw14,
+        tcsw12,
+        tcsw22,
+        tcsw18,
+        tcsw19,
+        tcsw20        
+        ;
 
     private void Awake()
     {
-       
+        switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();
+        switches = FindObjectsOfType<Switch>();        
+
+        // Cashing hand switches
+
+        switch18 = GetSwitchByName("Switch_18");
+        switch19 = GetSwitchByName("Switch_19");
+        switch20 = GetSwitchByName("Switch_20");
+        switch21 = GetSwitchByName("Switch_21");
+        switch22 = GetSwitchByName("Switch_22");
+        switch10 = GetSwitchByName("Switch_10");
+        switch12 = GetSwitchByName("Switch_12");
+        switch14 = GetSwitchByName("Switch_14");
+        
     }
-    // Use this for initialization
+
+
     void Start ()
     {
         fullEnginePath = new List<TrackCircuit>();
         list = pathHolder.nodesList;        
-        StartCoroutine(MakePathCoroutine());        
-       
+        engineTrack = engine.Track;
         
     }
 	
-	// Update is called once per frame
+	
 	void Update () {       
-        direction = engine.direction;       
+        direction = engine.direction;
+        // Update path each TrackCircuit
+        if(engineTrack != engine.Track)
+        {
+            GetFullPath(direction);
+            engineTrack = engine.Track;
+        }
+        
+
     }
 
-    IEnumerator MakePathCoroutine()
-    {        
-        yield return new WaitForSecondsRealtime(0.2f);
-        MakePath(GetEngineNode(), direction);
-        //print(route);
-        //route = "";        
-    }
 
 
 
@@ -50,14 +87,104 @@ public class PathMaker : Singleton<PathMaker> {
     {
         return pathHolder.trackCircuitTC_ID[tc];
     }
-   
-    public List<TrackCircuit> GetFullPath(int _direction)
+
+    public void CheckHandSwitches(int _direction)
     {
+        foreach (TrafficLights tc in ends)
+        {
+            tc.IsClosed = true;
+        }
+
+       
+        foreach (TrackCircuit tr in fullEnginePath)
+        {
+            if (ends.Contains(tr.TrackLights[1]) && tr.TrackLights[1].IsClosed)
+            {
+                tr.TrackLights[1].IsClosed = false;
+            }
+            if (ends.Contains(tr.TrackLights[0]) && tr.TrackLights[0].IsClosed)
+            {
+                tr.TrackLights[0].IsClosed = false;
+            }
+
+        }
+
+    }
+   
+   
+    public void GetFullPath(int _direction)
+    {
+        
         fullEnginePath.Clear();
+        route = "";
         MakePath(GetEngineNode(), _direction);
-        return fullEnginePath;    
+        print("right path " + route);
+        
+        if (fullEnginePath != null)
+        {
+
+            occupiedTrack = null;
+            foreach (TrackCircuit track in fullEnginePath)
+            {
+                if (track.IsCarPresence > 0 && track != fullEnginePath.First())
+                {
+                    occupiedTrack = track;
+                    break;
+                }    
+                
+                occupiedTrack = fullEnginePath.Last();     
+            }
+
+            CheckHandSwitches(_direction);
+
+           
+            foreach (TrackCircuit tr in fullEnginePath)
+            {
+
+                if (tr.TrackLights[1] && tr.TrackLights[1].IsClosed)
+                {                        
+                    lastRouteTrackForward = tr;
+                    break;
+                }
+
+
+            }             
+                  
+          
+            foreach (TrackCircuit tr in fullEnginePath)
+            {
+            if (tr.TrackLights[0] != null && tr.TrackLights[0].IsClosed)
+                {
+                    lastRouteTrackBackward = tr;
+                    break;
+                }                    
+            }            
+        }
+        else
+        {
+
+            occupiedTrack = engine.Track;
+            lastRouteTrackBackward = engine.Track;
+            lastRouteTrackForward = engine.Track;
+        }
+
+
+        print("OccupiedTrack  " + occupiedTrack);
+        print("lastRouteTrackForward  " + lastRouteTrackForward);
+        print("lastRouteTrackBackward  " + lastRouteTrackBackward);
+
+
     }
 
+    public Switch GetSwitchByName(string _switchName)
+    {
+        foreach (var sw in switches)
+        {
+            if (sw.name == _switchName)
+                return sw;
+        }
+        return null;
+    }
 
     public Node GetEngineNode()
     {
@@ -73,15 +200,16 @@ public class PathMaker : Singleton<PathMaker> {
 
     public void MakePath(Node node, int _direction)
     {
-        //route += " -> " + node.track.name;
+        route += " -> " + node.track.name;
+        print( node.track.name + "  " + _direction);
         fullEnginePath.Add(node.track);
-        
+
         Node next = null;
         TrackCircuit nextTC = null;
         // if we go forward or have no direction
-        if(direction >= 0)
+        if (_direction >= 0)
         {
-            if (node.track.isSwitch && !node.track.GetComponentInParent<Switch>().IsSwitchStraight)
+            if (node.track.isSwitch && !node.track.switchTrack.IsSwitchStraight)
             {
                 nextTC = node.nextMin;
             }
@@ -89,15 +217,15 @@ public class PathMaker : Singleton<PathMaker> {
             {
                 nextTC = node.nextPlus;
             }
-        
+
             if (nextTC != null)
             {
                 next = GetNodeByID(nextTC.trackCircuitID);
                 // check if switch from the path is in right position
-        
+
                 if (nextTC.isSwitch)
                 {
-                    if (nextTC.GetComponentInParent<Switch>().IsSwitchStraight)
+                    if (nextTC.switchTrack.IsSwitchStraight)
                     {
                         if (next.prevPlus != node.track)
                             nextTC = null;
@@ -113,7 +241,7 @@ public class PathMaker : Singleton<PathMaker> {
         // if we go backward 
         else
         {
-            if (node.track.isSwitch && !node.track.GetComponentInParent<Switch>().IsSwitchStraight)
+            if (node.track.isSwitch && !node.track.switchTrack.IsSwitchStraight)
             {
                 nextTC = node.prevMin;
             }
@@ -129,7 +257,7 @@ public class PathMaker : Singleton<PathMaker> {
                 // check if switch from the path is in right position
                 if (nextTC.isSwitch)
                 {
-                    if (nextTC.GetComponentInParent<Switch>().IsSwitchStraight)
+                    if (nextTC.switchTrack.IsSwitchStraight)
                     {
                         if (next.nextPlus != node.track)
                             nextTC = null;
@@ -142,14 +270,15 @@ public class PathMaker : Singleton<PathMaker> {
                 }
             }
 
-        }        
+        }
         if (nextTC == null)
             return;
         else
         {
             MakePath(next, _direction);
         }
-        
+
     }
+
 
 }

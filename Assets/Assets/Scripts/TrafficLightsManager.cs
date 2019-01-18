@@ -125,7 +125,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
 
     private void Awake()
     {
-        GameObject[] trafficLightsObjects = GameObject.FindGameObjectsWithTag("TrafficLight");
+        trafficLights= FindObjectsOfType<TrafficLights>();
 
         tempBtns = Resources.FindObjectsOfTypeAll<Button>();
         TrafficlightsButtons = new List<Button>();
@@ -148,13 +148,6 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
             }
 
         }
-
-
-        trafficLights = new TrafficLights [trafficLightsObjects.Length];
-        for (int i = 0; i < trafficLightsObjects.Length; i++)
-        {
-            trafficLights[i] = trafficLightsObjects[i].GetComponent<TrafficLights>();
-        }        
     }
 
     private void Start()
@@ -209,7 +202,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     {
         foreach (TrafficLights tl in trafficLights)
         {
-            if (tl.name.Equals(lightName))
+            if (tl.name ==lightName)
             {                
                 return tl;
             }            

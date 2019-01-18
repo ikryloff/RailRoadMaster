@@ -15,7 +15,8 @@ public class SwitchManager : Singleton<SwitchManager>
     private RemoteControlScript rcs;
     [SerializeField]
     private Engine engine;
-    private TrafficLightsManager trafficLightsManager;   
+    private TrafficLightsManager trafficLightsManager;
+    public PathMaker pathMaker;
     
 
     public bool IsSwitchModeOn
@@ -61,8 +62,8 @@ public class SwitchManager : Singleton<SwitchManager>
 
                         switchObject = hit.collider.transform.parent.gameObject;
                         Switch sw = switchObject.GetComponent<Switch>();
-                        sw.ChangeDirection();                        
-                        route.MakePath(engine.direction);
+                        sw.ChangeDirection();
+                        pathMaker.GetFullPath(engine.direction);
                         engine.GetAllExpectedCarsByDirection(engine.direction);
                         engine.GetExpectedCar();
                     }

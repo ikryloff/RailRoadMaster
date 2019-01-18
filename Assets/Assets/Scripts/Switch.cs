@@ -102,8 +102,7 @@ public class Switch : MonoBehaviour {
         switchPhysicsStraight.SetActive(true);
         turnIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
         straightIndicator.sortingLayerName = Constants.INDICATION_LAYER;
-        IsSwitchStraight = true;
-        
+        IsSwitchStraight = true;        
     }
     public void DirectionTurn()
     {
@@ -111,8 +110,7 @@ public class Switch : MonoBehaviour {
         switchPhysicsTurn.SetActive(true);
         turnIndicator.sortingLayerName = Constants.INDICATION_LAYER;
         straightIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
-        IsSwitchStraight = false;
-        
+        IsSwitchStraight = false;        
     }   
 
 }

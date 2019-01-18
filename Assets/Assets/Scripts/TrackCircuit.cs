@@ -23,6 +23,8 @@ public class TrackCircuit : MonoBehaviour {
     public PathHolder pathHolder;
     public int trackCircuitID;
     public bool isSwitch;
+    public Switch switchTrack;
+    public Route route;
     
 
     private void Awake()
@@ -30,6 +32,9 @@ public class TrackCircuit : MonoBehaviour {
         trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
         pathHolder = GameObject.Find("PathHolder").GetComponent<PathHolder>();
         isSwitch = GetComponentInParent<Switch>();
+        if (isSwitch)
+            switchTrack = GetComponentInParent<Switch>();
+        GetTrackLightsByTrack(this);
         
     }
 
@@ -38,8 +43,9 @@ public class TrackCircuit : MonoBehaviour {
 
     private void Start()
     {
+        route = GameObject.Find("Route").GetComponent<Route>();
         trackCircuitID = pathHolder.trackCircuitTC_ID[this];
-
+        
         useMode = Constants.TC_DEFAULT;
         allCells = new SpriteRenderer[3];
         allCells[0] = cellsTrack;
@@ -50,9 +56,10 @@ public class TrackCircuit : MonoBehaviour {
             allCells[2] = cellsTurn;
         }
         SetCellsLight(allCells, Constants.TC_DEFAULT);
-        GetTrackLightsByTrack(this);
+        
     }
 
+    
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -67,6 +74,7 @@ public class TrackCircuit : MonoBehaviour {
             other.GetComponent<RollingStock>().TrackCircuit = this;
         }
         GetTrackLightsByTrack(this);
+        
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -79,7 +87,7 @@ public class TrackCircuit : MonoBehaviour {
             }
             IsCarPresence -= 1;
             SetCellsLight(ReturnCells(), Constants.TC_DEFAULT);
-        }
+        }        
     }
 
     public int IsCarPresence
@@ -202,25 +210,33 @@ public class TrackCircuit : MonoBehaviour {
     }
     public void GetTrackLightsByTrack(TrackCircuit track)
     {
-        if (track.name == "Track_10_14_18" || track.name == "TrackCircuitSw18" || track.name == "TrackCircuitSw20" || track.name == "TrackCircuitSw22" || track.name == "Track_9" )
+        if (track.name == "Track_10_14_18" || track.name == "Track_10_14_18" || track.name == "TrackCircuitSw18" || track.name == "TrackCircuitSw20" || track.name == "TrackCircuitSw22")
         {
             TrackLightsNames = new string[] { "M3", "End10" };
         }
         if (track.name == "Track_10" || track.name == "Track_11")
         {
-            TrackLightsNames = new string[] { "End10_11", "End10" };
+            TrackLightsNames = new string[] { "End10_20", "End10" };            
+        }
+        if (track.name == "Track_11")
+        {
+            TrackLightsNames = new string[] { "End11_20", "End10" };
         }
         if (track.name == "Track_12" )
         {
-            TrackLightsNames = new string[] { "End12_13N", "End12_13CH" };
+            TrackLightsNames = new string[] { "End12N", "End12CH" };
+        }
+        if (track.name == "Track_12A")
+        {
+            TrackLightsNames = new string[] { null, "End12" };
         }
         if (track.name == "Track_13")
         {
-            TrackLightsNames = new string[] { "End12_13N", "End12_13CH" };
+            TrackLightsNames = new string[] { "End13N", "End13CH" };
         }
         if (track.name == "Track_9")
         {
-            TrackLightsNames = new string[] { "End9", "End10" };
+            TrackLightsNames = new string[] { "End9_18", "End10" };
         }
         if (track.name == "Track_6")
         {
@@ -250,9 +266,9 @@ public class TrackCircuit : MonoBehaviour {
         {
             TrackLightsNames = new string[] { "M1", "End7" };
         }
-        if (track.name == "Track_12_17_19" || track.name == "Track_12A" || track.name == "TrackCircuitSw21" || track.name == "TrackCircuitSw19")
+        if (track.name == "Track_12_17_19" )
         {
-            TrackLightsNames = new string[] { "M5", "End12" };
+            TrackLightsNames = new string[] { "M5", null };
         }
         if (track.name == "Track_8")
         {
@@ -264,12 +280,12 @@ public class TrackCircuit : MonoBehaviour {
         }
         if (track.name == "Track_14" )
         {
-            TrackLightsNames = new string[] { "End14", "End14SW" };
+            TrackLightsNames = new string[] { "End14", "End14_22SW" };
         }
 
         if (track.name == "TrackCircuitSw14" )
         {
-            TrackLightsNames = new string[] { "End6", "End14SW" };
+            TrackLightsNames = new string[] { null, "End22_14SW" };
         }     
 
         TrackLights = new TrafficLights[2];

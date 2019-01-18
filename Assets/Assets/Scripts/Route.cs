@@ -94,25 +94,13 @@ public class Route : Singleton<Route> {
             if (tempArr[i].tag == "Track")
                 trackCircuits.Add(tempArr[i]);
         }
-        switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();
-        switches = FindObjectsOfType<Switch>();
-
-        // Cashing hand switches
-
-        switch18 = GetSwitchByName("Switch_18");
-        switch19 = GetSwitchByName("Switch_19");
-        switch20 = GetSwitchByName("Switch_20");
-        switch21 = GetSwitchByName("Switch_21");
-        switch22 = GetSwitchByName("Switch_22");
-        switch10 = GetSwitchByName("Switch_10");
-        switch12 = GetSwitchByName("Switch_12");
-        switch14 = GetSwitchByName("Switch_14");
+       
     }
     void Start()
     {
         routes = new List<RouteObject>();
         engine = GameObject.Find("Engine").GetComponent<Engine>();
-        Invoke("MakePathInBothDirections", 0.5f);
+        Invoke("MakePathInBothDirections", 0.3f);
 
     }
 
@@ -130,207 +118,10 @@ public class Route : Singleton<Route> {
 
     
 
-    public void MakePath(int _direction)
-    {
-        fullTCPath = pathMaker.GetFullPath(_direction);            
-        
-        startTrack = pathMaker.engine.Track;  
-        
-        print("startPoint " + pathMaker.engine.Track);
-
-
-
-        // print new full path
-        string result = "full path  dir:" + _direction + " -> ";
-        if (fullTCPath != null)
-        {
-            
-            foreach (var item in fullTCPath)
-            {
-
-               result += " -> " + item.name;
-
-            }
-           print(result);
-
-            OccupiedTrack = null;
-            foreach (var track in fullTCPath)
-            {
-                if (track.IsCarPresence > 0 && track != fullTCPath.First())
-                {
-                    OccupiedTrack = track;
-                    break;
-                }
-                if (OccupiedTrack == null)
-                {
-                    OccupiedTrack = fullTCPath.Last();
-                }                   
-
-            }            
-
-            if (_direction == 1)
-            {
-                foreach (var tr in fullTCPath)
-                {
-
-                    if (tr.TrackLights[1] && tr.TrackLights[1].IsClosed)
-                    {
-                        LastRouteTrackForward = tr;
-                        break;
-                    }
-
-                }
-
-                if (LastRouteTrackForward)
-                {
-                    if (LastRouteTrackForward == tcsw14)
-                    {
-                        if (switch22.IsSwitchStraight)
-                            LastRouteTrackForward = tc10_10;
-                        else
-                            LastRouteTrackForward = tcsw14;
-                    }
-
-                    if (LastRouteTrackForward == tc14)
-                    {
-                        if (switch22.IsSwitchStraight)
-                            LastRouteTrackForward = tc14;
-                        else
-                            LastRouteTrackForward = tc10_10;
-                    }
-
-                    if (LastRouteTrackForward == tc12 || LastRouteTrackForward == tcsw19)
-                    {
-                        if (switch19.IsSwitchStraight)
-                            LastRouteTrackForward = tc12_12;
-                        else
-                            LastRouteTrackForward = tc13;
-                    }
-
-                    if (LastRouteTrackForward == tc13)
-                    {
-                        if (switch19.IsSwitchStraight)
-                            LastRouteTrackForward = tc13;
-                        else
-                            LastRouteTrackForward = tc12A;
-                    }
-                    if (LastRouteTrackForward == tc12_12)
-                    {
-                        if (switch19.IsSwitchStraight)
-                            LastRouteTrackForward = tc12A;
-                        else
-                            LastRouteTrackForward = tc12_12;
-                    }
-                }
-            }
-
-
-
-            if (_direction == -1)
-            {
-                foreach (var tr in fullTCPath)
-                {
-
-                    if (tr.TrackLights[0] != null && tr.TrackLights[0].IsClosed)
-                    {
-                        LastRouteTrackBackward = tr;
-                        break;
-                    }
-                }
-
-                if (LastRouteTrackBackward)
-                {
-                    if (LastRouteTrackBackward == tc10_10)
-                    {
-                        if (switch18.IsSwitchStraight && switch20.IsSwitchStraight)
-                            LastRouteTrackBackward = tcsw22;
-                        else
-                            LastRouteTrackBackward = tc10_10;
-                    }
-
-                    if (LastRouteTrackBackward == tc9)
-                    {
-                        if (switch18.IsSwitchStraight)
-                            LastRouteTrackBackward = tc9;
-                        else
-                            LastRouteTrackBackward = tcsw22;
-                    }
-
-                    if (LastRouteTrackBackward == tc11)
-                    {
-                        if (!switch20.IsSwitchStraight && switch18.IsSwitchStraight)
-                            LastRouteTrackBackward = tcsw22;
-                        else
-                            LastRouteTrackBackward = tc11;
-                    }
-
-                    if (LastRouteTrackBackward == tc10)
-                    {
-                        if (switch22.IsSwitchStraight)
-                            LastRouteTrackBackward = tcsw22;
-                        else
-                            LastRouteTrackBackward = tc14;
-                    }
-
-                    if (LastRouteTrackBackward == tc12A)
-                    {
-                        if (switch21.IsSwitchStraight)
-                            LastRouteTrackBackward = tc12_12;
-                        else
-                            LastRouteTrackBackward = tc13;
-                    }
-
-                    if (LastRouteTrackBackward == tc12_12)
-                    {
-                        if (switch19.IsSwitchStraight)
-                            LastRouteTrackBackward = tc12;
-                        else
-                            LastRouteTrackBackward = tc12_12;
-                    }
-                    if (LastRouteTrackBackward == tc13)
-                    {
-                        if (switch19.IsSwitchStraight)
-                            LastRouteTrackBackward = tc13;
-                        else
-                            LastRouteTrackBackward = tc12;
-                    }
-
-                    if (LastRouteTrackBackward == tcsw22 || LastRouteTrackBackward == tcsw18 || LastRouteTrackBackward == tcsw20)
-                    {
-                        if (switch22.IsSwitchStraight)
-                            LastRouteTrackBackward = tcsw22;
-                        else
-                        {
-                            print("aM HERR!!");
-                            LastRouteTrackBackward = tc14;
-                        }
-                            
-                    }
-                }
-            }
-        }
-        else
-        {
-            
-            OccupiedTrack = startTrack;           
-                LastRouteTrackBackward = startTrack;
-        }
-
-
-        print("OccupiedTrack  " + OccupiedTrack);
-        print("LastRouteTrackForward  " + LastRouteTrackForward);
-        print("LastRouteTrackBackward  " + LastRouteTrackBackward);
-        
-    }
-
-
-
-    
-
     public void MakePathInBothDirections()
     {
-        MakePath(1);
-        MakePath(-1);
+        pathMaker.GetFullPath(1);
+        pathMaker.GetFullPath(-1);
     }
 
     private void FixedUpdate()
@@ -387,8 +178,7 @@ public class Route : Singleton<Route> {
             textBuilder.PrintMessage(messageText, "Yardmaster:");
             ///
             print("Duplicate");
-        }
-            
+        }            
 
         MakePathInBothDirections();
     }      
@@ -999,15 +789,7 @@ public class Route : Singleton<Route> {
         }
     }
 
-    public Switch GetSwitchByName(string _switchName)
-    {
-        foreach (var sw in switches)
-        {
-            if (sw.name == _switchName)
-                return sw;            
-        }
-        return null;
-    }
+    
     
     private bool IsShunting(TrafficLights[] trafficLights)
     {

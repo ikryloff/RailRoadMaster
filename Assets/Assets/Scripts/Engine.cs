@@ -58,7 +58,7 @@ public class Engine : MonoBehaviour
     private Route route;
     [SerializeField]
     private bool brakes = true;
-    public int controllerPosition;
+    public float controllerPosition;
     [SerializeField]
     private Text speedTxt;
     [SerializeField]
@@ -121,14 +121,14 @@ public class Engine : MonoBehaviour
 
         // Cashing hand switches
 
-        switch18 = route.GetSwitchByName("Switch_18");
-        switch19 = route.GetSwitchByName("Switch_19");
-        switch20 = route.GetSwitchByName("Switch_20");
-        switch21 = route.GetSwitchByName("Switch_21");
-        switch22 = route.GetSwitchByName("Switch_22");
-        switch10 = route.GetSwitchByName("Switch_10");
-        switch12 = route.GetSwitchByName("Switch_12");
-        switch14 = route.GetSwitchByName("Switch_14");
+        switch18 = pathmaker.GetSwitchByName("Switch_18");
+        switch19 = pathmaker.GetSwitchByName("Switch_19");
+        switch20 = pathmaker.GetSwitchByName("Switch_20");
+        switch21 = pathmaker.GetSwitchByName("Switch_21");
+        switch22 = pathmaker.GetSwitchByName("Switch_22");
+        switch10 = pathmaker.GetSwitchByName("Switch_10");
+        switch12 = pathmaker.GetSwitchByName("Switch_12");
+        switch14 = pathmaker.GetSwitchByName("Switch_14");
         GetTrack();
     }
 
@@ -147,13 +147,21 @@ public class Engine : MonoBehaviour
     }
     public void MoveEngine()
     {
-       
-        if (MSpeed < MaxSpeed)
-            power += 0.8f;
+        if (MSpeed == maxSpeed)
+            power += 0;
         else
         {
-            power = 0;
+            if (MSpeed < maxSpeed)
+                power += 1f;
+            else
+            {
+                if (power > 0)
+                    power -= 10f;
+                if(power < 0)
+                    power = 0;
+            }
         }
+        
                    
         AddForceToEngine(power);
 
@@ -161,7 +169,7 @@ public class Engine : MonoBehaviour
 
     void AddForceToEngine(float _power)
     {
-        engine.AddRelativeForce(new Vector2(_power * direction, 0), ForceMode2D.Force);
+        engine.AddRelativeForce(new Vector2(_power * direction, 0), ForceMode2D.Impulse);
     }
 
     
@@ -193,7 +201,7 @@ public class Engine : MonoBehaviour
         {
             if (engine.velocity.x != 0)
             {
-                BreakeForce += 0.2f;                
+                BreakeForce += 1.5f;                
                 if (engine.velocity.magnitude > 3f)
                 {
                     engine.AddRelativeForce(new Vector2( - movingDirection * BreakeForce, 0), ForceMode2D.Force);
@@ -250,13 +258,12 @@ public class Engine : MonoBehaviour
 
     public void EngineControllerUseBrakes()
     {
-        brakes = true;
-        controllerPosition = 0;
+        brakes = true;        
     }
 
     public void EngineInstructionStop()
     {
-        Brakes = true;
+        brakes = true;
         direction = 0;
         controllerPosition = 0;
         instructionHandler = 0;
@@ -270,10 +277,8 @@ public class Engine : MonoBehaviour
         direction = direction == -1 && direction != 0 ? -1 : 1;
         if(direction == 1 && instructionHandler == 0)
         {
-            route.MakePath(direction);
-        }
-            
-        
+            pathmaker.GetFullPath(direction);
+        }   
         GetAllExpectedCarsByDirection(direction);
         ReleaseBrakes();
         instructionHandler++;
@@ -290,10 +295,11 @@ public class Engine : MonoBehaviour
         direction = direction == 1 && direction != 0 ? 1 : -1;
         if(direction == -1 && instructionHandler == 0)
         {
-            route.MakePath(direction);
+            pathmaker.GetFullPath(direction);
         }
             
         GetAllExpectedCarsByDirection(direction);
+        
         ReleaseBrakes();
         instructionHandler--;
         if (instructionHandler == 0)
@@ -343,7 +349,7 @@ public class Engine : MonoBehaviour
     {
         if (IsEngineGoesAheadByDirection(direction))
         {
-            DriveAccordingToCarPresence();
+            //DriveAccordingToCarPresence();
             DriveAccordingToLights();
         }
         // Stop after each coupling
@@ -401,7 +407,11 @@ public class Engine : MonoBehaviour
             controllerPosition = 6;
         }
 
-        
+        if (MSpeed == MaxSpeed)
+        {
+            EngineControllerReleaseAll();
+        }
+
         if (MSpeed > MaxSpeed || MaxSpeed == 0)
         {
             EngineControllerUseBrakes();   
@@ -410,10 +420,7 @@ public class Engine : MonoBehaviour
         {
             ReleaseBrakes();       
         }
-        if (MSpeed == MaxSpeed)
-        {
-            EngineControllerReleaseAll();
-        }
+        
 
     }
 
@@ -439,11 +446,11 @@ public class Engine : MonoBehaviour
 
     public void DriveAccordingToLights()
     {
-        if (route.LastRouteTrackForward)
-            TlForward = route.LastRouteTrackForward.TrackLights[1];
+        if (pathmaker.lastRouteTrackForward)
+            TlForward = pathmaker.lastRouteTrackForward.TrackLights[1];
 
-        if (route.LastRouteTrackBackward)
-            TlBackward = route.LastRouteTrackBackward.TrackLights[0];
+        if (pathmaker.lastRouteTrackBackward)
+            TlBackward = pathmaker.lastRouteTrackBackward.TrackLights[0];
         TrafficLights templight = null;
         if (direction == 1)
             templight = TlForward;
@@ -455,19 +462,19 @@ public class Engine : MonoBehaviour
 
         if (DistanceToLight <= 300 && DistanceToLight > 150)
         {
-            //Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+            //Debug.Log("Light is Closed!!" + " TL "  + "Distance " );
             if (Mathf.Abs(instructionHandler) > 5)
                 instructionHandler = 5 * direction;
         }
         else if (DistanceToLight <= 150 && DistanceToLight > 25)
         {
-            // Debug.Log("Light is Closed!!" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+            //Debug.Log("Light is Closed!!" + " TL " + "Distance ");
             if (Mathf.Abs(instructionHandler) > 2)
                 instructionHandler = 2 * direction;
         }
         else if (DistanceToLight <= 25 && DistanceToLight >= 6)
         {
-            //Debug.Log("Light is Closed!! I'll stop the engine" + " TL " + tl + "Distance " + Mathf.Abs(engine.transform.position.x - tl.transform.position.x));
+            //Debug.Log("Light is Closed!! I'll stop the engine");
             if (Mathf.Abs(instructionHandler) > 0)
             {
                 EngineInstructionStop();
@@ -569,7 +576,7 @@ public class Engine : MonoBehaviour
         float tempLightCoordForward = float.MaxValue;
         float tempLightCoordBackward = -float.MaxValue;
 
-        route.MakePath(1);
+        pathmaker.GetFullPath(1);
 
         foreach (RollingStock rc in cars)
         {
@@ -585,7 +592,7 @@ public class Engine : MonoBehaviour
             }
         }
 
-        route.MakePath(-1);
+        pathmaker.GetFullPath(-1);
 
         foreach (RollingStock rc in cars)
         {
@@ -669,7 +676,7 @@ public class Engine : MonoBehaviour
 
           
 
-    public int AbsControllerPosition()
+    public float AbsControllerPosition()
     {
         return Mathf.Abs(controllerPosition);        
     }

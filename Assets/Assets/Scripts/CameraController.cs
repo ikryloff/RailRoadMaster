@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour {
     
-    private float mapMovingSpeed = 38f;
+    private float mapMovingSpeed = 20f;
     public Vector2 mapBorder;
     public Vector3 mapLimit; 
     [SerializeField]
@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour {
     public Texture2D cursorForFocus;
     private bool isFocusModeIsOn;
 
-    float scrollSpeed = 20f;
+    float scrollSpeed = 10f;
 
     private void Start()
     {

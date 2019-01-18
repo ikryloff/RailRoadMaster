@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TrafficLights : MonoBehaviour {
     [SerializeField]
-    Sprite closed;
+    public Sprite closedSprite;
     [SerializeField]
     Sprite green;
     [SerializeField]
@@ -16,8 +16,8 @@ public class TrafficLights : MonoBehaviour {
     Sprite yellowFlashing;
     [SerializeField]
     private string trafficLightName;
-    [SerializeField]
-    SpriteRenderer controlLight;
+    
+    public SpriteRenderer controlLight;
 
     private SpriteRenderer lightColor;
     [SerializeField]
@@ -36,7 +36,8 @@ public class TrafficLights : MonoBehaviour {
     private void Awake()
     {
         lightColor = GetComponent<SpriteRenderer>();
-        SetLightColor(GetLightColor);         
+        SetLightColor(GetLightColor);
+        
     }    
 
 
@@ -104,7 +105,7 @@ public class TrafficLights : MonoBehaviour {
             }
 
         }
-        lightColor.sprite = closed;
+        lightColor.sprite = closedSprite;
     }
     private IEnumerator YellowTopFlashing()
     {
@@ -126,7 +127,7 @@ public class TrafficLights : MonoBehaviour {
                 yield return null;
             }
         }
-        lightColor.sprite = closed;
+        lightColor.sprite = closedSprite;
     }
 
 
@@ -137,9 +138,9 @@ public class TrafficLights : MonoBehaviour {
         switch (color)
         {
             case 0:
-                if(closed != null) // just for Ends
+                if(closedSprite != null) // just for Ends
                 {
-                    lightColor.sprite = closed;
+                    lightColor.sprite = closedSprite;
                     controlLight.color = redRC;
                 }                    
                 break;
@@ -168,7 +169,7 @@ public class TrafficLights : MonoBehaviour {
                 controlLight.color = greenRC;
                 break;
             default:
-                lightColor.sprite = closed;
+                lightColor.sprite = closedSprite;
                 controlLight.color = redRC;
                 break;
         }           

@@ -68,7 +68,7 @@ public class CompositionManager : Singleton<CompositionManager>
     }
     private void Start()
     {
-        Invoke("UpdateCompositionsInformation", 0.1f);
+        Invoke("UpdateCompositionsInformation", 0.5f);
     }
 
 

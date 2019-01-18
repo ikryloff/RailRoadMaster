@@ -18,7 +18,7 @@ public class PathHolder : Singleton<PathHolder>
     public  TrackCircuit _tc7;
     public  TrackCircuit _tc8;
     public  TrackCircuit _tc9;
-    public  TrackCircuit _tc10;
+    public  TrackCircuit _tc10_14_18;
     public  TrackCircuit _tc10_10;
     public  TrackCircuit _tc11;
     public  TrackCircuit _tc12;
@@ -62,7 +62,7 @@ public class PathHolder : Singleton<PathHolder>
     public static TrackCircuit tc7;
     public static TrackCircuit tc8;
     public static TrackCircuit tc9;
-    public static TrackCircuit tc10;
+    public static TrackCircuit tc10_14_18;
     public static TrackCircuit tc10_10;
     public static TrackCircuit tc11;
     public static TrackCircuit tc12;
@@ -106,7 +106,7 @@ public class PathHolder : Singleton<PathHolder>
     Node node7;
     Node node8;
     Node node9;
-    Node node10;
+    Node node10_14_18;
     Node node10_10;
     Node node11;
     Node node12;
@@ -156,7 +156,7 @@ public class PathHolder : Singleton<PathHolder>
     public static int  TC_7_ID = 7;
     public static int  TC_8_ID = 8;
     public static int  TC_9_ID = 9;
-    public static int  TC_10_ID = 19;
+    public static int  TC_10_14_18_ID = 19;
     public static int  TC_12A_ID = 20;
     public static int  TC_12_12_ID = 21;    
     public static int  TC_10_10_ID = 10;
@@ -206,7 +206,7 @@ public class PathHolder : Singleton<PathHolder>
         tc7 =          _tc7;
         tc8 =          _tc8;
         tc9 =          _tc9;
-        tc10 =         _tc10;
+        tc10_14_18 =   _tc10_14_18;
         tc10_10 =      _tc10_10;
         tc11    =      _tc11;
         tc12    =      _tc12;
@@ -254,10 +254,10 @@ public class PathHolder : Singleton<PathHolder>
             { tc8, TC_8_ID },
             { tc9, TC_9_ID },
             { tc10_10, TC_10_10_ID },
-            { tc10, TC_10_ID },
+            { tc10_14_18, TC_10_14_18_ID },
             { tc11, TC_11_ID },
-            { tc12_12, TC_12_12_ID },
-            { tc12, TC_12_ID },
+            { tc12_12, TC_12_ID },
+            { tc12, TC_12_12_ID },
             { tc12A, TC_12A_ID },
             { tc13, TC_13_ID },
             { tc14, TC_14_ID },
@@ -301,10 +301,10 @@ public class PathHolder : Singleton<PathHolder>
             { TC_8_ID, tc8 },
             { TC_9_ID, tc9 },
             { TC_10_10_ID, tc10_10 },
-            { TC_10_ID, tc10 },
+            { TC_10_14_18_ID, tc10_14_18 },
             { TC_11_ID, tc11 },
-            { TC_12_12_ID, tc12_12 },
-            { TC_12_ID, tc12 },
+            { TC_12_12_ID, tc12 },
+            { TC_12_ID, tc12_12 },
             { TC_12A_ID, tc12A },
             { TC_13_ID, tc13 },
             { TC_14_ID, tc14 },
@@ -349,7 +349,7 @@ public class PathHolder : Singleton<PathHolder>
         node7 = new Node(null, tcsw_1_3bot, tc7, null, null, false, TC_7_ID);
         node8 = new Node(null, null, tc8, tcsw_5_17bot, null, false, TC_8_ID);
         node9 = new Node(null, tcsw18, tc9, null, null, false, TC_9_ID);
-        node10 = new Node(null, tcsw22, tc10, tcsw18, null, false, TC_10_ID);
+        node10_14_18 = new Node(null, tcsw22, tc10_14_18, tcsw18, null, false, TC_10_14_18_ID);
         node10_10 = new Node(null, tcsw20, tc10_10, null, null, false, TC_10_10_ID);
         node11 = new Node(null, tcsw20, tc11, null, null, false, TC_11_ID);
         node12 = new Node(null, tcsw_5_17bot, tc12, tcsw19, null, false, TC_12_ID);
@@ -372,15 +372,15 @@ public class PathHolder : Singleton<PathHolder>
         nodeSw10 = new Node(tcsw_6_8bot, tcsw_6_8bot, tcsw10, tc3, tcsw12, true, TC_SW_10_ID);
         nodeSw12 = new Node(tcsw10, tcsw10, tcsw12, tcsw14, tc4, true, TC_SW_12_ID);
         nodeSw14 = new Node(tcsw12, tcsw12, tcsw14, tcsw22, tc5, true, TC_SW_14_ID);
-        nodeSw22 = new Node(tcsw14, tc14, tcsw22, tc10, tc10, true, TC_SW_22_ID);
+        nodeSw22 = new Node(tc14, tcsw14, tcsw22, tc10_14_18, tc10_14_18, true, TC_SW_22_ID);
         nodeSw16 = new Node(tcsw_6_8top, tcsw_6_8top, tcsw16, tcI_16_15, tc2, true, TC_SW_16_ID);
-        nodeSw18 = new Node(tc10, tc10, tcsw18, tcsw20, tc9, true, TC_SW_18_ID);
+        nodeSw18 = new Node(tc10_14_18, tc10_14_18, tcsw18, tcsw20, tc9, true, TC_SW_18_ID);
         nodeSw20 = new Node(tcsw18, tcsw18, tcsw20, tc10_10, tc11, true, TC_SW_20_ID);
         nodeSw15 = new Node(tc2, tcI_16_15, tcsw15, tcsw_7_9top, tcsw_7_9top, true, TC_SW_15_ID);
         nodeSw11 = new Node(tcsw13, tc3, tcsw11, tcsw_7_9bot, tcsw_7_9bot, true, TC_SW_11_ID);
         nodeSw19 = new Node(tcsw_5_17bot, tcsw_5_17bot, tcsw19, tc12, tc13, true, TC_SW_19_ID);
         nodeSw13 = new Node(tc4, tc5, tcsw13, tcsw11, tcsw11, true, TC_SW_13_ID);
-        nodeSw21 = new Node(tc13, tc12, tcsw21, tc12A, tc12A, true, TC_SW_21_ID);
+        nodeSw21 = new Node(tc13, tc12_12, tcsw21, tc12A, tc12A, true, TC_SW_21_ID);
 
         nodesList = new List<Node>(new Node[] 
         {
@@ -397,7 +397,7 @@ public class PathHolder : Singleton<PathHolder>
             node7,
             node8,
             node9,
-            node10,
+            node10_14_18,
             node10_10,
             node11,
             node12,
@@ -445,8 +445,8 @@ public class PathHolder : Singleton<PathHolder>
             { TC_7_ID,            node7     },
             { TC_8_ID,            node8     },
             { TC_9_ID,            node9     },
-            { TC_10_10_ID,        node10    },
-            { TC_10_ID,           node10_10 },
+            { TC_10_10_ID,        node10_10    },
+            { TC_10_14_18_ID,     node10_14_18 },
             { TC_11_ID,           node11    },
             { TC_12_12_ID,        node12    },
             { TC_12_ID,           node12_12 },

@@ -9,12 +9,13 @@ public class RollingStock : MonoBehaviour
     private string number;    
     private int compositionNumberofRS;
     private string compositionNumberString;
-    public bool brakes = true;
+    public bool brakes = true;    
     private Coupler activeCoupler;
     private Coupler passiveCoupler;
     private Coupler connectedToPassive; 
     [SerializeField]
-    private TrackCircuit trackCircuit; 
+    private TrackCircuit trackCircuit;
+    public float breakeForce;
 
     public string Number
     {
@@ -129,29 +130,34 @@ public class RollingStock : MonoBehaviour
         Brakes = true;
     }
     
-  
+
+   
 
     void FixedUpdate()
     {
 
         if (Brakes)
         {
+            
+            if(breakeForce < 60)
+                breakeForce += 0.9f;
             if (rollingStockRB.velocity.x > 0.3f)
-                rollingStockRB.AddRelativeForce(new Vector2(-60, 0), ForceMode2D.Force);
+                rollingStockRB.AddRelativeForce(new Vector2(-breakeForce, 0), ForceMode2D.Force);
             else if (rollingStockRB.velocity.x < -0.3f)
-                rollingStockRB.AddRelativeForce(new Vector2(60, 0), ForceMode2D.Force);
+                rollingStockRB.AddRelativeForce(new Vector2(breakeForce, 0), ForceMode2D.Force);
             else
                 rollingStockRB.velocity = new Vector2(0, 0);
             
         }
         else
         {
+            breakeForce = 0;
             if (rollingStockRB.velocity.x > 0)
             {
-                rollingStockRB.AddRelativeForce(new Vector2(-5f, 0), ForceMode2D.Force);
+                rollingStockRB.AddRelativeForce(new Vector2(-3f, 0), ForceMode2D.Force);
             }
             else if (rollingStockRB.velocity.x < 0)
-                rollingStockRB.AddRelativeForce(new Vector2(5f, 0), ForceMode2D.Force);
+                rollingStockRB.AddRelativeForce(new Vector2(3f, 0), ForceMode2D.Force);
 
             //rollingStockRB.AddRelativeForce(new Vector2(-8f, 0));
         }
