@@ -208,13 +208,22 @@ public class TrackCircuit : MonoBehaviour {
     {
         TrackLightsNames = new string[] { _left.Name, _right.Name };
     }
+
     public void GetTrackLightsByTrack(TrackCircuit track)
     {
-        if (track.name == "Track_10_14_18" || track.name == "Track_10_14_18" || track.name == "TrackCircuitSw18" || track.name == "TrackCircuitSw20" || track.name == "TrackCircuitSw22")
+        if (track.name == "Track_10_14_18" )
         {
-            TrackLightsNames = new string[] { "M3", "End10" };
+            TrackLightsNames = new string[] { null, null };
         }
-        if (track.name == "Track_10" || track.name == "Track_11")
+        if (track.name == "TrackCircuitSw22")
+        {
+            TrackLightsNames = new string[] { "EndM3", null };
+        }
+        if (track.name == "TrackCircuitSw18" || track.name == "TrackCircuitSw20")
+        {
+            TrackLightsNames = new string[] { null, null };
+        }
+        if (track.name == "Track_10")
         {
             TrackLightsNames = new string[] { "End10_20", "End10" };            
         }

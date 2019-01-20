@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RemoteControlScript : Singleton<RemoteControlScript> {
 
-    private Vector3 axisZ;
+    public Vector3 axisZ;
     [SerializeField]
     private GameObject remoteControll;
     [SerializeField]

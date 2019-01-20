@@ -28,6 +28,14 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     private List<TrafficLightBtnScript> listOfScriptedTLButtons;
     [SerializeField]
     private Button cancelButton;
+    [SerializeField]
+    private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
+    [SerializeField]
+    private TrafficLights end14_22SW, end22_14SW, end9_18, end10_20, end11_20, end12CH, end12N, end13CH, end13N, m3, endM3;
+    Switch[] switches;
+    public TrafficLights[] ends;
+
+
 
 
     public void SetRouteByLights(TrafficLights firstLight, TrafficLights secondLight)
@@ -148,13 +156,39 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
             }
 
         }
+
+        switches = FindObjectsOfType<Switch>();
+        // Cashing hand switches
+
+        switch18 = GetSwitchByName("Switch_18");
+        switch19 = GetSwitchByName("Switch_19");
+        switch20 = GetSwitchByName("Switch_20");
+        switch21 = GetSwitchByName("Switch_21");
+        switch22 = GetSwitchByName("Switch_22");
+        switch10 = GetSwitchByName("Switch_10");
+        switch12 = GetSwitchByName("Switch_12");
+        switch14 = GetSwitchByName("Switch_14");
+
+        end14_22SW = GetEndByName("End14_22SW");
+        end22_14SW = GetEndByName("End22_14SW");
+        end9_18 = GetEndByName("End9_18");
+        end10_20 = GetEndByName("End10_20");
+        end11_20 = GetEndByName("End11_20");
+        end12CH = GetEndByName("End12CH");
+        end12N = GetEndByName("End12N");
+        end13CH = GetEndByName("End13CH");
+        end13N = GetEndByName("End13N");
+        m3 = GetEndByName("M3");
+        endM3 = GetEndByName("EndM3");
+
+
     }
 
     private void Start()
     {
         lightText.text = "None";
 
-        
+        Invoke("CheckHandSwitches", 0.5f);        
     }
        
 
@@ -294,4 +328,68 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
             isStart = value;
         }
     }
+
+    public void CheckHandSwitches()
+    {
+
+        if (switch22.IsSwitchStraight)
+        {
+            end14_22SW.IsClosed = false;
+            end22_14SW.IsClosed = true;
+            endM3.IsClosed = false;
+        }
+        else
+        {
+            end14_22SW.IsClosed = true;
+            end22_14SW.IsClosed = false;
+            endM3.IsClosed = m3.IsClosed;
+        }
+
+        if (switch18.IsSwitchStraight)
+        {            
+            end9_18.IsClosed = true; 
+            if (switch20.IsSwitchStraight)
+            {
+                end10_20.IsClosed = false;
+                end11_20.IsClosed = true;
+            }
+            else
+            {
+                end10_20.IsClosed = true;
+                end11_20.IsClosed = false;
+            }
+        }
+        else
+        {
+            end9_18.IsClosed = false;
+            end10_20.IsClosed = true;
+            end11_20.IsClosed = true;
+        }
+
+
+
+    }
+
+
+    public Switch GetSwitchByName(string _switchName)
+    {
+        foreach (var sw in switches)
+        {
+            if (sw.name == _switchName)
+                return sw;
+        }
+        return null;
+    }
+
+    public TrafficLights GetEndByName(string _endName)
+    {
+        foreach (var e in trafficLights)
+        {
+            if (e.name == _endName)
+                return e;
+        }
+        return null;
+    }
+
+
 }

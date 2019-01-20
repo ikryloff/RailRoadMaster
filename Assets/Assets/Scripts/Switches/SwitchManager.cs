@@ -5,6 +5,7 @@ public class SwitchManager : Singleton<SwitchManager>
 {
 
     private GameObject switchObject;
+    [SerializeField]
     private GameObject[] indicators;
     public Switch[] switches;
     public GameObject[] switchObj;
@@ -35,7 +36,8 @@ public class SwitchManager : Singleton<SwitchManager>
 
         switches = FindObjectsOfType<Switch>();
         switchObj = GameObject.FindGameObjectsWithTag("RailSwitch");
-        trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();        
+        trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
+        indicators = GameObject.FindGameObjectsWithTag("Indication");
         route = GameObject.Find("Route").GetComponent<Route>();
         foreach (GameObject sw in switchObj)
         {
@@ -44,22 +46,31 @@ public class SwitchManager : Singleton<SwitchManager>
     }
     void Start () {
         IsSwitchModeOn = true;
-        indicators = GameObject.FindGameObjectsWithTag("Indication");        
+             
         RunIndicationMode();
     }
 	
-	void Update () {
+	void Update () {       
+
         if (!rcs.IsRemoteControllerOn)
         {
             if (!EventSystem.current.IsPointerOverGameObject())
             {
+                Vector3 click = Vector3.one;
+
                 if (Input.GetMouseButtonDown(0) && IsSwitchModeOn)
                 {
-                    Vector2 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    RaycastHit2D hit = Physics2D.Raycast(point, Vector2.zero);
-                    if (hit.collider != null && hit.collider.tag == "Indication")
+                    //Vector3 click = Camera.main.ScreenToWorldPoint(Input.mousePosition + new Vector3(0, 0, 100f
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+                    if (Physics.Raycast (ray, out hit))
                     {
-
+                        click = hit.point;
+                    }
+                    
+                    print("hit " + hit.collider.name);
+                    if (hit.collider != null && hit.collider.tag == "Lever")
+                    {
                         switchObject = hit.collider.transform.parent.gameObject;
                         Switch sw = switchObject.GetComponent<Switch>();
                         sw.ChangeDirection();
@@ -83,24 +94,14 @@ public class SwitchManager : Singleton<SwitchManager>
         IsSwitchModeOn = IsSwitchModeOn ? false : true;
         foreach (GameObject item in indicators)
         {
-            rend = item.GetComponent<Renderer>();
+            
             if (IsSwitchModeOn)
-            {
-                foreach (GameObject sw in switchObj)
-                {
-                    sw.layer = 9;
-                }
-                rend.gameObject.SetActive(true);
-                
+            {                
+                item.gameObject.SetActive(true);                
             }
-
             else
             {
-                foreach (GameObject sw in switchObj)
-                {
-                    sw.layer = 2;
-                }
-                rend.gameObject.SetActive(false);
+                item.gameObject.SetActive(false);
             }
                 
         }

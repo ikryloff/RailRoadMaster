@@ -7,12 +7,16 @@ using System.Linq;
 public class PathMaker : Singleton<PathMaker> {
     [SerializeField]
     private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
+    [SerializeField]
+    private TrafficLights end14_22SW, end22_14SW, end9_18, end10_20, end11_20, end12CH, end12N, end13CH, end13N;
     public PathHolder pathHolder;    
     public Engine engine;
     public int direction;
     public Route rt;
     List<Node> list;
     string route = " new ";
+    string routeForward = " new ";
+    string routeBackward = " new ";
     public TrafficLights[] ends;
     public List<TrackCircuit> fullEnginePath;
     public TrackCircuit occupiedTrack;
@@ -55,6 +59,16 @@ public class PathMaker : Singleton<PathMaker> {
         switch10 = GetSwitchByName("Switch_10");
         switch12 = GetSwitchByName("Switch_12");
         switch14 = GetSwitchByName("Switch_14");
+
+        end14_22SW = GetEndByName("End14_22SW");
+        end22_14SW = GetEndByName("End22_14SW");
+        end9_18 = GetEndByName("End9_18");
+        end10_20 = GetEndByName("End10_20");
+        end11_20 = GetEndByName("End11_20");
+        end12CH = GetEndByName("End12CH");
+        end12N = GetEndByName("End12N");
+        end13CH = GetEndByName("End13CH");
+        end13N = GetEndByName("End13N");
         
     }
 
@@ -90,6 +104,14 @@ public class PathMaker : Singleton<PathMaker> {
 
     public void CheckHandSwitches(int _direction)
     {
+
+        if (switch22.IsSwitchStraight)
+        {
+            end14_22SW.IsClosed = false;
+            end22_14SW.IsClosed = true;
+        }
+
+        /*
         foreach (TrafficLights tc in ends)
         {
             tc.IsClosed = true;
@@ -106,8 +128,9 @@ public class PathMaker : Singleton<PathMaker> {
             {
                 tr.TrackLights[0].IsClosed = false;
             }
-
         }
+
+    */
 
     }
    
@@ -117,8 +140,10 @@ public class PathMaker : Singleton<PathMaker> {
         
         fullEnginePath.Clear();
         route = "";
+        routeForward = "";
+        routeBackward = "";
         MakePath(GetEngineNode(), _direction);
-        print("right path " + route);
+        print("real path " + route);
         
         if (fullEnginePath != null)
         {
@@ -135,30 +160,35 @@ public class PathMaker : Singleton<PathMaker> {
                 occupiedTrack = fullEnginePath.Last();     
             }
 
-            CheckHandSwitches(_direction);
+            //CheckHandSwitches(_direction);
 
-           
-            foreach (TrackCircuit tr in fullEnginePath)
+            if ( _direction >= 0)
             {
-
-                if (tr.TrackLights[1] && tr.TrackLights[1].IsClosed)
-                {                        
-                    lastRouteTrackForward = tr;
-                    break;
-                }
-
-
-            }             
-                  
-          
-            foreach (TrackCircuit tr in fullEnginePath)
-            {
-            if (tr.TrackLights[0] != null && tr.TrackLights[0].IsClosed)
+                foreach (TrackCircuit tr in fullEnginePath)
                 {
-                    lastRouteTrackBackward = tr;
-                    break;
-                }                    
-            }            
+
+                    routeForward += " - > " + tr.name;
+                    if (tr.TrackLights[1] && tr.TrackLights[1].IsClosed)
+                    {
+                        lastRouteTrackForward = tr;
+                        break;
+                    }
+                }
+            }
+           
+            if (_direction == -1)
+            {
+                foreach (TrackCircuit tr in fullEnginePath)
+                {
+                    routeBackward += " - > " + tr.name;
+                    if (tr.TrackLights[0] != null && tr.TrackLights[0].IsClosed)
+                    {
+                        lastRouteTrackBackward = tr;
+                        break;
+                    }
+                }
+            }
+                
         }
         else
         {
@@ -171,8 +201,9 @@ public class PathMaker : Singleton<PathMaker> {
 
         print("OccupiedTrack  " + occupiedTrack);
         print("lastRouteTrackForward  " + lastRouteTrackForward);
+        print("pathForward  " + routeForward);
         print("lastRouteTrackBackward  " + lastRouteTrackBackward);
-
+        print("pathBack  " + routeBackward);
 
     }
 
@@ -182,6 +213,16 @@ public class PathMaker : Singleton<PathMaker> {
         {
             if (sw.name == _switchName)
                 return sw;
+        }
+        return null;
+    }
+
+    public TrafficLights GetEndByName(string _endName)
+    {
+        foreach (var e in ends)
+        {
+            if (e.name == _endName)
+                return e;
         }
         return null;
     }
@@ -201,7 +242,6 @@ public class PathMaker : Singleton<PathMaker> {
     public void MakePath(Node node, int _direction)
     {
         route += " -> " + node.track.name;
-        print( node.track.name + "  " + _direction);
         fullEnginePath.Add(node.track);
 
         Node next = null;

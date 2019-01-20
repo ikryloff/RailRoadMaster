@@ -13,6 +13,7 @@ public class Switch : MonoBehaviour {
     private SpriteRenderer turnIndicator;
     private SpriteRenderer straightIndicator;
     private SwitchManager switchManager;    
+    private TrafficLightsManager tlm;    
     private int timesLocked = 0;
     [SerializeField]
     TrackCircuit[] trackCircuits;
@@ -28,6 +29,7 @@ public class Switch : MonoBehaviour {
     {
         trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
         switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();        
+        tlm = FindObjectOfType<TrafficLightsManager>();        
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();        
         route = GameObject.Find("Route").GetComponent<Route>();
@@ -43,13 +45,13 @@ public class Switch : MonoBehaviour {
     {
         if (timesLocked > 0)
         {
-            turnIndicator.color = new Color32(255, 0, 0, 160);
-            straightIndicator.color = new Color32(255, 0, 0, 160);            
+            turnIndicator.color = new Color32(255, 77, 77, 160);
+            straightIndicator.color = new Color32(255, 77, 77, 160);
         }
         else if(timesLocked == 0)
         {
-            turnIndicator.color = new Color32(255, 255, 255, 160);
-            straightIndicator.color = new Color32(255, 255, 255, 160);
+            turnIndicator.color = new Color32(255, 242, 0, 160);
+            straightIndicator.color = new Color32(58, 227, 116, 160);
         }
 
     }
@@ -65,8 +67,10 @@ public class Switch : MonoBehaviour {
             else
             {
                 DirectionStraight();
-            }            
+            }
+            tlm.CheckHandSwitches();
             route.MakePathInBothDirections();
+            
         }
         else Debug.Log("Locked");
     } 
@@ -99,17 +103,13 @@ public class Switch : MonoBehaviour {
     public void DirectionStraight()
     {
         switchPhysicsTurn.SetActive(false);
-        switchPhysicsStraight.SetActive(true);
-        turnIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
-        straightIndicator.sortingLayerName = Constants.INDICATION_LAYER;
+        switchPhysicsStraight.SetActive(true);       
         IsSwitchStraight = true;        
     }
     public void DirectionTurn()
     {
         switchPhysicsStraight.SetActive(false);
-        switchPhysicsTurn.SetActive(true);
-        turnIndicator.sortingLayerName = Constants.INDICATION_LAYER;
-        straightIndicator.sortingLayerName = Constants.HIDE_INDICATION_LAYER;
+        switchPhysicsTurn.SetActive(true);       
         IsSwitchStraight = false;        
     }   
 

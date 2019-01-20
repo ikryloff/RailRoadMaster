@@ -372,7 +372,7 @@ public class PathHolder : Singleton<PathHolder>
         nodeSw10 = new Node(tcsw_6_8bot, tcsw_6_8bot, tcsw10, tc3, tcsw12, true, TC_SW_10_ID);
         nodeSw12 = new Node(tcsw10, tcsw10, tcsw12, tcsw14, tc4, true, TC_SW_12_ID);
         nodeSw14 = new Node(tcsw12, tcsw12, tcsw14, tcsw22, tc5, true, TC_SW_14_ID);
-        nodeSw22 = new Node(tc14, tcsw14, tcsw22, tc10_14_18, tc10_14_18, true, TC_SW_22_ID);
+        nodeSw22 = new Node(tcsw14, tc14, tcsw22, tc10_14_18, tc10_14_18, true, TC_SW_22_ID);
         nodeSw16 = new Node(tcsw_6_8top, tcsw_6_8top, tcsw16, tcI_16_15, tc2, true, TC_SW_16_ID);
         nodeSw18 = new Node(tc10_14_18, tc10_14_18, tcsw18, tcsw20, tc9, true, TC_SW_18_ID);
         nodeSw20 = new Node(tcsw18, tcsw18, tcsw20, tc10_10, tc11, true, TC_SW_20_ID);

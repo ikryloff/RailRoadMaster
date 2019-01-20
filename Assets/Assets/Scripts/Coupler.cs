@@ -74,9 +74,7 @@ public class Coupler : MonoBehaviour
                     jointCar = gameObject.AddComponent<FixedJoint2D>();
                     jointCar.connectedBody = otherCouplerRB;
                     jointCar.anchor = new Vector2(1, 0); //hardcoded joint point                
-                    jointCar.autoConfigureConnectedAnchor = true;
-                    jointCar.frequency = 0;
-                    jointCar.dampingRatio = 0;
+                    jointCar.autoConfigureConnectedAnchor = true;                   
                     otherRollingStock.ConnectedToPassive = gameObject.GetComponent<Coupler>();
                     OtherCoupler = otherCouplerRB.GetComponent<Coupler>();
                     ConnectedToActive = PassiveToThisCoupler;
