@@ -615,3 +615,7 @@ Assets/Pixelplacement/Surge/Utilities/EditorUtilities.cs
 Assets/Pixelplacement/Surge/Utilities/Initialization.cs
 Assets/Pixelplacement/Surge/Utilities/LayerMaskHelper.cs
 Assets/Pixelplacement/Surge/Utilities/Math.cs
+*.controller
+*.anim
+*.shader
+*.dae

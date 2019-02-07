@@ -5,10 +5,8 @@ using UnityEngine;
 using System.Linq;
 
 public class PathMaker : Singleton<PathMaker> {
-    [SerializeField]
-    private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
-    [SerializeField]
-    private TrafficLights end14_22SW, end22_14SW, end9_18, end10_20, end11_20, end12CH, end12N, end13CH, end13N;
+
+    private TrafficLightsManager tlm;
     public PathHolder pathHolder;    
     public Engine engine;
     public int direction;
@@ -47,29 +45,10 @@ public class PathMaker : Singleton<PathMaker> {
     private void Awake()
     {
         switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();
+        tlm = FindObjectOfType<TrafficLightsManager>();
         switches = FindObjectsOfType<Switch>();        
 
-        // Cashing hand switches
-
-        switch18 = GetSwitchByName("Switch_18");
-        switch19 = GetSwitchByName("Switch_19");
-        switch20 = GetSwitchByName("Switch_20");
-        switch21 = GetSwitchByName("Switch_21");
-        switch22 = GetSwitchByName("Switch_22");
-        switch10 = GetSwitchByName("Switch_10");
-        switch12 = GetSwitchByName("Switch_12");
-        switch14 = GetSwitchByName("Switch_14");
-
-        end14_22SW = GetEndByName("End14_22SW");
-        end22_14SW = GetEndByName("End22_14SW");
-        end9_18 = GetEndByName("End9_18");
-        end10_20 = GetEndByName("End10_20");
-        end11_20 = GetEndByName("End11_20");
-        end12CH = GetEndByName("End12CH");
-        end12N = GetEndByName("End12N");
-        end13CH = GetEndByName("End13CH");
-        end13N = GetEndByName("End13N");
-        
+       
     }
 
 
@@ -102,37 +81,6 @@ public class PathMaker : Singleton<PathMaker> {
         return pathHolder.trackCircuitTC_ID[tc];
     }
 
-    public void CheckHandSwitches(int _direction)
-    {
-
-        if (switch22.IsSwitchStraight)
-        {
-            end14_22SW.IsClosed = false;
-            end22_14SW.IsClosed = true;
-        }
-
-        /*
-        foreach (TrafficLights tc in ends)
-        {
-            tc.IsClosed = true;
-        }
-
-       
-        foreach (TrackCircuit tr in fullEnginePath)
-        {
-            if (ends.Contains(tr.TrackLights[1]) && tr.TrackLights[1].IsClosed)
-            {
-                tr.TrackLights[1].IsClosed = false;
-            }
-            if (ends.Contains(tr.TrackLights[0]) && tr.TrackLights[0].IsClosed)
-            {
-                tr.TrackLights[0].IsClosed = false;
-            }
-        }
-
-    */
-
-    }
    
    
     public void GetFullPath(int _direction)
@@ -160,7 +108,7 @@ public class PathMaker : Singleton<PathMaker> {
                 occupiedTrack = fullEnginePath.Last();     
             }
 
-            //CheckHandSwitches(_direction);
+            tlm.CheckHandSwitches();
 
             if ( _direction >= 0)
             {

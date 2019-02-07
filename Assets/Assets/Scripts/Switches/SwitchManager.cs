@@ -58,9 +58,8 @@ public class SwitchManager : Singleton<SwitchManager>
             {
                 Vector3 click = Vector3.one;
 
-                if (Input.GetMouseButtonDown(0) && IsSwitchModeOn)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    //Vector3 click = Camera.main.ScreenToWorldPoint(Input.mousePosition + new Vector3(0, 0, 100f
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
                     if (Physics.Raycast (ray, out hit))

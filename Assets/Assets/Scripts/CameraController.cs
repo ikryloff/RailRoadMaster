@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour {
     private float mapMovingSpeed = 20f;
     public Vector2 mapBorder;
     public Vector3 mapLimit; 
+    public float mapLimitMinZ; 
     [SerializeField]
     private Rigidbody2D cameraTarget;   
     [SerializeField]
@@ -182,7 +183,7 @@ public class CameraController : MonoBehaviour {
 
             desiredPosition.x = Mathf.Clamp(desiredPosition.x, -mapLimit.x, mapLimit.x);
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, -mapLimit.y, mapLimit.y);
-            desiredPosition.z = Mathf.Clamp(desiredPosition.z, -mapLimit.z, mapLimit.z);
+            desiredPosition.z = Mathf.Clamp(desiredPosition.z, -mapLimit.z, mapLimitMinZ);
             smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * dt);
             transform.position = smoothedPosition;
 

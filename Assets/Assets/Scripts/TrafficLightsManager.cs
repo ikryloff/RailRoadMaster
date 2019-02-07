@@ -31,7 +31,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     [SerializeField]
     private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
     [SerializeField]
-    private TrafficLights end14_22SW, end22_14SW, end9_18, end10_20, end11_20, end12CH, end12N, end13CH, end13N, m3, endM3;
+    private TrafficLights end14_22SW, end22_14SW, end9_18, end10_20, end11_20, end12CH, end12N, end13CH, end13N, m3, endM3, end10_18;
     Switch[] switches;
     public TrafficLights[] ends;
 
@@ -180,7 +180,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         end13N = GetEndByName("End13N");
         m3 = GetEndByName("M3");
         endM3 = GetEndByName("EndM3");
-
+        end10_18 = GetEndByName("End10_18");
 
     }
 
@@ -347,25 +347,48 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
 
         if (switch18.IsSwitchStraight)
         {            
-            end9_18.IsClosed = true; 
-            if (switch20.IsSwitchStraight)
-            {
-                end10_20.IsClosed = false;
-                end11_20.IsClosed = true;
-            }
-            else
-            {
-                end10_20.IsClosed = true;
-                end11_20.IsClosed = false;
-            }
+            end9_18.IsClosed = true;
+            end10_18.IsClosed = false;  
+           
         }
         else
         {
             end9_18.IsClosed = false;
-            end10_20.IsClosed = true;
-            end11_20.IsClosed = true;
+            end10_18.IsClosed = true;
         }
 
+        if (switch20.IsSwitchStraight)
+        {
+            end10_20.IsClosed = false;
+            end11_20.IsClosed = true;
+        }
+        else
+        {
+            end10_20.IsClosed = true;
+            end11_20.IsClosed = false;
+        }
+
+        if (switch21.IsSwitchStraight)
+        {
+            end12CH.IsClosed = false;
+            end13CH.IsClosed = true;
+        }
+        else
+        {
+            end12CH.IsClosed = true;
+            end13CH.IsClosed = false;
+        }
+
+        if (switch19.IsSwitchStraight)
+        {
+            end12N.IsClosed = false;
+            end13N.IsClosed = true;
+        }
+        else
+        {
+            end12N.IsClosed = true;
+            end13N.IsClosed = false;
+        }
 
 
     }

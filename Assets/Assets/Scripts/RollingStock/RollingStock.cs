@@ -16,6 +16,7 @@ public class RollingStock : MonoBehaviour
     [SerializeField]
     private TrackCircuit trackCircuit;
     public float breakeForce;
+    public GameObject fork;
 
     public string Number
     {
@@ -127,6 +128,7 @@ public class RollingStock : MonoBehaviour
         rollingStockRB = GetComponent<Rigidbody2D>();        
         ActiveCoupler = transform.GetChild(0).GetComponent<Coupler>();
         PassiveCoupler = transform.GetChild(1).GetComponent<Coupler>();
+        fork = rollingStock.transform.Find("Fork").gameObject;
         Brakes = true;
     }
     
@@ -152,6 +154,7 @@ public class RollingStock : MonoBehaviour
         else
         {
             breakeForce = 0;
+            /*
             if (rollingStockRB.velocity.x > 0)
             {
                 rollingStockRB.AddRelativeForce(new Vector2(-3f, 0), ForceMode2D.Force);
@@ -159,7 +162,7 @@ public class RollingStock : MonoBehaviour
             else if (rollingStockRB.velocity.x < 0)
                 rollingStockRB.AddRelativeForce(new Vector2(3f, 0), ForceMode2D.Force);
 
-            //rollingStockRB.AddRelativeForce(new Vector2(-8f, 0));
+            */
         }
 
     } 

@@ -16,19 +16,22 @@ public class Coupler : MonoBehaviour
     private Rigidbody2D rollingStockRB;
     private bool isActiveCoupler;
     [SerializeField]
-    private bool isPassiveCoupleConnected;
-    private FixedJoint2D jointCar;    
+    private bool isPassiveCoupleConnected;    
+    private HingeJoint2D jointCar;
     [SerializeField]
     private Coupler connectedToActive;
     private CompositionManager cm;
     public CouplerManager cpm;
-    Vector2 position;
+    
+    
+   
 
     void Awake()
     {
                 
         rollingStock = transform.parent.GetComponent<RollingStock>();
         rollingStockRB = rollingStock.GetComponent<Rigidbody2D>();
+       
         if (IsActiveCoupler)
         {
             if (OtherCoupler)
@@ -36,22 +39,22 @@ public class Coupler : MonoBehaviour
                 PassiveToThisCoupler = OtherCoupler;
                 otherCouplerRB = OtherCoupler.GetComponent<Rigidbody2D>();
                 otherRollingStock = OtherCoupler.transform.parent.GetComponent<RollingStock>();
-                jointCar = gameObject.AddComponent<FixedJoint2D>();
+                jointCar = gameObject.AddComponent<HingeJoint2D>();
                 jointCar.connectedBody = otherCouplerRB;
                 jointCar.anchor = new Vector2(1, 0); //hardcoded joint point                
-                jointCar.autoConfigureConnectedAnchor = true;
-                jointCar.frequency = 0;
-                jointCar.dampingRatio = 0;
+                jointCar.autoConfigureConnectedAnchor = false;                
                 otherRollingStock.ConnectedToPassive = gameObject.GetComponent<Coupler>();
                 ConnectedToActive = PassiveToThisCoupler;                
                 PassiveToThisCoupler.IsPassiveCoupleConnected = true;
                 PassiveToThisCoupler.OtherCoupler = this;
+                otherRollingStock.fork.SetActive(false);
             }
 
         }       
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();        
-        cpm = GameObject.Find("CouplerManager").GetComponent<CouplerManager>();
-        position = transform.localPosition;
+        cpm = GameObject.Find("CouplerManager").GetComponent<CouplerManager>();       
+        
+
     }
 
 
@@ -71,14 +74,14 @@ public class Coupler : MonoBehaviour
                 otherRollingStockRB = otherRollingStock.GetComponent<Rigidbody2D>();
                 if (hitPoint.point.x - gameObject.transform.position.x > 0)
                 {
-                    jointCar = gameObject.AddComponent<FixedJoint2D>();
+                    OtherCoupler = otherCouplerRB.GetComponent<Coupler>();                    
+                    jointCar = gameObject.AddComponent<HingeJoint2D>();
                     jointCar.connectedBody = otherCouplerRB;
                     jointCar.anchor = new Vector2(1, 0); //hardcoded joint point                
-                    jointCar.autoConfigureConnectedAnchor = true;                   
-                    otherRollingStock.ConnectedToPassive = gameObject.GetComponent<Coupler>();
-                    OtherCoupler = otherCouplerRB.GetComponent<Coupler>();
+                    jointCar.autoConfigureConnectedAnchor = false;                   
+                    otherRollingStock.ConnectedToPassive = gameObject.GetComponent<Coupler>();                    
                     ConnectedToActive = PassiveToThisCoupler;
-                    
+                    otherRollingStock.fork.SetActive(false);
                     
 
                     if (cpm.IsCouplerModeIsOn)
@@ -94,7 +97,7 @@ public class Coupler : MonoBehaviour
     }
 
 
-    public FixedJoint2D JointCar
+    public HingeJoint2D JointCar
     {
         get
         {
@@ -105,24 +108,15 @@ public class Coupler : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating("UpdateCoupleralignment", 1f, 1f);  //1s delay, repeat every 1s
+        //InvokeRepeating("UpdateCoupleralignment", 1f, 1f);  //1s delay, repeat every 1s
         
         
     }
 
     private void FixedUpdate()
     {
-        if (!OtherCoupler)
-        {
-            gameObject.transform.rotation = rollingStock.transform.rotation;
-            transform.localPosition = position;
-        }
-        
+           
 
-        
-        
-       
-        
     }
 
     private void UpdateCoupleralignment()
@@ -208,11 +202,13 @@ public class Coupler : MonoBehaviour
         if (JointCar)
         {
             OtherCoupler.transform.parent.GetComponent<RollingStock>().ConnectedToPassive = null;
+            OtherCoupler.transform.parent.GetComponent<RollingStock>().fork.SetActive(true);
             OtherCoupler.IsPassiveCoupleConnected = false;            
             PassiveToThisCoupler.OtherCoupler = null;
             OtherCoupler = null;
             Destroy(JointCar);
             cm.UpdateCompositionsInformation();
+            
         }            
     }
 

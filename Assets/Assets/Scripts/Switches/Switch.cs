@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class Switch : MonoBehaviour {
@@ -17,6 +18,9 @@ public class Switch : MonoBehaviour {
     private int timesLocked = 0;
     [SerializeField]
     TrackCircuit[] trackCircuits;
+    public Animator anim;
+    private string animMethod;
+    public GameTime gameTime;
     
     Route route;
 
@@ -28,8 +32,9 @@ public class Switch : MonoBehaviour {
     void Awake ()
     {
         trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
-        switchManager = GameObject.Find("SwitchManager").GetComponent<SwitchManager>();        
-        tlm = FindObjectOfType<TrafficLightsManager>();        
+        switchManager = FindObjectOfType<SwitchManager>(); 
+        tlm = FindObjectOfType<TrafficLightsManager>();
+        gameTime = FindObjectOfType<GameTime>();
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();        
         route = GameObject.Find("Route").GetComponent<Route>();
@@ -38,6 +43,8 @@ public class Switch : MonoBehaviour {
     {
         IsSwitchStraight = true;
         DirectionStraight();
+        if(transform.Find("Lever"))
+            anim = transform.Find("Lever").GetComponent<Animator>();
     }
 
 
@@ -56,16 +63,18 @@ public class Switch : MonoBehaviour {
 
     }
 
+    
+
     public void ChangeDirection()
     {
         if (timesLocked == 0)
         {
             if (IsSwitchStraight == true)
-            {
+            {                               
                 DirectionTurn();
             }
             else
-            {
+            {                               
                 DirectionStraight();
             }
             tlm.CheckHandSwitches();
@@ -102,12 +111,16 @@ public class Switch : MonoBehaviour {
 
     public void DirectionStraight()
     {
+        if(anim)
+            anim.SetBool("TurnSwitch", false);
         switchPhysicsTurn.SetActive(false);
         switchPhysicsStraight.SetActive(true);       
         IsSwitchStraight = true;        
     }
     public void DirectionTurn()
     {
+        if (anim)
+            anim.SetBool("TurnSwitch", true);
         switchPhysicsStraight.SetActive(false);
         switchPhysicsTurn.SetActive(true);       
         IsSwitchStraight = false;        

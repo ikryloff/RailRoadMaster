@@ -152,24 +152,23 @@ public class Engine : MonoBehaviour
         else
         {
             if (MSpeed < maxSpeed)
-                power += 1f;
+                power += 0.3f;
             else
             {
                 if (power > 0)
-                    power -= 10f;
+                    power -= 6f;
                 if(power < 0)
                     power = 0;
             }
-        }
-        
+        }      
                    
         AddForceToEngine(power);
 
     }
 
     void AddForceToEngine(float _power)
-    {
-        engine.AddRelativeForce(new Vector2(_power * direction, 0), ForceMode2D.Impulse);
+    {       
+            engine.AddRelativeForce(new Vector2(_power * direction, 0), ForceMode2D.Impulse);  
     }
 
     
