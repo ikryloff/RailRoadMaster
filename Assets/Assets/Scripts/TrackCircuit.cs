@@ -294,7 +294,10 @@ public class TrackCircuit : MonoBehaviour {
 
         if (track.name == "TrackCircuitSw14" )
         {
-            TrackLightsNames = new string[] { null, "End22_14SW" };
+            if(track.GetComponentInParent<Switch>().IsSwitchStraight)
+                TrackLightsNames = new string[] { null, "End22_14SW" };
+            else
+                TrackLightsNames = new string[] { null, null };
         }     
 
         TrackLights = new TrafficLights[2];

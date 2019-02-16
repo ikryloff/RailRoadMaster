@@ -20,6 +20,7 @@ public class PathMaker : Singleton<PathMaker> {
     public TrackCircuit occupiedTrack;
     public TrackCircuit lastRouteTrackForward;
     public TrackCircuit lastRouteTrackBackward;
+    
     TrackCircuit engineTrack;
     SwitchManager switchManager;
     Switch[] switches;

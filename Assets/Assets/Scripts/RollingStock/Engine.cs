@@ -105,8 +105,7 @@ public class Engine : MonoBehaviour
     TrafficLights tlForward;
     [SerializeField]
     TrafficLights tlBackward;
-    [SerializeField]
-    private int movingDirection;
+    public int movingDirection;
     public PathMaker pathmaker;
 
 
@@ -228,7 +227,7 @@ public class Engine : MonoBehaviour
             }
             else if (engine.velocity.x < 0)
                 engine.AddRelativeForce(new Vector2(3, 0), ForceMode2D.Force);
-        }
+        }      
 
     }
 
@@ -272,9 +271,8 @@ public class Engine : MonoBehaviour
 
     public void EngineInstructionsForward()
     {
-        route.IsPathCheckingForward = true;
         direction = direction == -1 && direction != 0 ? -1 : 1;
-        if(direction == 1 && instructionHandler == 0)
+        if(direction == 1)
         {
             pathmaker.GetFullPath(direction);
         }   
@@ -290,9 +288,8 @@ public class Engine : MonoBehaviour
 
     public void EngineInstructionsBackwards()
     {
-        route.IsPathCheckingForward = false;
         direction = direction == 1 && direction != 0 ? 1 : -1;
-        if(direction == -1 && instructionHandler == 0)
+        if(direction == -1)
         {
             pathmaker.GetFullPath(direction);
         }

@@ -12,9 +12,7 @@ public class TrafficLights : MonoBehaviour {
     [SerializeField]
     Material white;
     [SerializeField]
-    Material yellow;
-    [SerializeField]
-    Material yellowFlashing;
+    Material yellow;    
     [SerializeField]
     Material noLight;
     [SerializeField]
@@ -25,7 +23,8 @@ public class TrafficLights : MonoBehaviour {
     public GameObject blueSignal;
     public GameObject whiteSignal;
     public GameObject redSignal;
-    public GameObject yellowSignal;
+    public GameObject topYellowSignal;
+    public GameObject bottomYellowSignal;
     public GameObject greenSignal;
 
     public List <GameObject> lights;
@@ -35,6 +34,8 @@ public class TrafficLights : MonoBehaviour {
     private Material lightColor;
     [SerializeField]
     private int intColor;
+    PathMaker pathMaker;
+    public int lightDirection;
 
     //Colors for remote control
     private Color32 redRC = new Color32(255, 10, 0, 255);
@@ -42,7 +43,7 @@ public class TrafficLights : MonoBehaviour {
     private Color32 whiteRC = new Color32(230, 230, 230, 255);
     [SerializeField]
     private bool isClosed;
-   
+    public Animator anim;
 
     const float flashTime = 1f;
     private string nameRouteOfLight;
@@ -50,77 +51,31 @@ public class TrafficLights : MonoBehaviour {
     
     private void Awake()
     {
-        if (blueSignal)
-        {
-            blueSignal = transform.Find("BlueSignal").gameObject;
-            lights.Add(blueSignal);
-        }
+        AddSignal(blueSignal);
+        AddSignal(whiteSignal);
+        AddSignal(redSignal);
+        AddSignal(topYellowSignal);
+        AddSignal(bottomYellowSignal);
+        AddSignal(greenSignal);
+        pathMaker = FindObjectOfType<PathMaker>();
 
-
-        if (whiteSignal)
-        {
-            whiteSignal = transform.Find("WhiteSignal").gameObject;
-            lights.Add(whiteSignal);
-        }
-            
-        
-        
-        //SetLightColor(GetLightColor);
-        
     }
     private void Start()
     {
-        SetLightColor(GetLightColor);
+        SetLightColor(GetLightColor);        
+
     }
 
-    /*
-    private IEnumerator YellowFlashing()
+   
+    public void AddSignal(GameObject signal)
     {
-        
-        while (GetLightColor == Constants.COLOR_YELLOW_FLASH)
-        {            
-            float temp = 0f;
-            while (temp < flashTime)
-            {
-                temp += Time.deltaTime;
-               // lightColor.sprite = yellowFlashing;
-                yield return null;
-            }
-            temp = 0f;
-            while (temp < flashTime)
-            {
-                temp += Time.deltaTime;
-                lightColor.sprite = null;
-                yield return null;
-            }
-
-        }
-        //lightColor.sprite = closedSprite;
-    }
-    private IEnumerator YellowTopFlashing()
-    {
-        const float flashTime = 1f;
-        while (GetLightColor == Constants.COLOR_YELLOW_TOP_FLASH)
+        if (signal)
         {
-            float temp = 0f;
-            while (temp < flashTime)
-            {
-                temp += Time.deltaTime;
-                //lightColor.sprite = yellowFlashing;
-                yield return null;
-            }
-            temp = 0f;
-            while (temp < flashTime)
-            {
-                temp += Time.deltaTime;
-                //lightColor.sprite = yellow;
-                yield return null;
-            }
+            lights.Add(signal);
         }
-        //lightColor.sprite = closedSprite;
     }
-    */
 
+   
     //Main function of setting color using coroutine for delay
     public void SetLightColor(int color)
     {
@@ -130,21 +85,25 @@ public class TrafficLights : MonoBehaviour {
     public IEnumerator TurnOnLightWithDelay(int color)
     {
         yield return new WaitForSeconds(1.1f);
-
+        if (anim)
+        {
+            anim.enabled = false;
+        }
         intColor = color;
         IsClosed = color == 0 || color == 2 ? true : false;
         if (lights != null)
         {
             foreach (GameObject item in lights)
             {
-                item.transform.Find("Light").gameObject.SetActive(false);
+                item.transform.Find("Ray").gameObject.SetActive(false);
                 item.GetComponent<MeshRenderer>().material = noLight;
             }
         }
 
         GameObject tempSignal = null;
         Material tempMaterial = null;
-
+        GameObject tempSignalAdd = null;
+        Material tempMaterialAdd = null;
 
         switch (color)
         {
@@ -156,30 +115,62 @@ public class TrafficLights : MonoBehaviour {
                     controlLight.color = redRC;
                 }
                 break;
+                //green
             case 1:
-                //lightColor.sprite = green;
+                tempSignal = greenSignal;
+                tempMaterial = green;
                 controlLight.color = greenRC;
                 break;
+                //blue
             case 2:
                 tempSignal = blueSignal;
                 tempMaterial = blue;
                 controlLight.color = redRC;
                 break;
+                //white
             case 3:
                 tempSignal = whiteSignal;
                 tempMaterial = white;
                 controlLight.color = whiteRC;
                 break;
+                //yellow
             case 4:
-                // lightColor.sprite = yellow;
+                tempSignal = topYellowSignal;
+                tempMaterial = yellow;                
                 controlLight.color = greenRC;
                 break;
             case 5:
-                StartCoroutine("YellowFlashing");
+                //blinking Yellow;
+                tempSignal = topYellowSignal;
+                tempMaterial = yellow;                
+                if (anim)
+                {
+                    anim.enabled = true;
+                    anim.Play("BlinkYellow");
+                }
                 controlLight.color = greenRC;
                 break;
+
             case 6:
-                StartCoroutine("YellowTopFlashing");
+                //TopYellow and bottomYellow;
+                tempSignal = topYellowSignal;
+                tempMaterial = yellow;
+                tempSignalAdd = bottomYellowSignal;
+                tempMaterialAdd = yellow;
+                controlLight.color = greenRC;
+                break;
+
+            case 7:
+                //blinking Yellow and bottomYellow;
+                tempSignal = topYellowSignal;
+                tempMaterial = yellow;
+                if (anim)
+                {
+                    anim.enabled = true;
+                    anim.Play("BlinkYellow");
+                }
+                tempSignalAdd = bottomYellowSignal;
+                tempMaterialAdd = yellow;
                 controlLight.color = greenRC;
                 break;
             default:
@@ -190,10 +181,15 @@ public class TrafficLights : MonoBehaviour {
         }
         if (tempSignal != null && tempMaterial != null)
         {
-            tempSignal.transform.Find("Light").gameObject.SetActive(true);
+            tempSignal.transform.Find("Ray").gameObject.SetActive(true);
             tempSignal.GetComponent<MeshRenderer>().material = tempMaterial;
         }
-        print(this.Name + "   " + color);
+        if (tempSignalAdd != null && tempMaterialAdd != null)
+        {
+            tempSignalAdd.transform.Find("Ray").gameObject.SetActive(true);
+            tempSignalAdd.GetComponent<MeshRenderer>().material = tempMaterialAdd;
+        }      
+        pathMaker.GetFullPath(lightDirection);
     }
    
 

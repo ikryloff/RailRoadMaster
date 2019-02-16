@@ -6,11 +6,16 @@ public class CameraController : MonoBehaviour {
     private float mapMovingSpeed = 20f;
     public Vector2 mapBorder;
     public Vector3 mapLimit; 
-    public float mapLimitMinZ; 
+    float mapLimitMinZ = -400f;
+    float mapLimitMaxZ = 5f;
+    float mapLimitMinX = 930f;
+    float mapLimitMaxX = 2697f;
+    float mapLimitMinY = -608f;
+    float mapLimitMaxY = -300f;
     [SerializeField]
-    private Rigidbody2D cameraTarget;   
+    public Transform cameraTarget;   
     [SerializeField]
-    private Rigidbody2D startPos;   
+    private GameObject startPos;   
     private Vector3 desiredPosition;
     Vector3 smoothedPosition;
     private float smoothSpeed = 5f;
@@ -20,14 +25,25 @@ public class CameraController : MonoBehaviour {
     public float cameraSize;
     public Texture2D cursorForFocus;
     private bool isFocusModeIsOn;
-
+    public float speed;
     float scrollSpeed = 10f;
+
+    private void Awake()
+    {
+#if UNITY_ANDROID
+        QualitySettings.vSyncCount = 0;    
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+#endif
+    }
 
     private void Start()
     {
+        
+
+
         IsFocusModeIsOn = false;
         lastTime = Time.realtimeSinceStartup;
-        transform.position = startPos.position - new Vector2(0, 30f);
+        
         
     }
 
@@ -36,7 +52,7 @@ public class CameraController : MonoBehaviour {
     void FixedUpdate()
     {
         MoveCamera(Time.deltaTime);
-       
+        
 
     }
 
@@ -64,30 +80,50 @@ public class CameraController : MonoBehaviour {
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    CameraTarget = hit.collider.GetComponentInParent<Rigidbody2D>();
+                    cameraTarget = hit.collider.GetComponentInParent<Transform>();
                 }
             }
         }
         else if (!IsFocusModeIsOn)
         {
-            CameraTarget = null;
+            //CameraTarget = null;
         }
 
+        //transform.position = cameraTarget.position - new Vector3(0, 130, 200f);
+
+        // Moving camera by touching
+        if(Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        {
+            Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
+            transform.Translate(-touchDeltaPosition.x * speed, -touchDeltaPosition.y * speed, 0);
+            transform.position = new Vector3
+                (
+                    Mathf.Clamp(transform.position.x, mapLimitMinX, mapLimitMaxX),
+                    Mathf.Clamp(transform.position.y, mapLimitMinY, mapLimitMaxY),
+                    Mathf.Clamp(transform.position.z, mapLimitMinZ, mapLimitMaxZ)
+                );
+        }
+
+        // Zoom 
+        if(Input.touchCount == 2)
+        {
+            Touch touchZero = Input.GetTouch(0);
+            Touch touchOne = Input.GetTouch(1);
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+            float prevTouchMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchMagnitude = (touchZero.position - touchOne.position).magnitude;
+
+            float deltaMagnitudeDiff = prevTouchMagnitude - touchMagnitude;
+
+            Camera.main.fieldOfView += deltaMagnitudeDiff * 0.1f;
+            Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, 4f, 45f);
+
+        }
 
     }
 
-    public Rigidbody2D CameraTarget
-    {
-        get
-        {
-            return cameraTarget;
-        }
-
-        set
-        {
-            cameraTarget = value;
-        }
-    }
+    
 
     public bool MyUpdate
     {
@@ -138,11 +174,11 @@ public class CameraController : MonoBehaviour {
 
     public void CameraZoomIn()
     {
-        GetComponent<Camera>().fieldOfView -= 10;
+        
     }
     public void CameraZoomOut()
     {
-        GetComponent<Camera>().fieldOfView += 10;
+        
     }
 
     public void RunFocusMode()
@@ -157,9 +193,9 @@ public class CameraController : MonoBehaviour {
         {
             desiredPosition = transform.position;
 
-            if (IsFocusModeIsOn && CameraTarget != null)
+            if (IsFocusModeIsOn && cameraTarget != null)
             {
-                desiredPosition = CameraTarget.transform.position;                
+                desiredPosition = cameraTarget.transform.position;                
             }
           
             if (Input.GetKey(KeyCode.W) )
@@ -181,9 +217,9 @@ public class CameraController : MonoBehaviour {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             desiredPosition.z += scroll * 100 * scrollSpeed;
 
-            desiredPosition.x = Mathf.Clamp(desiredPosition.x, -mapLimit.x, mapLimit.x);
+            desiredPosition.x = Mathf.Clamp(desiredPosition.x, mapLimitMinX, mapLimitMaxX);
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, -mapLimit.y, mapLimit.y);
-            desiredPosition.z = Mathf.Clamp(desiredPosition.z, -mapLimit.z, mapLimitMinZ);
+            desiredPosition.z = Mathf.Clamp(desiredPosition.z, mapLimitMinZ, mapLimitMaxZ);
             smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * dt);
             transform.position = smoothedPosition;
 

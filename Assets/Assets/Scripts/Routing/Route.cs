@@ -68,7 +68,6 @@ public class Route : Singleton<Route> {
     private TrackCircuit occupiedTrack;
     private TrackCircuit lastRouteTrackForward;
     private TrackCircuit lastRouteTrackBackward;
-    private bool isPathCheckingForward;
     private Switch[] switches;
     private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
     IEnumerable<TrackCircuit> fullPath;
@@ -83,6 +82,8 @@ public class Route : Singleton<Route> {
     private TextBuilder textBuilder;
     private string messageText;
     public PathMaker pathMaker;
+    
+   
 
     private void Awake()
     {
@@ -126,6 +127,21 @@ public class Route : Singleton<Route> {
 
     private void FixedUpdate()
     {
+
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            pathMaker.GetFullPath(engine.direction);
+        }
+
+
+
+
+
+
+
+
+
         if(routes != null)
         {
             for (int i = 0; i < routes.Count; i++)
@@ -153,7 +169,7 @@ public class Route : Singleton<Route> {
     /// Make routes manager
     public void MakeRoute(TrafficLights startLight, TrafficLights endLight)
     {
-                
+        startLight.lightDirection = 0;        
         routeName = startLight.Name + endLight.Name;
         if (CheckRouteForDuplicates(startLight.Name))
         {
@@ -180,7 +196,19 @@ public class Route : Singleton<Route> {
             print("Duplicate");
         }            
 
-        MakePathInBothDirections();
+        // Find the direction of route and checking all path
+        if(startLight.transform.position.x < endLight.transform.position.x)
+        {
+            startLight.lightDirection = 1;
+            route.routeDirection = 1;
+        }
+        else if(startLight.transform.position.x > endLight.transform.position.x)
+        {
+            startLight.lightDirection = -1;
+            route.routeDirection = -1;
+        }
+        
+        
     }      
 
     private void RouteManage(RouteObject ro,  string routeName)
@@ -604,6 +632,7 @@ public class Route : Singleton<Route> {
     public void DestroyRouteByRouteName(string _routeName)
     {
         DestroyRoute(GetRouteByName(_routeName));
+        pathMaker.GetFullPath(engine.direction);
     }
     
 
@@ -619,6 +648,7 @@ public class Route : Singleton<Route> {
             foreach (TrackCircuit tc in ro.TrackCircuits)
             {
                 tc.UseMode = Constants.TC_DEFAULT;
+                
             }
             //print("Unlock");
         }        
@@ -626,6 +656,7 @@ public class Route : Singleton<Route> {
         Destroy(ro);
         if (!Routes.Any())
             cancelRouteButton.interactable = false;
+        
     }
 
     public void DestroyRouteByLight(TrafficLights hitLight)
@@ -645,7 +676,8 @@ public class Route : Singleton<Route> {
                     break;
                 }
             }
-        } 
+        }
+        
     }
 
     // return true if switches in route are free
@@ -753,18 +785,20 @@ public class Route : Singleton<Route> {
             if (IsShunting(lights))
             {
                 startLight.SetLightColor(Constants.COLOR_WHITE);
-                endLight.SetLightColor(Constants.COLOR_BLUE);
+                endLight.SetLightColor(Constants.COLOR_DEFAULT);
             }
                 
         }
         else
         {
-            if (String.IsNullOrEmpty(route.EndLight.NameRouteOfLight))
+            if (string.IsNullOrEmpty(route.EndLight.NameRouteOfLight))
                 route.EndLight.SetLightColor(Constants.COLOR_DEFAULT);
-            startLight.SetLightColor(Constants.COLOR_DEFAULT);
+            startLight.SetLightColor(Constants.COLOR_DEFAULT);          
             startLight.tag = Constants.LIGHTS_FREE;
             startLight.NameRouteOfLight = "";
             
+
+
         }
         
 
@@ -845,19 +879,7 @@ public class Route : Singleton<Route> {
         }
     }
 
-    public bool IsPathCheckingForward
-    {
-        get
-        {
-            return isPathCheckingForward;
-        }
-
-        set
-        {
-            isPathCheckingForward = value;
-        }
-    }
-
+   
     public TrackCircuit OccupiedTrack
     {
         get

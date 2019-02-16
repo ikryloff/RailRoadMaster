@@ -126,7 +126,7 @@ public class GameManager : Singleton<GameManager> {
     IEnumerator ShuntingFrom2to7()
     {
         step0 = false;
-        cc.CameraTarget = engineRB;
+        //cc.cameraTarget = engineRB;
         tlm.MakeRouteIfPossible(CH2, M1);        
         auto.RunAutoDrive(2, engine, engineT, m1Transform, 300,  40, false);
         step1 = true;
