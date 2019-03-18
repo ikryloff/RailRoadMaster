@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using BansheeGz.BGSpline.Components;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,9 +27,10 @@ public class TrafficLights : MonoBehaviour {
     public GameObject topYellowSignal;
     public GameObject bottomYellowSignal;
     public GameObject greenSignal;
-
+    public Engine engine;
     public List <GameObject> lights;
-    
+    public BGCcMath mathTemp;
+
     public SpriteRenderer controlLight;
     [SerializeField]
     private Material lightColor;
@@ -44,9 +46,10 @@ public class TrafficLights : MonoBehaviour {
     [SerializeField]
     private bool isClosed;
     public Animator anim;
-
+    public float distance;
     const float flashTime = 1f;
     private string nameRouteOfLight;
+    public float maxLength;
    
     
     private void Awake()
@@ -58,11 +61,21 @@ public class TrafficLights : MonoBehaviour {
         AddSignal(bottomYellowSignal);
         AddSignal(greenSignal);
         pathMaker = FindObjectOfType<PathMaker>();
+        engine = FindObjectOfType<Engine>();
 
     }
     private void Start()
     {
-        SetLightColor(GetLightColor);        
+        SetLightColor(intColor);
+        
+        Vector3 tangent;
+        if (mathTemp)
+        {
+            transform.position = mathTemp.CalcByDistance(distance, out tangent);
+
+            maxLength = mathTemp.GetDistance();
+        }
+        
 
     }
 
@@ -76,15 +89,9 @@ public class TrafficLights : MonoBehaviour {
     }
 
    
-    //Main function of setting color using coroutine for delay
+    //Main function of setting color 
     public void SetLightColor(int color)
     {
-        StartCoroutine(TurnOnLightWithDelay(color));
-    }    
-    
-    public IEnumerator TurnOnLightWithDelay(int color)
-    {
-        yield return new WaitForSeconds(1.1f);
         if (anim)
         {
             anim.enabled = false;
@@ -115,34 +122,34 @@ public class TrafficLights : MonoBehaviour {
                     controlLight.color = redRC;
                 }
                 break;
-                //green
+            //green
             case 1:
                 tempSignal = greenSignal;
                 tempMaterial = green;
                 controlLight.color = greenRC;
                 break;
-                //blue
+            //blue
             case 2:
                 tempSignal = blueSignal;
                 tempMaterial = blue;
                 controlLight.color = redRC;
                 break;
-                //white
+            //white
             case 3:
                 tempSignal = whiteSignal;
                 tempMaterial = white;
                 controlLight.color = whiteRC;
                 break;
-                //yellow
+            //yellow
             case 4:
                 tempSignal = topYellowSignal;
-                tempMaterial = yellow;                
+                tempMaterial = yellow;
                 controlLight.color = greenRC;
                 break;
             case 5:
                 //blinking Yellow;
                 tempSignal = topYellowSignal;
-                tempMaterial = yellow;                
+                tempMaterial = yellow;
                 if (anim)
                 {
                     anim.enabled = true;
@@ -188,10 +195,9 @@ public class TrafficLights : MonoBehaviour {
         {
             tempSignalAdd.transform.Find("Ray").gameObject.SetActive(true);
             tempSignalAdd.GetComponent<MeshRenderer>().material = tempMaterialAdd;
-        }      
-        pathMaker.GetFullPath(lightDirection);
-    }
-   
+        }
+        
+    }      
 
     public TrafficLights GetTrafficLightByName(string lightName)
     {

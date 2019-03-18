@@ -11,7 +11,7 @@ public class RailRunObject : MonoBehaviour {
     public Transform rollingStockTransform;
     public Transform aimPosition;
     public int direction;
-    private int mSpeed;
+    private int realSpeed;
     public bool mustCouple;
     public RollingStock rollingStock; 
     public string startCompositionNumberString;
@@ -170,18 +170,7 @@ public class RailRunObject : MonoBehaviour {
         }
     }
 
-    public int MSpeed
-    {
-        get
-        {
-            return mSpeed;
-        }
-
-        set
-        {
-            mSpeed = value;
-        }
-    }
+   
 
     void Start () {        
         EngineRB = Engine.GetComponent<Rigidbody2D>();
@@ -199,12 +188,12 @@ public class RailRunObject : MonoBehaviour {
         //Debug.Log("Mathf.Abs(Distance) " + Mathf.Abs(Distance));        
         if (EngineRB)
         {
-            MSpeed = (int)(Time.deltaTime * EngineRB.velocity.magnitude * 5);
+            realSpeed = (int)(Time.deltaTime * EngineRB.velocity.magnitude * 5);
             //Debug.Log(Engine.ControllerPosition + " Dist " + Mathf.Abs(Distance));
 
         }
         
-        if (MSpeed > MaxSpeed)
+        if (realSpeed > MaxSpeed)
         {
             Engine.EngineControllerUseBrakes();
             //Debug.Log("More  " + (MaxSpeed - (int)(Time.deltaTime * EngineRB.velocity.magnitude * 5)));
@@ -214,13 +203,13 @@ public class RailRunObject : MonoBehaviour {
             Engine.ReleaseBrakes();
             if (Mathf.Abs(Distance) > 4000)
             {
-                if (MSpeed < 10)
+                if (realSpeed < 10)
                     Engine.controllerPosition = 1 * Direction;
-                if(MSpeed >= 10 && MSpeed < 15)
+                if(realSpeed >= 10 && realSpeed < 15)
                     Engine.controllerPosition = 2 * Direction;
-                if (MSpeed >= 15 && MSpeed < 25)
+                if (realSpeed >= 15 && realSpeed < 25)
                     Engine.controllerPosition = 4 * Direction;
-                if (MSpeed >= 25 )
+                if (realSpeed >= 25 )
                     Engine.controllerPosition = 8 * Direction;
                 
                 MaxSpeed = maxSpeed;
@@ -265,7 +254,7 @@ public class RailRunObject : MonoBehaviour {
                         Engine.controllerPosition = 1 * Direction;
                     }                        
                 }
-                if (MSpeed == 0)
+                if (realSpeed == 0)
                 {
                     Engine.EngineControllerUseBrakes();
                     Debug.Log("Run is over");

@@ -26,11 +26,12 @@ public class Switch : MonoBehaviour {
 
     [SerializeField]
     private bool isSwitchStraight;
-   
-        
+    BogeyPathScript[] bogeys;
+
 
     void Awake ()
     {
+        bogeys = FindObjectsOfType<BogeyPathScript>();
         trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
         switchManager = FindObjectOfType<SwitchManager>(); 
         tlm = FindObjectOfType<TrafficLightsManager>();
@@ -38,13 +39,16 @@ public class Switch : MonoBehaviour {
         turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
         straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();        
         route = GameObject.Find("Route").GetComponent<Route>();
+       
+                
     }
     private void Start()
     {
-        IsSwitchStraight = true;
-        DirectionStraight();
-        if(transform.Find("Lever"))
+        
+        if (transform.Find("Lever"))
             anim = transform.Find("Lever").GetComponent<Animator>();
+        IsSwitchStraight = true;
+        DirectionStraight();        
     }
 
 
@@ -62,14 +66,14 @@ public class Switch : MonoBehaviour {
         }
 
     }
-
     
 
+
     public void ChangeDirection()
-    {
+    {        
         if (timesLocked == 0)
         {
-            if (IsSwitchStraight == true)
+            if (IsSwitchStraight)
             {                               
                 DirectionTurn();
             }
@@ -77,8 +81,7 @@ public class Switch : MonoBehaviour {
             {                               
                 DirectionStraight();
             }
-            tlm.CheckHandSwitches();
-            route.MakePathInBothDirections();
+            tlm.CheckHandSwitches();           
             
         }
         else Debug.Log("Locked");
@@ -111,19 +114,35 @@ public class Switch : MonoBehaviour {
 
     public void DirectionStraight()
     {
-        if(anim)
+        
+        if (anim)
             anim.SetBool("TurnSwitch", false);
         switchPhysicsTurn.SetActive(false);
-        switchPhysicsStraight.SetActive(true);       
-        IsSwitchStraight = true;        
+        switchPhysicsStraight.SetActive(true);
+        if (!isSwitchStraight)
+            UpdatePath();
+        IsSwitchStraight = true;
+        
+        
     }
     public void DirectionTurn()
     {
+        
         if (anim)
             anim.SetBool("TurnSwitch", true);
         switchPhysicsStraight.SetActive(false);
-        switchPhysicsTurn.SetActive(true);       
+        switchPhysicsTurn.SetActive(true);
+        if (isSwitchStraight)
+            UpdatePath();
         IsSwitchStraight = false;        
     }   
+
+    public void UpdatePath()
+    {
+        foreach (BogeyPathScript item in bogeys)
+        {
+            item.UpdatePath();
+        }
+    }
 
 }

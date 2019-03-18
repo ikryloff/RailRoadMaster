@@ -26,7 +26,7 @@ public class TextBuilder : Singleton<TextBuilder> {
     {   
         string mess = string.Format("# {0} : {1} {2}", counter, from, message);
         messLogControl.MessageText(mess);
-        print(mess);
+       // print(mess);
         counter++;
     }
 

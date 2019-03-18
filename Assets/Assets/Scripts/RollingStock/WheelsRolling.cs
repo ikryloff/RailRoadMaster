@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WheelsRolling : MonoBehaviour {    
-    Rigidbody2D car;
+    public RollingStock car;
+    public float speed;
 
     void Start()
     {
-        car = gameObject.transform.root.GetComponent<Rigidbody2D>();        
+        car = gameObject.transform.root.GetComponent<RollingStock>();        
     }
 
     // Update is called once per frame
     void Update () {
-        
-        transform.Rotate(-car.velocity.x * 0.3f, 0, 0);
+        speed = car.force;
+        transform.Rotate(-speed * 10f, 0, 0);
 	}
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
+
 public class EngineRun : MonoBehaviour
 {
     public float stopPos;
@@ -49,7 +50,7 @@ public class Engine : MonoBehaviour
 {
     public static int instructionHandler;
 
-    private Rigidbody2D engine;
+    private Rigidbody engine;
     private RollingStock engineRS;
     [SerializeField]
     private RollingStock[] cars;
@@ -67,12 +68,10 @@ public class Engine : MonoBehaviour
     private Text directionTxt;
     [SerializeField]
     private Text handlerTxt;
-    public CompositionManager cm;
-    public float mSpeed;
+    public CompositionManager cm;    
     
     public int direction;
     private int directionInstructions;
-    private int absControllerPosition;
     public int maxSpeed;
     private bool isDrivingByInstructionsIsOn;
     [SerializeField]
@@ -107,8 +106,8 @@ public class Engine : MonoBehaviour
     TrafficLights tlBackward;
     public int movingDirection;
     public PathMaker pathmaker;
-
-
+    int speed;
+    public float acceleration;
 
     private void Awake()
     {
@@ -134,40 +133,34 @@ public class Engine : MonoBehaviour
     void Start()
     {
 
-        engine = GetComponent<Rigidbody2D>();        
+        engine = GetComponent<Rigidbody>();
+
         // conductor mode
         IsDrivingByInstructionsIsOn = true;
         InformationUpdateFunction();
-        InvokeRepeating("InformationUpdateFunction", 0.5f, 0.5f);
+        InvokeRepeating("InformationUpdateFunction", 0.3f, 0.3f);
+        acceleration = 0;
 
         
-
 
     }
     public void MoveEngine()
     {
-        if (MSpeed == maxSpeed)
-            power += 0;
+        if (Math.Abs(speed) == maxSpeed)
+            acceleration += 0;
         else
         {
-            if (MSpeed < maxSpeed)
-                power += 0.3f;
-            else
+            if (Math.Abs(speed) < maxSpeed)
+                acceleration += 0.1f * direction;
+            else if (Math.Abs(speed) > maxSpeed)
             {
-                if (power > 0)
-                    power -= 6f;
-                if(power < 0)
-                    power = 0;
+                acceleration -= 0.3f * speed/Math.Abs(speed);                
             }
-        }      
-                   
-        AddForceToEngine(power);
-
-    }
-
-    void AddForceToEngine(float _power)
-    {       
-            engine.AddRelativeForce(new Vector2(_power * direction, 0), ForceMode2D.Impulse);  
+        } 
+        if(brakes && speed == 0)
+        {
+            acceleration = 0;
+        }
     }
 
     
@@ -175,7 +168,7 @@ public class Engine : MonoBehaviour
     {
         if (EngineRS.Number == "8888")
         {
-            speedTxt.text = "Speed: " + MSpeed;
+            speedTxt.text = "Speed: " + speed;
             throttleTxt.text = "Throttle: " + Mathf.Abs(controllerPosition);
             directionTxt.text = "Direction: " + direction;
         }
@@ -187,48 +180,17 @@ public class Engine : MonoBehaviour
     /// </summary>
     void FixedUpdate()
     {
-        CheckMovingDirection();
+        //CheckMovingDirection();
         PrintHandler();
-        GetTrack();
-        MSpeed = (int)(Time.deltaTime * engine.velocity.magnitude * 50);
+        //GetTrack();
 
-       if (IsDrivingByInstructionsIsOn)
+       
+        speed = (int)(engineRS.force * 30);
+        
+        
+        if (IsDrivingByInstructionsIsOn)
             DriveByInstructions();
         MoveEngine();
-        if (Brakes)
-        {
-            if (engine.velocity.x != 0)
-            {
-                BreakeForce += 1.5f;                
-                if (engine.velocity.magnitude > 3f)
-                {
-                    engine.AddRelativeForce(new Vector2( - movingDirection * BreakeForce, 0), ForceMode2D.Force);
-                }                           
-                else
-                    engine.velocity = new Vector2(0, 0);
-                if (cm.CompositionsList.Any())
-                {
-                    foreach (RollingStock rs in cm.CompositionsList[EngineRS.CompositionNumberofRS])
-                    {
-                        rs.Brakes = true;
-
-                    }
-                }
-            }
-            else
-                engine.velocity = new Vector2(0, 0);
-        }
-        else if (!Brakes)
-        {
-            BreakeForce = 0;
-            if (engine.velocity.x > 0)
-            {
-                engine.AddRelativeForce(new Vector2(-3f, 0), ForceMode2D.Force);
-            }
-            else if (engine.velocity.x < 0)
-                engine.AddRelativeForce(new Vector2(3, 0), ForceMode2D.Force);
-        }      
-
     }
 
     /// <summary>
@@ -237,7 +199,7 @@ public class Engine : MonoBehaviour
 
     public void ReleaseBrakes()
     {
-        Brakes = false;
+        brakes = false;
         if (cm.CompositionsList.Any())
         {
             foreach (RollingStock rs in cm.CompositionsList[EngineRS.CompositionNumberofRS])
@@ -265,22 +227,51 @@ public class Engine : MonoBehaviour
         direction = 0;
         controllerPosition = 0;
         instructionHandler = 0;
-        IsEngineCanMove = false;
     }
     
+    public void EngineUpdateTheView()
+    {
+        if (direction == 1)
+        {
+            pathmaker.GetFullPath(direction);
+        }        
+        if (direction == -1)
+        {
+            pathmaker.GetFullPath(direction);
+        }
+        GetAllExpectedCarsByDirection(direction);
+
+    }
 
     public void EngineInstructionsForward()
     {
         direction = direction == -1 && direction != 0 ? -1 : 1;
         if(direction == 1)
         {
-            pathmaker.GetFullPath(direction);
+            //pathmaker.GetFullPath(direction);
         }   
-        GetAllExpectedCarsByDirection(direction);
+        //GetAllExpectedCarsByDirection(direction);
         ReleaseBrakes();
-        instructionHandler++;
-        if (instructionHandler == 0)
-            direction = 0;
+        if(instructionHandler != 0)
+        {
+            instructionHandler++;
+            if (instructionHandler == 0)
+            {
+                EngineInstructionStop();
+
+            }
+        }
+        else
+        {
+            if (speed >= -1)
+            {
+                instructionHandler++;
+            }
+            else
+                instructionHandler = 0;
+            engineRS.ChangeDirection();
+        }        
+            
         if (instructionHandler == 7)
             instructionHandler = 6;
         StartCompositionNumber = EngineRS.CompositionNumberString;
@@ -291,15 +282,31 @@ public class Engine : MonoBehaviour
         direction = direction == 1 && direction != 0 ? 1 : -1;
         if(direction == -1)
         {
-            pathmaker.GetFullPath(direction);
+            //pathmaker.GetFullPath(direction);
         }
             
-        GetAllExpectedCarsByDirection(direction);
-        
-        ReleaseBrakes();
-        instructionHandler--;
-        if (instructionHandler == 0)
-            direction = 0;
+        //GetAllExpectedCarsByDirection(direction);        
+        ReleaseBrakes();        
+
+        if (instructionHandler != 0)
+        {
+            instructionHandler--;
+            if (instructionHandler == 0)
+            {
+                EngineInstructionStop();
+
+            }
+        }
+        else
+        {
+            if (speed <= 1)
+            {
+                instructionHandler--;
+            }
+            else
+                instructionHandler = 0;
+            engineRS.ChangeDirection();
+        }
         if (instructionHandler == -7)
             instructionHandler = -6;
         StartCompositionNumber = EngineRS.CompositionNumberString;
@@ -359,9 +366,9 @@ public class Engine : MonoBehaviour
 
         if (instructionHandler == 0)
         {
-            MaxSpeed = 0;
+            maxSpeed = 0;
             EngineInstructionStop();
-            if (MSpeed < 1)
+            if (speed < 1)
                 engine.velocity = new Vector2(0, 0);
         }
 
@@ -369,46 +376,46 @@ public class Engine : MonoBehaviour
        
         if (absHandler == 1)
         {
-            MaxSpeed = 3;
+            maxSpeed = 3;
             controllerPosition = 1;
         }
             
         if (absHandler == 2)
         {
-            MaxSpeed = 5;
+            maxSpeed = 5;
             controllerPosition = 2;
         }
             
         if (absHandler == 3)
         {
-            MaxSpeed = 10;
+            maxSpeed = 10;
             controllerPosition = 3;
         }
             
         if (absHandler == 4)
         {
-            MaxSpeed = 15;
+            maxSpeed = 15;
             controllerPosition = 4;
         }
             
         if (absHandler == 5)
         {
-            MaxSpeed = 25;
+            maxSpeed = 25;
             controllerPosition = 5;
         }
             
         if (absHandler == 6)
         {
-            MaxSpeed = 40;
+            maxSpeed = 40;
             controllerPosition = 6;
         }
 
-        if (MSpeed == MaxSpeed)
+        if (speed == maxSpeed)
         {
             EngineControllerReleaseAll();
         }
 
-        if (MSpeed > MaxSpeed || MaxSpeed == 0)
+        if (speed > maxSpeed || maxSpeed == 0)
         {
             EngineControllerUseBrakes();   
         }
@@ -423,9 +430,9 @@ public class Engine : MonoBehaviour
     private void PrintHandler()
     {
         if (direction > 0)
-            handlerTxt.text = "  >>> " + Mathf.Abs(instructionHandler) + ">>> " + MaxSpeed;
+            handlerTxt.text = "  >>> " + Mathf.Abs(instructionHandler) + ">>> " + maxSpeed;
         else if (direction < 0)
-            handlerTxt.text = MaxSpeed + "  <<< " + Mathf.Abs(instructionHandler) + " <<<";
+            handlerTxt.text = maxSpeed + "  <<< " + Mathf.Abs(instructionHandler) + " <<<";
         else
             handlerTxt.text = "  <<< 0 >>>";
     }
@@ -670,52 +677,7 @@ public class Engine : MonoBehaviour
 
     }
 
-          
-
-    public float AbsControllerPosition()
-    {
-        return Mathf.Abs(controllerPosition);        
-    }
-    
-
-    public bool Brakes
-    {
-        get
-        {
-            return brakes;
-        }
-
-        set
-        {
-            brakes = value;
-        }
-    }
-
-    public float MSpeed
-    {
-        get
-        {
-            return mSpeed;
-        }
-
-        set
-        {
-            mSpeed = value;
-        }
-    }
-
-    public int MaxSpeed
-    {
-        get
-        {
-            return maxSpeed;
-        }
-
-        set
-        {
-            maxSpeed = value;
-        }
-    }
+      
 
     public bool IsDrivingByInstructionsIsOn
     {
@@ -887,21 +849,9 @@ public class Engine : MonoBehaviour
         }
     }
 
-    public float BreakeForce
-    {
-        get
-        {
-            return breakeForce;
-        }
-
-        set
-        {
-            breakeForce = value;
-        }
-    }
-
+    
     public void CheckMovingDirection()
     {
-        movingDirection = engine.velocity.x >= 0 ? 1 : -1;              
+        movingDirection = engine.velocity.x > 0 ? 1 : -1;              
     }
 }

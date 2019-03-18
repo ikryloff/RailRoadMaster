@@ -101,7 +101,7 @@ public class Route : Singleton<Route> {
     {
         routes = new List<RouteObject>();
         engine = GameObject.Find("Engine").GetComponent<Engine>();
-        Invoke("MakePathInBothDirections", 0.3f);
+        //Invoke("MakePathInBothDirections", 0.3f);
 
     }
 
@@ -121,8 +121,8 @@ public class Route : Singleton<Route> {
 
     public void MakePathInBothDirections()
     {
-        pathMaker.GetFullPath(1);
-        pathMaker.GetFullPath(-1);
+       // pathMaker.GetFullPath(1);
+      //  pathMaker.GetFullPath(-1);
     }
 
     private void FixedUpdate()
@@ -133,13 +133,7 @@ public class Route : Singleton<Route> {
         {
             pathMaker.GetFullPath(engine.direction);
         }
-
-
-
-
-
-
-
+        
 
 
         if(routes != null)
@@ -180,8 +174,8 @@ public class Route : Singleton<Route> {
             route.RouteName = routeName;
 
             //Message
-            messageText = string.Format("OK, prepare route from {0} at {1}", startLight.name, endLight.name);
-            textBuilder.PrintMessage(messageText, "Yardmaster:");
+           // messageText = string.Format("OK, prepare route from {0} at {1}", startLight.name, endLight.name);
+           // textBuilder.PrintMessage(messageText, "Yardmaster:");
             //
             RouteLightsManage(tl, true);
             RouteManage(route, routeName);
@@ -190,8 +184,8 @@ public class Route : Singleton<Route> {
         else
         {
             //Message
-            messageText = string.Format("We have another route from {0} ", startLight.name);
-            textBuilder.PrintMessage(messageText, "Yardmaster:");
+          //  messageText = string.Format("We have another route from {0} ", startLight.name);
+          //  textBuilder.PrintMessage(messageText, "Yardmaster:");
             ///
             print("Duplicate");
         }            
@@ -207,8 +201,8 @@ public class Route : Singleton<Route> {
             startLight.lightDirection = -1;
             route.routeDirection = -1;
         }
-        
-        
+
+        engine.EngineUpdateTheView();
     }      
 
     private void RouteManage(RouteObject ro,  string routeName)
@@ -632,7 +626,7 @@ public class Route : Singleton<Route> {
     public void DestroyRouteByRouteName(string _routeName)
     {
         DestroyRoute(GetRouteByName(_routeName));
-        pathMaker.GetFullPath(engine.direction);
+        engine.EngineUpdateTheView();
     }
     
 
@@ -656,7 +650,7 @@ public class Route : Singleton<Route> {
         Destroy(ro);
         if (!Routes.Any())
             cancelRouteButton.interactable = false;
-        
+        engine.EngineUpdateTheView();
     }
 
     public void DestroyRouteByLight(TrafficLights hitLight)
@@ -677,7 +671,8 @@ public class Route : Singleton<Route> {
                 }
             }
         }
-        
+        engine.EngineUpdateTheView();
+
     }
 
     // return true if switches in route are free
@@ -796,9 +791,6 @@ public class Route : Singleton<Route> {
             startLight.SetLightColor(Constants.COLOR_DEFAULT);          
             startLight.tag = Constants.LIGHTS_FREE;
             startLight.NameRouteOfLight = "";
-            
-
-
         }
         
 

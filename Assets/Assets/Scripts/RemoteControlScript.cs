@@ -36,16 +36,7 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
         }
     }
 
-    void Awake () {
-        remoteSprite = remoteControll.GetComponent<SpriteRenderer>();
-        halfCameraHeight = Camera.main.orthographicSize;
-        cameraHeight = halfCameraHeight * 2;
-        cameraSize = new Vector2(Camera.main.aspect * cameraHeight, cameraHeight);
-        spriteSize = remoteSprite.sprite.bounds.size;
-        axisZ = new Vector3(0, 0, 190f);
-        scale = remoteSprite.transform.localScale;
-        scale *= cameraSize.x / spriteSize.x;  
-        remoteSprite.transform.localScale = scale;
+    void Awake () {        
         switches = GameObject.FindGameObjectsWithTag("Switch");
         IsRemoteControllerOn = true;
         RunRemoteControl();
@@ -62,10 +53,6 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
 
     public void RunRemoteControl()
     {
-        float tempRatio = Camera.main.orthographicSize / halfCameraHeight;
-        scale = new Vector3(tempRatio, tempRatio);
-        remoteSprite.transform.localScale *= scale;
-        halfCameraHeight = Camera.main.orthographicSize;
         if (IsRemoteControllerOn)
         {
             remoteControll.gameObject.SetActive(false);

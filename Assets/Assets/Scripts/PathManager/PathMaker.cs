@@ -86,7 +86,7 @@ public class PathMaker : Singleton<PathMaker> {
    
     public void GetFullPath(int _direction)
     {
-        
+        /*
         fullEnginePath.Clear();
         route = "";
         routeForward = "";
@@ -96,7 +96,6 @@ public class PathMaker : Singleton<PathMaker> {
         
         if (fullEnginePath != null)
         {
-
             occupiedTrack = null;
             foreach (TrackCircuit track in fullEnginePath)
             {
@@ -111,14 +110,15 @@ public class PathMaker : Singleton<PathMaker> {
 
             tlm.CheckHandSwitches();
 
-            if ( _direction >= 0)
+            if ( _direction == 1)
             {
                 foreach (TrackCircuit tr in fullEnginePath)
                 {
-
                     routeForward += " - > " + tr.name;
+                    tr.GetTrackLightsByTrack();                    
                     if (tr.TrackLights[1] && tr.TrackLights[1].IsClosed)
                     {
+                        print(tr.TrackLights[1].name + " --- bad");
                         lastRouteTrackForward = tr;
                         break;
                     }
@@ -130,6 +130,7 @@ public class PathMaker : Singleton<PathMaker> {
                 foreach (TrackCircuit tr in fullEnginePath)
                 {
                     routeBackward += " - > " + tr.name;
+                    tr.GetTrackLightsByTrack();
                     if (tr.TrackLights[0] != null && tr.TrackLights[0].IsClosed)
                     {
                         lastRouteTrackBackward = tr;
@@ -141,7 +142,6 @@ public class PathMaker : Singleton<PathMaker> {
         }
         else
         {
-
             occupiedTrack = engine.Track;
             lastRouteTrackBackward = engine.Track;
             lastRouteTrackForward = engine.Track;
@@ -152,7 +152,7 @@ public class PathMaker : Singleton<PathMaker> {
         print("lastRouteTrackForward  " + lastRouteTrackForward);
         print("pathForward  " + routeForward);
         print("lastRouteTrackBackward  " + lastRouteTrackBackward);
-        print("pathBack  " + routeBackward);
+        print("pathBack  " + routeBackward);*/
 
     }
 
@@ -196,7 +196,7 @@ public class PathMaker : Singleton<PathMaker> {
         Node next = null;
         TrackCircuit nextTC = null;
         // if we go forward or have no direction
-        if (_direction >= 0)
+        if (_direction == 1)
         {
             if (node.track.isSwitch && !node.track.switchTrack.IsSwitchStraight)
             {
@@ -228,7 +228,7 @@ public class PathMaker : Singleton<PathMaker> {
             }
         }
         // if we go backward 
-        else
+        else if (_direction == -1)
         {
             if (node.track.isSwitch && !node.track.switchTrack.IsSwitchStraight)
             {

@@ -3,15 +3,15 @@ using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour {
     
-    private float mapMovingSpeed = 20f;
+    private float mapMovingSpeed = 40f;
     public Vector2 mapBorder;
-    public Vector3 mapLimit; 
-    float mapLimitMinZ = -400f;
-    float mapLimitMaxZ = 5f;
-    float mapLimitMinX = 930f;
-    float mapLimitMaxX = 2697f;
-    float mapLimitMinY = -608f;
-    float mapLimitMaxY = -300f;
+    public Vector3 mapLimit;
+    public float mapLimitMinZ = -400f;
+    public float mapLimitMaxZ = 5f;
+    public float mapLimitMinX = -1000f;
+    public float mapLimitMaxX = 2697f;
+    public float mapLimitMinY = -608f;
+    public float mapLimitMaxY = -300f;
     [SerializeField]
     public Transform cameraTarget;   
     [SerializeField]
@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour {
     public Texture2D cursorForFocus;
     private bool isFocusModeIsOn;
     public float speed;
-    float scrollSpeed = 10f;
+    float scrollSpeed = 10;
 
     private void Awake()
     {
@@ -52,7 +52,8 @@ public class CameraController : MonoBehaviour {
     void FixedUpdate()
     {
         MoveCamera(Time.deltaTime);
-        
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        Camera.main.fieldOfView -= scroll * scrollSpeed;
 
     }
 
@@ -200,11 +201,11 @@ public class CameraController : MonoBehaviour {
           
             if (Input.GetKey(KeyCode.W) )
             {
-                desiredPosition.y += mapMovingSpeed;                
+                desiredPosition.z += mapMovingSpeed;                
             }
             if (Input.GetKey(KeyCode.S) )
             {
-                desiredPosition.y -= mapMovingSpeed;
+                desiredPosition.z -= mapMovingSpeed;
             }
             if (Input.GetKey(KeyCode.A) )
             {
@@ -214,8 +215,7 @@ public class CameraController : MonoBehaviour {
             {
                 desiredPosition.x += mapMovingSpeed;
             }
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            desiredPosition.z += scroll * 100 * scrollSpeed;
+            
 
             desiredPosition.x = Mathf.Clamp(desiredPosition.x, mapLimitMinX, mapLimitMaxX);
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, -mapLimit.y, mapLimit.y);

@@ -18,7 +18,10 @@ public class SwitchManager : Singleton<SwitchManager>
     private Engine engine;
     private TrafficLightsManager trafficLightsManager;
     public PathMaker pathMaker;
+  
+
     
+
 
     public bool IsSwitchModeOn
     {
@@ -34,7 +37,7 @@ public class SwitchManager : Singleton<SwitchManager>
     }
     private void Awake()    {
 
-        switches = FindObjectsOfType<Switch>();
+        switches = FindObjectsOfType<Switch>();       
         switchObj = GameObject.FindGameObjectsWithTag("RailSwitch");
         trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
         indicators = GameObject.FindGameObjectsWithTag("Indication");
@@ -50,7 +53,8 @@ public class SwitchManager : Singleton<SwitchManager>
         RunIndicationMode();
     }
 	
-	void Update () {       
+	void Update ()
+    {       
 
         if (!rcs.IsRemoteControllerOn)
         {
@@ -67,7 +71,7 @@ public class SwitchManager : Singleton<SwitchManager>
                         click = hit.point;
                     }
                     
-                    print("hit " + hit.collider.name);
+                    //print("hit " + hit.collider.name);
                     if (hit.collider != null && hit.collider.tag == "Lever")
                     {
                         switchObject = hit.collider.transform.parent.gameObject;
@@ -82,9 +86,10 @@ public class SwitchManager : Singleton<SwitchManager>
             if (Input.GetKeyDown(KeyCode.Space))
             {                
                 RunIndicationMode();
-            }
-            
+            }            
         }
+
+
         
     }
 
@@ -105,9 +110,6 @@ public class SwitchManager : Singleton<SwitchManager>
                 
         }
     }
-
-   
-
-
+    
 
 }

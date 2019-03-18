@@ -34,7 +34,7 @@ public class TrackCircuit : MonoBehaviour {
         isSwitch = GetComponentInParent<Switch>();
         if (isSwitch)
             switchTrack = GetComponentInParent<Switch>();
-        GetTrackLightsByTrack(this);
+        GetTrackLightsByTrack();
         
     }
 
@@ -73,7 +73,7 @@ public class TrackCircuit : MonoBehaviour {
             SetCellsLight(ReturnCells(), Constants.TC_OVER);
             other.GetComponent<RollingStock>().TrackCircuit = this;
         }
-        GetTrackLightsByTrack(this);
+        GetTrackLightsByTrack();
         
     }
 
@@ -209,96 +209,100 @@ public class TrackCircuit : MonoBehaviour {
         TrackLightsNames = new string[] { _left.Name, _right.Name };
     }
 
-    public void GetTrackLightsByTrack(TrackCircuit track)
+    public void GetTrackLightsByTrack()
     {
-        if (track.name == "Track_10_14_18" )
+        if (name == "Track_10_14_18" )
         {
             TrackLightsNames = new string[] { null, null };
         }
-        if (track.name == "TrackCircuitSw22")
+        if (name == "TrackCircuitSw22")
         {
             TrackLightsNames = new string[] { "EndM3", null };
         }
-        if (track.name == "TrackCircuitSw18" || track.name == "TrackCircuitSw20")
+        if (name == "TrackCircuitSw18" || name == "TrackCircuitSw20" || name == "TrackCircuitSw15")
         {
             TrackLightsNames = new string[] { null, null };
         }
-        if (track.name == "Track_10")
+        if (name == "Track_10")
         {
             TrackLightsNames = new string[] { "End10_20", "End10" };            
         }
-        if (track.name == "Track_11")
+        if (name == "Track_11")
         {
             TrackLightsNames = new string[] { "End11_20", "End10" };
         }
-        if (track.name == "Track_12" )
+        if (name == "Track_12" )
         {
             TrackLightsNames = new string[] { "End12N", "End12CH" };
         }
-        if (track.name == "Track_12A")
+        if (name == "Track_12A")
         {
             TrackLightsNames = new string[] { null, "End12" };
         }
-        if (track.name == "Track_13")
+        if (name == "Track_13")
         {
             TrackLightsNames = new string[] { "End13N", "End13CH" };
         }
-        if (track.name == "Track_9")
+        if (name == "Track_9")
         {
             TrackLightsNames = new string[] { "End9_18", "End10" };
         }
-        if (track.name == "Track_6")
+        if (name == "Track_6")
         {
             TrackLightsNames = new string[] { "End6", "M2" };
         }        
-        if (track.name == "Track_2")
+        if (name == "Track_2")
         {
             TrackLightsNames = new string[] { "N2", "CH2" };
         }
-        if (track.name == "Track_I_16_15")
+        if (name == "Track_I_16_15")
         {
             TrackLightsNames = new string[] { "NI", "CHI" };
         }
-        if (track.name == "Track_3")
+        if (name == "Track_3")
         {
             TrackLightsNames = new string[] { "N3", "CH3" };
         }
-        if (track.name == "Track_4")
+        if (name == "Track_4")
         {
             TrackLightsNames = new string[] { "N4", "CH4" };
         }
-        if (track.name == "Track_5")
+        if (name == "Track_5")
         {
             TrackLightsNames = new string[] { "N5", "CH5" };
         }
-        if (track.name == "Track_7")
+        if (name == "Track_7")
         {
             TrackLightsNames = new string[] { "M1", "End7" };
         }
-        if (track.name == "Track_12_17_19" )
+        if (name == "Track_12_17_19" )
         {
             TrackLightsNames = new string[] { "M5", null };
         }
-        if (track.name == "Track_8")
+        if (name == "Track_8")
         {
             TrackLightsNames = new string[] { "End8", "M4" };
         }
-        if (track.name == "TrackCircuitSw5_17Bot")
+        if (name == "TrackCircuitSw5_17Bot")
         {
-            TrackLightsNames = new string[] { "End8", "End12" };
+            if (GetComponentInParent<Switch>().IsSwitchStraight)
+                TrackLightsNames = new string[] { "End8", null };
+            else
+                TrackLightsNames = new string[] { null, null };            
         }
-        if (track.name == "Track_14" )
+        if (name == "Track_14" )
         {
             TrackLightsNames = new string[] { "End14", "End14_22SW" };
         }
 
-        if (track.name == "TrackCircuitSw14" )
+        if (name == "TrackCircuitSw14" )
         {
-            if(track.GetComponentInParent<Switch>().IsSwitchStraight)
+            if(GetComponentInParent<Switch>().IsSwitchStraight)
                 TrackLightsNames = new string[] { null, "End22_14SW" };
             else
                 TrackLightsNames = new string[] { null, null };
-        }     
+        }
+        
 
         TrackLights = new TrafficLights[2];
 

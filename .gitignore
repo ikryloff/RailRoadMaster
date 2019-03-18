@@ -619,3 +619,9 @@ Assets/Pixelplacement/Surge/Utilities/Math.cs
 *.anim
 *.shader
 *.dae
+Assets/Assets/Physics/Firm.physicsMaterial2D
+*.physicsMaterial2D
+*.physicsMaterial2D
+Assets/Assets/Physics/Firm.physicsMaterial2D
+Assets/Assets/Physics/NoFriction.physicsMaterial2D
+Assets/Assets/Physics/NoFriction3D.physicMaterial
