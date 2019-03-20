@@ -52,8 +52,7 @@ public class CameraController : MonoBehaviour {
     void FixedUpdate()
     {
         MoveCamera(Time.deltaTime);
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        Camera.main.fieldOfView -= scroll * scrollSpeed;
+        
 
     }
 
@@ -119,7 +118,7 @@ public class CameraController : MonoBehaviour {
 
             Camera.main.fieldOfView += deltaMagnitudeDiff * 0.1f;
             Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, 4f, 45f);
-
+            
         }
 
     }
@@ -215,7 +214,9 @@ public class CameraController : MonoBehaviour {
             {
                 desiredPosition.x += mapMovingSpeed;
             }
-            
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            desiredPosition.y -= scroll * 200 * scrollSpeed;
+            desiredPosition.z += scroll * 200 * scrollSpeed;
 
             desiredPosition.x = Mathf.Clamp(desiredPosition.x, mapLimitMinX, mapLimitMaxX);
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, -mapLimit.y, mapLimit.y);

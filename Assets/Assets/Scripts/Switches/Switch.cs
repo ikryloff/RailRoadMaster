@@ -26,12 +26,13 @@ public class Switch : MonoBehaviour {
 
     [SerializeField]
     private bool isSwitchStraight;
-    BogeyPathScript[] bogeys;
+    
+    
 
 
     void Awake ()
     {
-        bogeys = FindObjectsOfType<BogeyPathScript>();
+               
         trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
         switchManager = FindObjectOfType<SwitchManager>(); 
         tlm = FindObjectOfType<TrafficLightsManager>();
@@ -81,8 +82,8 @@ public class Switch : MonoBehaviour {
             {                               
                 DirectionStraight();
             }
-            tlm.CheckHandSwitches();           
-            
+            tlm.CheckHandSwitches();
+            switchManager.UpdatePathAfterSwitch();
         }
         else Debug.Log("Locked");
     } 
@@ -118,9 +119,7 @@ public class Switch : MonoBehaviour {
         if (anim)
             anim.SetBool("TurnSwitch", false);
         switchPhysicsTurn.SetActive(false);
-        switchPhysicsStraight.SetActive(true);
-        if (!isSwitchStraight)
-            UpdatePath();
+        switchPhysicsStraight.SetActive(true);        
         IsSwitchStraight = true;
         
         
@@ -131,18 +130,10 @@ public class Switch : MonoBehaviour {
         if (anim)
             anim.SetBool("TurnSwitch", true);
         switchPhysicsStraight.SetActive(false);
-        switchPhysicsTurn.SetActive(true);
-        if (isSwitchStraight)
-            UpdatePath();
+        switchPhysicsTurn.SetActive(true);        
         IsSwitchStraight = false;        
     }   
 
-    public void UpdatePath()
-    {
-        foreach (BogeyPathScript item in bogeys)
-        {
-            item.UpdatePath();
-        }
-    }
+   
 
 }

@@ -18,9 +18,9 @@ public class SwitchManager : Singleton<SwitchManager>
     private Engine engine;
     private TrafficLightsManager trafficLightsManager;
     public PathMaker pathMaker;
-  
+    BogeyPathScript[] bogeys;
 
-    
+
 
 
     public bool IsSwitchModeOn
@@ -46,6 +46,8 @@ public class SwitchManager : Singleton<SwitchManager>
         {
             sw.layer = 2;
         }
+
+        bogeys = FindObjectsOfType<BogeyPathScript>();
     }
     void Start () {
         IsSwitchModeOn = true;
@@ -110,6 +112,13 @@ public class SwitchManager : Singleton<SwitchManager>
                 
         }
     }
-    
+
+    public void UpdatePathAfterSwitch()
+    {
+        foreach (BogeyPathScript item in bogeys)
+        {
+            item.UpdatePath();
+        }
+    }
 
 }

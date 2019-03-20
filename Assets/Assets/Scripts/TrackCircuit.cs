@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using BansheeGz.BGSpline.Components;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TrackCircuit : MonoBehaviour {
     private string trackName;
     private int isCarPresence;
+    public bool hasCarPresence;
     private int useMode;
     private Switch switchTC;
     [SerializeField]
@@ -25,7 +27,8 @@ public class TrackCircuit : MonoBehaviour {
     public bool isSwitch;
     public Switch switchTrack;
     public Route route;
-    
+
+    public TrackPathUnit [] paths;
 
     private void Awake()
     {
@@ -33,13 +36,38 @@ public class TrackCircuit : MonoBehaviour {
         pathHolder = GameObject.Find("PathHolder").GetComponent<PathHolder>();
         isSwitch = GetComponentInParent<Switch>();
         if (isSwitch)
+        {
             switchTrack = GetComponentInParent<Switch>();
+            paths = transform.parent.GetComponentsInChildren<TrackPathUnit>();
+        }
+        else
+        {
+            paths = transform.GetComponentsInChildren<TrackPathUnit>();
+        }
         GetTrackLightsByTrack();
+       
         
     }
 
+    private void Update()
+    {
+        CheckPresence();
+    }
 
-
+    public void CheckPresence()
+    {
+        foreach (TrackPathUnit item in paths)
+        {
+            if (item.hasObjects)
+            {
+                hasCarPresence = true;
+                break;
+            }
+            else
+                hasCarPresence = false;
+                
+        }
+    }
 
     private void Start()
     {

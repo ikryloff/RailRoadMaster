@@ -6,11 +6,9 @@ using System.Linq;
 using UnityEngine;
 
 public class TrackPath : Singleton<TrackPath> {    
+    
+    [SerializeField]
     private BGCcMath[] trackList;
-    [SerializeField]
-    private BGCcMath[] orderedForwardTracklist;
-    [SerializeField]
-    private BGCcMath[] orderedBackwardTracklist;
     public List<BGCcMath> path;
     public BGCcMath nextTrack;
     public BGCcMath changedTrack;
@@ -19,6 +17,8 @@ public class TrackPath : Singleton<TrackPath> {
     public int direction = 1;
     public bool isReady = false;
 
+    
+   
               
 
     public void GetTrackPath( BogeyPathScript bogey)

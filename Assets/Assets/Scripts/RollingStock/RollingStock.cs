@@ -73,14 +73,13 @@ public class RollingStock : MonoBehaviour
     }
 
     void Update()
-    {
-        
+    {        
 
         if (engine)
         {
             acceleration = engine.acceleration;
         }
-        force = Time.fixedDeltaTime * acceleration * isMoving;
+        force = Time.fixedUnscaledDeltaTime * acceleration * isMoving;
         
         
         distance += force;

@@ -95,7 +95,8 @@ public class Route : Singleton<Route> {
             if (tempArr[i].tag == "Track")
                 trackCircuits.Add(tempArr[i]);
         }
-       
+     switchManager = FindObjectOfType<SwitchManager>();
+
     }
     void Start()
     {
@@ -179,6 +180,7 @@ public class Route : Singleton<Route> {
             //
             RouteLightsManage(tl, true);
             RouteManage(route, routeName);
+            switchManager.UpdatePathAfterSwitch();
             cancelRouteButton.interactable = true;
         }
         else
@@ -201,7 +203,7 @@ public class Route : Singleton<Route> {
             startLight.lightDirection = -1;
             route.routeDirection = -1;
         }
-
+        
         engine.EngineUpdateTheView();
     }      
 

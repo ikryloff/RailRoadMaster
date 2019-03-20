@@ -19,12 +19,14 @@ public class BogeyPathScript : MonoBehaviour {
     public float distance;
     TrackPath trackPath;
     public SwitchManager switchManager;
+    public TrackPathUnit trackPathUnit;
 
 
     private void Awake()
     {
         trackPath = FindObjectOfType<TrackPath>();
         switchManager = FindObjectOfType<SwitchManager>();
+        
     }
 
     private void Start()
@@ -33,6 +35,8 @@ public class BogeyPathScript : MonoBehaviour {
         distance = rollingStock.distance + offset;
         bogey = gameObject.transform;
         mathTemp = rollingStock.mathTemp;
+        trackPathUnit = mathTemp.GetComponent<TrackPathUnit>();
+        trackPathUnit.bogey = this;
         UpdatePath();
         
     }
@@ -40,9 +44,8 @@ public class BogeyPathScript : MonoBehaviour {
 
     void Update()
     {
-        distance += rollingStock.force;
+        distance += rollingStock.force;       
 
-                    
         if (mathTemp)
         {
             if (rollingStock.mathTemp == mathTemp && distance > 50 && mathTemp.GetDistance() - distance < 55)
@@ -56,6 +59,8 @@ public class BogeyPathScript : MonoBehaviour {
             if (rollingStock.force > 0 && mathTemp.GetDistance() - distance < 0.1)
             {
                 mathTemp = trackPath.GetNextTrack(mathTemp, ownTrackPath);
+
+                trackPathUnit.bogey = null;
                 if (mathTemp)
                     distance = 0;
                 else
@@ -69,7 +74,8 @@ public class BogeyPathScript : MonoBehaviour {
             if (rollingStock.force < 0 && distance < 0.1)
             {
                 mathTemp = trackPath.GetPrevTrack(mathTemp, ownTrackPath);
-                if(mathTemp)
+                trackPathUnit.bogey = null;
+                if (mathTemp)
                     distance = mathTemp.GetDistance();
                 else
                 {
@@ -78,7 +84,9 @@ public class BogeyPathScript : MonoBehaviour {
                     distance = 0;
                     
                 }                    
-            }                
+            }
+            trackPathUnit = mathTemp.GetComponent<TrackPathUnit>();
+            trackPathUnit.bogey = this;
         }
         else
         {
