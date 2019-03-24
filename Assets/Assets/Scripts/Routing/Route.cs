@@ -117,14 +117,8 @@ public class Route : Singleton<Route> {
         }
         return null;
     }
+        
 
-    
-
-    public void MakePathInBothDirections()
-    {
-       // pathMaker.GetFullPath(1);
-      //  pathMaker.GetFullPath(-1);
-    }
 
     private void FixedUpdate()
     {
@@ -141,7 +135,7 @@ public class Route : Singleton<Route> {
         {
             for (int i = 0; i < routes.Count; i++)
             {
-                if (routes[i].TrackCircuits[0].IsCarPresence > 0)
+                if (routes[i].TrackCircuits[0].hasCarPresence)
                 {
                     if(!IsShunting(routes[i].TrafficLights))
                         routes[i].StartLight.SetLightColor(0);                    
@@ -180,7 +174,9 @@ public class Route : Singleton<Route> {
             //
             RouteLightsManage(tl, true);
             RouteManage(route, routeName);
+
             switchManager.UpdatePathAfterSwitch();
+
             cancelRouteButton.interactable = true;
         }
         else
@@ -591,10 +587,8 @@ public class Route : Singleton<Route> {
                        // print("Make route direction " + ro.RouteName);
                         RouteDirection(ro.SwitchesStr, Constants.DIR_STR);
                         RouteDirection(ro.SwitchesTurn, Constants.DIR_TURN);
-                        foreach (TrackCircuit tc in ro.TrackCircuits)
-                        {
-                            tc.UseMode = Constants.TC_WAIT;
-                        }
+                        RouteLock(ro.TrackCircuits);
+                        
                         //print("Route Locked " + ro.RouteName);
                         //Message
                         messageText = string.Format("Route {0} is ready. You can go as will", ro.RouteName);
@@ -625,6 +619,15 @@ public class Route : Singleton<Route> {
         }
     }
 
+    private void RouteLock(TrackCircuit[] trackCircuits)
+    {
+        foreach (TrackCircuit tc in trackCircuits)
+        {
+            tc.UseMode = Constants.TC_WAIT;
+            tc.isInRoute = true;
+        }
+    }
+
     public void DestroyRouteByRouteName(string _routeName)
     {
         DestroyRoute(GetRouteByName(_routeName));
@@ -639,8 +642,7 @@ public class Route : Singleton<Route> {
         RouteLightsManage(ro.TrafficLights, false);
         if (withUnlock)
         {
-            RouteSwitchesUnlock(ro.SwitchesStr);
-            RouteSwitchesUnlock(ro.SwitchesTurn);
+            RouteUnlock(ro.TrackCircuits);            
             foreach (TrackCircuit tc in ro.TrackCircuits)
             {
                 tc.UseMode = Constants.TC_DEFAULT;
@@ -684,7 +686,11 @@ public class Route : Singleton<Route> {
         {
             foreach (Switch sw in switches)
             {
-                if ((dir == Constants.DIR_STR && !sw.IsSwitchStraight && sw.SwitchLockCount > 0) || (dir == Constants.DIR_TURN && sw.IsSwitchStraight && sw.SwitchLockCount > 0))
+                if (
+                        sw.isSwitchInUse || 
+                        (dir == Constants.DIR_STR && !sw.IsSwitchStraight && (sw.isLockedByRS || sw.isLockedByRoute)) || 
+                        (dir == Constants.DIR_TURN && sw.IsSwitchStraight && (sw.isLockedByRS || sw.isLockedByRoute ))
+                    )
                 {
                     return false;
                 }
@@ -719,7 +725,7 @@ public class Route : Singleton<Route> {
         for (int i = 0; i < trackCircuits.Length - 1; i++)
         {
             
-            if (trackCircuits[i].IsCarPresence > 0)
+            if (trackCircuits[i].hasCarPresence)
             {
                 
                 dangerPresence = false;
@@ -729,7 +735,7 @@ public class Route : Singleton<Route> {
        // print("Not presence path ="  + dangerPresence);
        // print("is Shunting: "  + IsShunting(trafficLights));
         //if it is a train route, all tracks must be free
-        if (!IsShunting(trafficLights) && last.IsCarPresence > 0)
+        if (!IsShunting(trafficLights) && last.hasCarPresence)
             dangerPresence = false;
         //print(" Not presence track =" + dangerPresence);
         return dangerPresence;
@@ -759,13 +765,13 @@ public class Route : Singleton<Route> {
 
     }
 
-    public void RouteSwitchesUnlock(Switch[] arr)
+    public void RouteUnlock(TrackCircuit[] arr)
     {
        if(arr != null)
         {
-            foreach (Switch sw in arr)
+            foreach (TrackCircuit tc in arr)
             {
-                sw.SwitchLockCount -= 1;
+                tc.isInRoute = false;
             }
         }
     }
@@ -811,8 +817,7 @@ public class Route : Singleton<Route> {
                 else
                 {
                     sw.DirectionTurn();                   
-                }
-                sw.SwitchLockCount += 1;
+                }                
             }
         }
     }

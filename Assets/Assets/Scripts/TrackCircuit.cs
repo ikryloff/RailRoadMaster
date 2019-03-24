@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrackCircuit : MonoBehaviour {
+public class TrackCircuit : MonoBehaviour
+{
+
     private string trackName;
-    private int isCarPresence;
     public bool hasCarPresence;
     private int useMode;
     private Switch switchTC;
@@ -16,17 +17,28 @@ public class TrackCircuit : MonoBehaviour {
     [SerializeField]
     private SpriteRenderer cellsTurn;
     private SpriteRenderer[] allCells;
+    public SpriteRenderer[] indicator;
+
     [SerializeField]
     private string[] trackLightsNames;
     [SerializeField]
     private TrafficLights[] trackLights;
     [SerializeField]
     private TrafficLightsManager trafficLightsManager;
-    public PathHolder pathHolder;
-    public int trackCircuitID;
+    public PathHolder pathHolder;    
     public bool isSwitch;
     public Switch switchTrack;
     public Route route;
+
+    public Color32 colorPresence;
+    public Color32 colorInRoute;
+    public Color32 colorInPath;
+    public Color32 colorTransparent;
+    public Color32 colorInUse;
+
+    public bool isInRoute;
+    public bool isInPath;
+    public bool isInUse;
 
     public TrackPathUnit [] paths;
 
@@ -35,23 +47,40 @@ public class TrackCircuit : MonoBehaviour {
         trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
         pathHolder = GameObject.Find("PathHolder").GetComponent<PathHolder>();
         isSwitch = GetComponentInParent<Switch>();
-        if (isSwitch)
-        {
-            switchTrack = GetComponentInParent<Switch>();
-            paths = transform.parent.GetComponentsInChildren<TrackPathUnit>();
-        }
-        else
+        switchTrack = GetComponentInParent<Switch>();
+        if (!isSwitch)
         {
             paths = transform.GetComponentsInChildren<TrackPathUnit>();
+            indicator =  GetComponentsInChildren<SpriteRenderer>();
+        }
+        else if(isSwitch && tag == "SingleSwitch")
+        {
+            paths = transform.parent.GetComponentsInChildren<TrackPathUnit>();
+            indicator = transform.parent.GetComponentsInChildren<SpriteRenderer>();
+        }
+        
+        
+
+        foreach (TrackPathUnit item in paths)
+        {
+            item.trackCircuit = this; 
         }
         GetTrackLightsByTrack();
-       
-        
-    }
+
+        route = GameObject.Find("Route").GetComponent<Route>();
+        colorPresence = new Color32(255, 77, 77, 160);
+        colorInRoute = new Color32(255, 210, 0, 160);
+        colorInPath = new Color32(58, 227, 116, 160);
+        colorInUse =  new Color32(105, 165, 230, 160);
+        colorTransparent = new Color32(255, 255, 255, 0);
+}
 
     private void Update()
     {
         CheckPresence();
+        PresenceFunction();
+        TrackCircuitColor();
+        CheckInRoute();
     }
 
     public void CheckPresence()
@@ -69,15 +98,26 @@ public class TrackCircuit : MonoBehaviour {
         }
     }
 
+    public void CheckInRoute()
+    {
+        if (isSwitch)
+        {
+            if (isInRoute)
+                switchTC.isLockedByRoute = true;
+            else
+                switchTC.isLockedByRoute = false;        
+        }
+            
+            
+    }
+
     private void Start()
     {
-        route = GameObject.Find("Route").GetComponent<Route>();
-        trackCircuitID = pathHolder.trackCircuitTC_ID[this];
-        
+           
         useMode = Constants.TC_DEFAULT;
         allCells = new SpriteRenderer[3];
         allCells[0] = cellsTrack;
-        if (tag == "Switch")
+        if (isSwitch)
         {
             switchTC = transform.parent.GetComponent<Switch>();
             allCells[1] = cellsStraight;
@@ -87,61 +127,105 @@ public class TrackCircuit : MonoBehaviour {
         
     }
 
-    
-
-    void OnTriggerEnter2D(Collider2D other)
+    public void TrackCircuitColor()
     {
-        if (other.tag == "RollingStock")
+
+        if (isInPath)
         {
-            if (tag == "Switch")
+            if (isInUse)
             {
-                switchTC.SwitchLockCount += 1;
+                if (indicator != null) //temp
+                {
+                    foreach (SpriteRenderer item in indicator)
+                    {
+                        item.color = colorInUse;
+                    }
+                }
+
             }
-            IsCarPresence += 1;
-            SetCellsLight(ReturnCells(), Constants.TC_OVER);
-            other.GetComponent<RollingStock>().TrackCircuit = this;
+            if (isInRoute && !isInUse)
+            {
+                if (indicator != null) //temp
+                {
+                    foreach (SpriteRenderer item in indicator)
+                    {
+                        item.color = colorInRoute;
+                    }
+                }
+            }
+            if (hasCarPresence)
+            {
+                if (indicator != null) //temp
+                {
+                    foreach (SpriteRenderer item in indicator)
+                    {
+                        item.color = colorPresence;
+                    }
+                }
+
+            }
+            else if (!hasCarPresence && !isInRoute && !isInUse)
+            {
+                if (indicator != null) //temp
+                {
+                    foreach (SpriteRenderer item in indicator)
+                    {
+                        item.color = colorInPath;
+                    }
+                }
+
+            }
         }
+        else
+        {
+            foreach (SpriteRenderer item in indicator)
+            {
+                item.color = colorTransparent;
+            }
+
+        }
+
+
+    }
+
+
+    public void PresenceFunction()
+    {
+        if (hasCarPresence)
+        {
+            if (tag == "SingleSwitch" || tag == "DoubleSwitch")
+            {
+                switchTC.isLockedByRS = true;
+            }            
+            SetCellsLight(ReturnCells(), Constants.TC_OVER);            
+        }
+        else
+        {
+            if (tag == "SingleSwitch" || tag == "DoubleSwitch")
+            {
+                switchTC.isLockedByRS = false;
+            }            
+            SetCellsLight(ReturnCells(), Constants.TC_DEFAULT);
+
+        }
+
+
         GetTrackLightsByTrack();
         
     }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.tag == "RollingStock")
-        {
-            if (tag == "Switch")
-            {
-                transform.parent.GetComponent<Switch>().SwitchLockCount -= 1;
-            }
-            IsCarPresence -= 1;
-            SetCellsLight(ReturnCells(), Constants.TC_DEFAULT);
-        }        
-    }
-
-    public int IsCarPresence
-    {
-        get
-        {
-            return isCarPresence;
-        }
-
-        set
-        {
-            isCarPresence = value;
-
-        }
-    }
+       
+    
 
 
     public int UseMode
     {
         get
         {
-            if (isCarPresence > 0)
+            if (hasCarPresence)
             {
                 useMode = Constants.TC_OVER;
             }
-            if (useMode == Constants.TC_OVER && isCarPresence == 0)
+            if (useMode == Constants.TC_OVER && !hasCarPresence)
             {
                 useMode = Constants.TC_USED;
             }
@@ -222,7 +306,7 @@ public class TrackCircuit : MonoBehaviour {
                         cell.color = new Color32(215, 0, 0, 255);
                     else
                         cell.color = new Color32(190, 190, 190, 255);
-                    if (IsCarPresence > 0)
+                    if (hasCarPresence)
                         cell.color = new Color32(215, 0, 0, 255);
                 }
             }

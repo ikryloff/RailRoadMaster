@@ -6,16 +6,18 @@ public class Switch : MonoBehaviour {
     [SerializeField]
     private GameObject switchPhysicsTurn;
     [SerializeField]
-    private GameObject switchPhysicsStraight;
+    public GameObject switchPhysicsStraight;
     [SerializeField]
-    private GameObject turnIndicatorObj;
+    public GameObject turnIndicatorObj;
     [SerializeField]
     private GameObject straightIndicatorObj;
-    private SpriteRenderer turnIndicator;
-    private SpriteRenderer straightIndicator;
+    public SpriteRenderer turnIndicator;
+    public SpriteRenderer straightIndicator;
     private SwitchManager switchManager;    
     private TrafficLightsManager tlm;    
-    private int timesLocked = 0;
+    public bool isLockedByRS;
+    public bool isLockedByRoute;
+    public bool isSwitchInUse;
     [SerializeField]
     TrackCircuit[] trackCircuits;
     public Animator anim;
@@ -36,9 +38,7 @@ public class Switch : MonoBehaviour {
         trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
         switchManager = FindObjectOfType<SwitchManager>(); 
         tlm = FindObjectOfType<TrafficLightsManager>();
-        gameTime = FindObjectOfType<GameTime>();
-        turnIndicator = turnIndicatorObj.GetComponent<SpriteRenderer>();
-        straightIndicator = straightIndicatorObj.GetComponent<SpriteRenderer>();        
+        gameTime = FindObjectOfType<GameTime>();            
         route = GameObject.Find("Route").GetComponent<Route>();
        
                 
@@ -53,26 +53,10 @@ public class Switch : MonoBehaviour {
     }
 
 
-    private void OnGUI()
-    {
-        if (timesLocked > 0)
-        {
-            turnIndicator.color = new Color32(255, 77, 77, 160);
-            straightIndicator.color = new Color32(255, 77, 77, 160);
-        }
-        else if(timesLocked == 0)
-        {
-            turnIndicator.color = new Color32(255, 242, 0, 160);
-            straightIndicator.color = new Color32(58, 227, 116, 160);
-        }
-
-    }
-    
-
 
     public void ChangeDirection()
     {        
-        if (timesLocked == 0)
+        if (!isLockedByRoute && !isLockedByRS && !isSwitchInUse)
         {
             if (IsSwitchStraight)
             {                               
@@ -88,17 +72,7 @@ public class Switch : MonoBehaviour {
         else Debug.Log("Locked");
     } 
     
-    public int SwitchLockCount
-    {
-        set
-        {
-            timesLocked = value;
-        }
-        get
-        {
-            return timesLocked;
-        }
-    }
+    
 
     public bool IsSwitchStraight
     {

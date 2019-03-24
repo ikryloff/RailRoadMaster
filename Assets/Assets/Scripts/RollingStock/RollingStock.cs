@@ -28,7 +28,7 @@ public class RollingStock : MonoBehaviour
      
 
 
-    public BGCcMath mathTemp;
+    public TrackPathUnit mathTemp;
 
     public Transform rsTransform;
 
@@ -38,11 +38,19 @@ public class RollingStock : MonoBehaviour
 
     public float acceleration;
     public float force;
-    public List<BGCcMath> ownTrackPath;
+    public List<TrackPathUnit> ownTrackPath;
     public TrackPath trackPath;
+
+    public BogeyPathScript[] bogeys;
+    public Transform bogeyA;
+    public Transform bogeyB;
     /// <summary>
     /// 
     /// </summary>
+    private float angle;
+    private Vector3 dir;
+
+
 
     private void Awake()
     {
@@ -50,6 +58,20 @@ public class RollingStock : MonoBehaviour
         switchManager = FindObjectOfType<SwitchManager>();
         engine = GetComponent<Engine>();
         rsTransform = gameObject.GetComponent<Transform>();
+
+        // set bogeys to RS
+        bogeys = GetComponentsInChildren<BogeyPathScript>();              
+        if(bogeys[0].transform.position.x < bogeys[1].transform.position.x)
+        {
+            bogeyA = bogeys[0].transform;
+            bogeyB = bogeys[1].transform;
+        }
+        else
+        {
+            bogeyA = bogeys[1].transform;
+            bogeyB = bogeys[0].transform;
+        }
+        
     }
 
 
@@ -87,10 +109,10 @@ public class RollingStock : MonoBehaviour
         {
             Vector3 tangent;
 
-            rsTransform.position = mathTemp.CalcPositionAndTangentByDistance(distance, out tangent);
-            rsTransform.rotation = Quaternion.LookRotation(tangent);
+            rsTransform.position = mathTemp.math.CalcPositionAndTangentByDistance(distance, out tangent);            
+            UpdateRSRotation();
 
-            if (force > 0 && mathTemp.GetDistance() - distance < 0.1)
+            if (force > 0 && mathTemp.math.GetDistance() - distance < 0.1)
             {
                 mathTemp = trackPath.GetNextTrack(mathTemp, ownTrackPath);
                 distance = 0;
@@ -99,10 +121,8 @@ public class RollingStock : MonoBehaviour
             {
                 mathTemp = trackPath.GetPrevTrack(mathTemp, ownTrackPath);
                 if (mathTemp)
-                    distance = mathTemp.GetDistance();
-                
-            }
-           
+                    distance = mathTemp.math.GetDistance();                
+            }           
         }
         else
         {
@@ -123,38 +143,15 @@ public class RollingStock : MonoBehaviour
         }
        
     }
-
-    void FixedUpdate()
+    // rotation of rolling stock
+    void UpdateRSRotation()
     {
-
-        if (Brakes)
-        {
-            
-            if(breakeForce < 60)
-                breakeForce += 0.9f;
-            if (rollingStockRB.velocity.x > 0.3f)
-                rollingStockRB.AddRelativeForce(new Vector2(-breakeForce, 0), ForceMode.Force);
-            else if (rollingStockRB.velocity.x < -0.3f)
-                rollingStockRB.AddRelativeForce(new Vector2(breakeForce, 0), ForceMode.Force);
-            else
-                rollingStockRB.velocity = new Vector2(0, 0);
-            
-        }
-        else
-        {
-            breakeForce = 0;
-            /*
-            if (rollingStockRB.velocity.x > 0)
-            {
-                rollingStockRB.AddRelativeForce(new Vector2(-3f, 0), ForceMode2D.Force);
-            }
-            else if (rollingStockRB.velocity.x < 0)
-                rollingStockRB.AddRelativeForce(new Vector2(3f, 0), ForceMode2D.Force);
-
-            */
-        }
-
+        dir = bogeyB.position - bogeyA.position;
+        angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+        rsTransform.rotation = Quaternion.Euler(0, angle, 0);
     }
+
+   
 
 
     public string Number

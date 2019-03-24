@@ -9,6 +9,7 @@ public class TrackPathUnit : MonoBehaviour {
     public BGCcMath math;
     public BogeyPathScript bogey;
     public bool hasObjects;
+    public TrackCircuit trackCircuit;
 
     private void Awake()
     {
@@ -16,6 +17,11 @@ public class TrackPathUnit : MonoBehaviour {
     }
 
     private void Update()
+    {
+        CheckObjectAtPath();
+    }
+
+    public void CheckObjectAtPath()
     {
         if (bogey)
         {

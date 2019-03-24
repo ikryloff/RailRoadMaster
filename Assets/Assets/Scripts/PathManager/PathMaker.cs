@@ -77,10 +77,7 @@ public class PathMaker : Singleton<PathMaker> {
 
 
 
-    public int GetID(TrackCircuit tc)
-    {
-        return pathHolder.trackCircuitTC_ID[tc];
-    }
+    
 
    
    
@@ -176,12 +173,7 @@ public class PathMaker : Singleton<PathMaker> {
         return null;
     }
 
-    public Node GetEngineNode()
-    {
-        // Find ID of Engine trackCircuit
-        int start = GetID(engine.Track);                
-        return pathHolder.nodesID_ND[start];
-    }
+   
 
     public Node GetNodeByID(int nodeID)
     {       
@@ -209,7 +201,7 @@ public class PathMaker : Singleton<PathMaker> {
 
             if (nextTC != null)
             {
-                next = GetNodeByID(nextTC.trackCircuitID);
+                //next = GetNodeByID(nextTC.trackCircuitID);
                 // check if switch from the path is in right position
 
                 if (nextTC.isSwitch)
@@ -241,7 +233,7 @@ public class PathMaker : Singleton<PathMaker> {
 
             if (nextTC != null)
             {
-                next = GetNodeByID(nextTC.trackCircuitID);
+                //next = GetNodeByID(nextTC.trackCircuitID);
 
                 // check if switch from the path is in right position
                 if (nextTC.isSwitch)

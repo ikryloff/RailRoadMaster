@@ -368,8 +368,7 @@ public class Engine : MonoBehaviour
         {
             maxSpeed = 0;
             EngineInstructionStop();
-            if (speed < 1)
-                engine.velocity = new Vector2(0, 0);
+            
         }
 
         int absHandler = Mathf.Abs(instructionHandler);
@@ -546,25 +545,7 @@ public class Engine : MonoBehaviour
     {
         ExpectedСars.Clear();
 
-        foreach (RollingStock rc in cars)
-        {
-
-            if (rc.TrackCircuit == route.OccupiedTrack || rc.TrackCircuit == EngineRS.TrackCircuit)
-            {
-                if (!ExpectedСars.Contains(rc))
-                {
-                    if (_direction == -1 && rc.transform.position.x < engine.position.x - 20)
-                    {
-                        ExpectedСars.Add(rc);
-                    }
-                    if (_direction == 1 && rc.transform.position.x > engine.position.x + 20)
-                    {
-                        ExpectedСars.Add(rc);
-                    }
-                }
-            }
-
-        }
+        
     }
 
     public void GetDistanceToExpetedCar()
