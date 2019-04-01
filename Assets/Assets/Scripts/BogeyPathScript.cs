@@ -42,7 +42,7 @@ public class BogeyPathScript : MonoBehaviour {
         distance = rollingStock.distance + offset;
         bogey = gameObject.transform;
         mathTemp = rollingStock.mathTemp;
-        mathTemp.bogey = this;
+        
         trackCircuit = mathTemp.trackCircuit;
         UpdatePath();
         
@@ -61,11 +61,10 @@ public class BogeyPathScript : MonoBehaviour {
             }
             Vector3 tangent;
             bogey.position = mathTemp.math.CalcPositionAndTangentByDistance(distance, out tangent);
-            bogey.rotation = Quaternion.LookRotation(tangent);            
-
+            bogey.rotation = Quaternion.LookRotation(tangent);             
+            
             if (rollingStock.force > 0 && mathTemp.math.GetDistance() - distance < 0.1)
-            {
-                mathTemp.bogey = null;
+            {                
                 mathTemp = trackPath.GetNextTrack(mathTemp, ownTrackPath);                                           
                 
                 if (mathTemp)
@@ -81,10 +80,8 @@ public class BogeyPathScript : MonoBehaviour {
                 }
             }
             if (rollingStock.force < 0 && distance < 0.1)
-            {
-                mathTemp.bogey = null;
-                mathTemp = trackPath.GetPrevTrack(mathTemp, ownTrackPath);
-                
+            {                
+                mathTemp = trackPath.GetPrevTrack(mathTemp, ownTrackPath);               
                 
                 if (mathTemp)
                 {                    
@@ -98,8 +95,7 @@ public class BogeyPathScript : MonoBehaviour {
                     distance = 0;
                     
                 }                    
-            }
-            mathTemp.bogey = this;
+            }            
             trackCircuit = mathTemp.trackCircuit;
         }
         else
@@ -111,8 +107,11 @@ public class BogeyPathScript : MonoBehaviour {
     public void UpdatePath()
     {
         // getPath for only one bogey
-        if(rollingStock.force >= 0 && bogeyPos == 1 || rollingStock.force < 0 && bogeyPos == -1)
-            trackPath.GetTrackPath(this);                         
+        if (rollingStock.force >= 0 && bogeyPos == 1 || rollingStock.force < 0 && bogeyPos == -1)
+            trackPath.GetTrackPath(this);
+        else
+            trackPath.GetTrackPath(otherBogey);
     }
+  
        
 }

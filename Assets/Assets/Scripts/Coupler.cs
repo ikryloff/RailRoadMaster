@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class Coupler : MonoBehaviour
 {
@@ -22,16 +24,31 @@ public class Coupler : MonoBehaviour
     private Coupler connectedToActive;
     private CompositionManager cm;
     public CouplerManager cpm;
-    
+
+    public float offset;
+    public float distance;
+    public TrackPathUnit mathTemp;
+    public TrackPath trackPath;
+    public List<TrackPathUnit> ownTrackPath;    
+    Transform couplerTransform;
+    Transform rsTransform;
     
    
+    Vector3 dir;
+    float angle;
+    float pointDist;
+    // which is of 2 couplers (-1 = left; +1 = right)
+    public int couplerPos;
 
     void Awake()
     {
                 
         rollingStock = transform.parent.GetComponent<RollingStock>();
         rollingStockRB = rollingStock.GetComponent<Rigidbody2D>();
-       
+        rsTransform = rollingStock.GetComponent<Transform>();        
+        
+        couplerTransform = gameObject.transform;        
+        couplerPos = offset > 0 ? 1 : -1;        
         if (IsActiveCoupler)
         {
             if (OtherCoupler)
@@ -52,11 +69,21 @@ public class Coupler : MonoBehaviour
 
         }       
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();        
-        cpm = GameObject.Find("CouplerManager").GetComponent<CouplerManager>();       
+        cpm = GameObject.Find("CouplerManager").GetComponent<CouplerManager>();
+
+        trackPath = FindObjectOfType<TrackPath>();      
         
 
     }
 
+    private void Start()
+    {
+        distance = rollingStock.distance + offset;
+        mathTemp = rollingStock.mathTemp;
+        mathTemp.coupler = this;        
+        
+
+    }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -97,27 +124,60 @@ public class Coupler : MonoBehaviour
     }
 
 
-    public HingeJoint2D JointCar
+   
+    private void Update()
     {
-        get
+
+        distance += rollingStock.force;
+
+        if (mathTemp)
         {
-            return jointCar;
+            
+                               
+            couplerTransform.position = mathTemp.math.CalcPositionByDistance(distance, true);
+            
+            ownTrackPath = rollingStock.ownTrackPath;
+
+
+            if (rollingStock.force > 0 && mathTemp.math.GetDistance() - distance < 0.1)
+            {
+                mathTemp.coupler = null;
+                mathTemp = trackPath.GetNextTrack(mathTemp, ownTrackPath);
+                if (mathTemp)
+                {
+                    distance = 0;
+                }
+                else
+                {
+                    rollingStock.isMoving = 0;
+                    mathTemp = ownTrackPath.Last();
+                    distance = mathTemp.math.GetDistance();
+                }
+            }
+            if (rollingStock.force < 0 && distance < 0.1)
+            {
+                mathTemp.coupler = null;
+                mathTemp = trackPath.GetPrevTrack(mathTemp, ownTrackPath);
+                if (mathTemp)
+                {
+                    distance = mathTemp.math.GetDistance();
+                }
+                else
+                {
+                    rollingStock.isMoving = 0;
+                    mathTemp = ownTrackPath.First();
+                    distance = 0;
+                }
+            }
+            mathTemp.coupler = this;            
         }
-
+        else
+        {
+            rollingStock.isMoving = 0;
+        }
     }
 
-    private void Start()
-    {
-        //InvokeRepeating("UpdateCoupleralignment", 1f, 1f);  //1s delay, repeat every 1s
-        
-        
-    }
-
-    private void FixedUpdate()
-    {
-           
-
-    }
+   
 
     private void UpdateCoupleralignment()
     {
@@ -199,17 +259,7 @@ public class Coupler : MonoBehaviour
 
     public void Uncouple()
     {
-        if (JointCar)
-        {
-            OtherCoupler.transform.parent.GetComponent<RollingStock>().ConnectedToPassive = null;
-            OtherCoupler.transform.parent.GetComponent<RollingStock>().fork.SetActive(true);
-            OtherCoupler.IsPassiveCoupleConnected = false;            
-            PassiveToThisCoupler.OtherCoupler = null;
-            OtherCoupler = null;
-            Destroy(JointCar);
-            cm.UpdateCompositionsInformation();
-            
-        }            
+        
     }
 
 }

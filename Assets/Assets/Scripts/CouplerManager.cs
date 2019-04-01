@@ -49,7 +49,7 @@ public class CouplerManager : Singleton<CouplerManager>
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (coupler.JointCar)
+                if (coupler)
                 {
                     coupler.Uncouple();
                     Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
@@ -69,7 +69,7 @@ public class CouplerManager : Singleton<CouplerManager>
         {
             foreach (GameObject cp in couplerPictures)
             {
-                if (cp.GetComponentInParent<Coupler>().JointCar)
+                if (cp.GetComponentInParent<Coupler>())
                 {
                     cp.SetActive(true);
                 }

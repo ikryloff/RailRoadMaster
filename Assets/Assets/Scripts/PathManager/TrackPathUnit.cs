@@ -6,8 +6,8 @@ using UnityEngine;
 public class TrackPathUnit : MonoBehaviour {
 
     
-    public BGCcMath math;
-    public BogeyPathScript bogey;
+    public BGCcMath math;    
+    public Coupler coupler;
     public bool hasObjects;
     public TrackCircuit trackCircuit;
 
@@ -23,7 +23,7 @@ public class TrackPathUnit : MonoBehaviour {
 
     public void CheckObjectAtPath()
     {
-        if (bogey)
+        if (coupler)
         {
             hasObjects = true;
         }

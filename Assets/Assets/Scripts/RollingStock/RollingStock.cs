@@ -82,7 +82,7 @@ public class RollingStock : MonoBehaviour
         rollingStockRB = GetComponent<Rigidbody>();        
         ActiveCoupler = transform.GetChild(0).GetComponent<Coupler>();
         PassiveCoupler = transform.GetChild(1).GetComponent<Coupler>();
-        //fork = rollingStock.transform.Find("Fork").gameObject;
+        
         Brakes = true;
 
         // exp

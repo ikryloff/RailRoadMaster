@@ -85,6 +85,7 @@ public class TrackCircuit : MonoBehaviour
 
     public void CheckPresence()
     {
+
         foreach (TrackPathUnit item in paths)
         {
             if (item.hasObjects)

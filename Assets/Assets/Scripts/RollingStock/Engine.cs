@@ -321,31 +321,15 @@ public class Engine : MonoBehaviour
         run.InitEngineRun(this, 1, 1);
     }
 
-    public bool IsEngineGoesAhead
+    public bool IsEngineGoesAhead()
     {
-        get
-        {
-            return (direction == 1 && !EngineRS.ActiveCoupler.JointCar) || (direction == -1 && !EngineRS.PassiveCoupler.IsPassiveCoupleConnected);
-        }
-        set
-        {
-            isEngineGoesAhead = value;
-        }
-
+        
+        return false;
     }
 
     public bool IsEngineGoesAheadByDirection(int _direction)
     {
-        if ((_direction == 1 && !EngineRS.ActiveCoupler.JointCar) || (_direction == -1 && !EngineRS.PassiveCoupler.IsPassiveCoupleConnected))
-        {
-            IsEngineGoesAhead = true;
-            return true;
-        }
-        else
-        {
-            IsEngineGoesAhead = false;
-            return false;
-        }
+        return false;
     }
 
     public void DriveByInstructions()
