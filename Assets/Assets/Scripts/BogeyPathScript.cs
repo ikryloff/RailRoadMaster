@@ -19,6 +19,7 @@ public class BogeyPathScript : MonoBehaviour {
     TrackPath trackPath;
     public SwitchManager switchManager;
     public TrackCircuit trackCircuit;
+    public bool isRightBogey;
     // wihich is of 2 bogeys (-1 = left; +1 = right)
     public int bogeyPos;
     public BogeyPathScript otherBogey; 
@@ -29,20 +30,23 @@ public class BogeyPathScript : MonoBehaviour {
         switchManager = FindObjectOfType<SwitchManager>();
         rollingStock = GetComponentInParent<RollingStock>();
         bogeyPos = offset > 0 ? 1 : -1;
+        isRightBogey = offset > 0 ? true : false;
         //find other bogey
+
+    }
+
+    private void Start()
+    {
+
         foreach (BogeyPathScript item in rollingStock.bogeys)
         {
             if (item != this)
                 otherBogey = item;
         }
-    }
-
-    private void Start()
-    {        
         distance = rollingStock.distance + offset;
         bogey = gameObject.transform;
         mathTemp = rollingStock.mathTemp;
-        
+        mathTemp.bogeys.Add(this);
         trackCircuit = mathTemp.trackCircuit;
         UpdatePath();
         
@@ -64,7 +68,8 @@ public class BogeyPathScript : MonoBehaviour {
             bogey.rotation = Quaternion.LookRotation(tangent);             
             
             if (rollingStock.force > 0 && mathTemp.math.GetDistance() - distance < 0.1)
-            {                
+            {
+                mathTemp.bogeys.Remove(this);
                 mathTemp = trackPath.GetNextTrack(mathTemp, ownTrackPath);                                           
                 
                 if (mathTemp)
@@ -80,7 +85,8 @@ public class BogeyPathScript : MonoBehaviour {
                 }
             }
             if (rollingStock.force < 0 && distance < 0.1)
-            {                
+            {
+                mathTemp.bogeys.Remove(this);
                 mathTemp = trackPath.GetPrevTrack(mathTemp, ownTrackPath);               
                 
                 if (mathTemp)
@@ -97,6 +103,8 @@ public class BogeyPathScript : MonoBehaviour {
                 }                    
             }            
             trackCircuit = mathTemp.trackCircuit;
+            if(!mathTemp.bogeys.Contains(this))
+                mathTemp.bogeys.Add(this);
         }
         else
         {
@@ -111,7 +119,7 @@ public class BogeyPathScript : MonoBehaviour {
             trackPath.GetTrackPath(this);
         else
             trackPath.GetTrackPath(otherBogey);
-    }
-  
+    }  
+   
        
 }

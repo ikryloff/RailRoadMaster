@@ -18,19 +18,11 @@ public class RollingStock : MonoBehaviour
     [SerializeField]
     private TrackCircuit trackCircuit;
     public float breakeForce;
-    public GameObject fork;
-    public Engine engine;
-    public SwitchManager switchManager;
-
-    /// <summary>
-    /// experimental
-    /// </summary>
-     
-
-
+   
+    public Engine engine;    
+    SwitchManager switchManager;   
     public TrackPathUnit mathTemp;
-
-    public Transform rsTransform;
+    Transform rsTransform;
 
     public float distance;
     public bool isDirectionChanged;
@@ -39,45 +31,49 @@ public class RollingStock : MonoBehaviour
     public float acceleration;
     public float force;
     public List<TrackPathUnit> ownTrackPath;
-    public TrackPath trackPath;
+    TrackPath trackPath;
 
     public BogeyPathScript[] bogeys;
-    public Transform bogeyA;
-    public Transform bogeyB;
-    /// <summary>
-    /// 
-    /// </summary>
+    public BogeyPathScript bogeyA;
+    public BogeyPathScript bogeyB;
+    Transform bogeyTransformA;
+    Transform bogeyTransformB;
+    public RollingStock rightCarToConnect;
+    
     private float angle;
     private Vector3 dir;
 
+    public float distanceToNextCar;
 
 
-    private void Awake()
-    {
+
+    private void Awake()    {
         trackPath = FindObjectOfType<TrackPath>();
         switchManager = FindObjectOfType<SwitchManager>();
-        engine = GetComponent<Engine>();
+        
         rsTransform = gameObject.GetComponent<Transform>();
 
         // set bogeys to RS
         bogeys = GetComponentsInChildren<BogeyPathScript>();              
         if(bogeys[0].transform.position.x < bogeys[1].transform.position.x)
         {
-            bogeyA = bogeys[0].transform;
-            bogeyB = bogeys[1].transform;
+            bogeyA = bogeys[0];
+            bogeyB = bogeys[1];
         }
         else
         {
-            bogeyA = bogeys[1].transform;
-            bogeyB = bogeys[0].transform;
+            bogeyA = bogeys[1];
+            bogeyB = bogeys[0];
         }
-        
+        bogeyTransformA = bogeyA.transform;
+        bogeyTransformB = bogeyB.transform;
     }
 
 
 
     private void Start()
     {
+        distanceToNextCar = 999999;
         rollingStock = GetComponent<RollingStock>();
         rollingStockRB = GetComponent<Rigidbody>();        
         ActiveCoupler = transform.GetChild(0).GetComponent<Coupler>();
@@ -95,12 +91,14 @@ public class RollingStock : MonoBehaviour
     }
 
     void Update()
-    {        
+    {
 
         if (engine)
         {
             acceleration = engine.acceleration;
         }
+        else
+            acceleration = 0;
         force = Time.fixedUnscaledDeltaTime * acceleration * isMoving;
         
         
@@ -129,9 +127,55 @@ public class RollingStock : MonoBehaviour
             isMoving = 0;
         }
 
-        
+        if (force != 0)
+            GetDistanceToRightCar();
+        CheckConnectionToCar();
 
     }
+
+    public void GetDistanceToRightCar()
+    {
+        bool pathIsFree = false;
+        float toCarDist = mathTemp.math.GetDistance() - mathTemp.rightBogey.distance;
+        for (int i = ownTrackPath.IndexOf(mathTemp) + 1; i < ownTrackPath.Count; i++)
+        {
+            if (!ownTrackPath[i].hasObjects)
+            {
+                toCarDist += ownTrackPath[i].math.GetDistance();                
+            }
+            else if (ownTrackPath[i].hasObjects)
+            {
+                if(ownTrackPath[i].leftBogey != bogeyB)                    
+                {
+                    toCarDist += ownTrackPath[i].leftBogey.distance;
+                    rightCarToConnect = ownTrackPath[i].leftBogey.rollingStock;
+                    pathIsFree = false;
+                    break;
+                }                
+            }
+            pathIsFree = true;
+        }
+        if (mathTemp.bogeys.Count > 2 && mathTemp.bogeys.IndexOf(bogeyB) < mathTemp.bogeys.Count)
+        {
+            toCarDist = mathTemp.bogeys[mathTemp.bogeys.IndexOf(bogeyB) + 1].distance - bogeyB.distance;
+            pathIsFree = false;
+        }
+            
+        if (pathIsFree)
+            distanceToNextCar = 999999;
+        else
+            distanceToNextCar = toCarDist;
+    }
+
+    public void CheckConnectionToCar()
+    {
+        if(distanceToNextCar < 37)
+        {
+            print("hello");
+            rightCarToConnect.engine = engine;
+        }
+    }
+
 
     // forced changing direction
     public void ChangeDirection()
@@ -146,7 +190,7 @@ public class RollingStock : MonoBehaviour
     // rotation of rolling stock
     void UpdateRSRotation()
     {
-        dir = bogeyB.position - bogeyA.position;
+        dir = bogeyTransformB.position - bogeyTransformA.position;
         angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
         rsTransform.rotation = Quaternion.Euler(0, angle, 0);
     }

@@ -24,19 +24,7 @@ public class Coupler : MonoBehaviour
     private Coupler connectedToActive;
     private CompositionManager cm;
     public CouplerManager cpm;
-
-    public float offset;
-    public float distance;
-    public TrackPathUnit mathTemp;
-    public TrackPath trackPath;
-    public List<TrackPathUnit> ownTrackPath;    
-    Transform couplerTransform;
-    Transform rsTransform;
     
-   
-    Vector3 dir;
-    float angle;
-    float pointDist;
     // which is of 2 couplers (-1 = left; +1 = right)
     public int couplerPos;
 
@@ -44,11 +32,8 @@ public class Coupler : MonoBehaviour
     {
                 
         rollingStock = transform.parent.GetComponent<RollingStock>();
-        rollingStockRB = rollingStock.GetComponent<Rigidbody2D>();
-        rsTransform = rollingStock.GetComponent<Transform>();        
-        
-        couplerTransform = gameObject.transform;        
-        couplerPos = offset > 0 ? 1 : -1;        
+        rollingStockRB = rollingStock.GetComponent<Rigidbody2D>();              
+               
         if (IsActiveCoupler)
         {
             if (OtherCoupler)
@@ -64,25 +49,21 @@ public class Coupler : MonoBehaviour
                 ConnectedToActive = PassiveToThisCoupler;                
                 PassiveToThisCoupler.IsPassiveCoupleConnected = true;
                 PassiveToThisCoupler.OtherCoupler = this;
-                otherRollingStock.fork.SetActive(false);
+                
             }
 
         }       
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();        
         cpm = GameObject.Find("CouplerManager").GetComponent<CouplerManager>();
 
-        trackPath = FindObjectOfType<TrackPath>();      
+           
         
 
     }
 
     private void Start()
     {
-        distance = rollingStock.distance + offset;
-        mathTemp = rollingStock.mathTemp;
-        mathTemp.coupler = this;        
         
-
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -107,8 +88,7 @@ public class Coupler : MonoBehaviour
                     jointCar.anchor = new Vector2(1, 0); //hardcoded joint point                
                     jointCar.autoConfigureConnectedAnchor = false;                   
                     otherRollingStock.ConnectedToPassive = gameObject.GetComponent<Coupler>();                    
-                    ConnectedToActive = PassiveToThisCoupler;
-                    otherRollingStock.fork.SetActive(false);
+                    ConnectedToActive = PassiveToThisCoupler;                    
                     
 
                     if (cpm.IsCouplerModeIsOn)
@@ -127,54 +107,7 @@ public class Coupler : MonoBehaviour
    
     private void Update()
     {
-
-        distance += rollingStock.force;
-
-        if (mathTemp)
-        {
-            
-                               
-            couplerTransform.position = mathTemp.math.CalcPositionByDistance(distance, true);
-            
-            ownTrackPath = rollingStock.ownTrackPath;
-
-
-            if (rollingStock.force > 0 && mathTemp.math.GetDistance() - distance < 0.1)
-            {
-                mathTemp.coupler = null;
-                mathTemp = trackPath.GetNextTrack(mathTemp, ownTrackPath);
-                if (mathTemp)
-                {
-                    distance = 0;
-                }
-                else
-                {
-                    rollingStock.isMoving = 0;
-                    mathTemp = ownTrackPath.Last();
-                    distance = mathTemp.math.GetDistance();
-                }
-            }
-            if (rollingStock.force < 0 && distance < 0.1)
-            {
-                mathTemp.coupler = null;
-                mathTemp = trackPath.GetPrevTrack(mathTemp, ownTrackPath);
-                if (mathTemp)
-                {
-                    distance = mathTemp.math.GetDistance();
-                }
-                else
-                {
-                    rollingStock.isMoving = 0;
-                    mathTemp = ownTrackPath.First();
-                    distance = 0;
-                }
-            }
-            mathTemp.coupler = this;            
-        }
-        else
-        {
-            rollingStock.isMoving = 0;
-        }
+        
     }
 
    
