@@ -52,8 +52,7 @@ public class Engine : MonoBehaviour
 
     private Rigidbody engine;
     private RollingStock engineRS;
-    [SerializeField]
-    private RollingStock[] cars;
+    
     [SerializeField]
     private List<RollingStock> expectedСars;
     private Route route;
@@ -113,7 +112,7 @@ public class Engine : MonoBehaviour
     {
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
         route = GameObject.Find("Route").GetComponent<Route>();
-        cars = FindObjectsOfType<RollingStock>();
+        
         ExpectedСars = new List<RollingStock>();
         EngineRS = GetComponent<RollingStock>();
 
@@ -546,35 +545,11 @@ public class Engine : MonoBehaviour
 
         pathmaker.GetFullPath(1);
 
-        foreach (RollingStock rc in cars)
-        {
-
-            if (rc.TrackCircuit == route.OccupiedTrack || rc.TrackCircuit == EngineRS.TrackCircuit)
-            {
-                if (rc.transform.position.x < tempCarCoordForward && rc.transform.position.x > engine.transform.position.x)
-                {
-                    tempCarFoward = rc;
-                    tempCarCoordForward = rc.transform.position.x;
-                }
-
-            }
-        }
+       
 
         pathmaker.GetFullPath(-1);
 
-        foreach (RollingStock rc in cars)
-        {
-
-            if (rc.TrackCircuit == route.OccupiedTrack || rc.TrackCircuit == EngineRS.TrackCircuit)
-            {
-                if (rc.transform.position.x > tempCarCoordBackward && rc.transform.position.x < engine.transform.position.x)
-                {
-                    tempCarBackward = rc;
-                    tempCarCoordBackward = rc.transform.position.x;
-                }
-
-            }
-        }
+        
         if(route.LastRouteTrackForward)
         {
             tempLightCoordForward = route.LastRouteTrackForward.TrackLights[1].transform.position.x;

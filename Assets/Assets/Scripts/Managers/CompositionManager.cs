@@ -6,8 +6,8 @@ public class CompositionManager : Singleton<CompositionManager>
 {
     public List<string> compositions = new List<string>();
     public Dictionary<int, RollingStock[]> compositionsList = new Dictionary<int, RollingStock[]>();
-    private GameObject[] carsObj;
-    private RollingStock[] cars;
+   
+    public RollingStock[] cars;
     public string composition;
     private string compositionNumber;
 
@@ -57,14 +57,8 @@ public class CompositionManager : Singleton<CompositionManager>
    
     private void Awake()
     {
-        carsObj = GameObject.FindGameObjectsWithTag("RollingStock");
-        int i = 0;
-        cars = new RollingStock[carsObj.Length];
-        foreach (GameObject item in carsObj)
-        {
-            cars[i] = item.GetComponent<RollingStock>();
-            i++;
-        }        
+        
+        cars = FindObjectsOfType<RollingStock>();
     }
     private void Start()
     {
@@ -193,6 +187,6 @@ public class CompositionManager : Singleton<CompositionManager>
         composition += rs.ActiveCoupler.ConnectedToActive.transform.parent.GetComponent<RollingStock>().Number;
         CompositionNumberFromCars(rs.ActiveCoupler.ConnectedToActive.transform.parent.GetComponent<RollingStock>());
         return rs.Number + composition;
-    }
+    }   
 
 }

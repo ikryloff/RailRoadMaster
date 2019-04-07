@@ -12,9 +12,9 @@ public class TrackPath : Singleton<TrackPath> {
     public BGCcMath nextTrack;
     public BGCcMath changedTrack;
 
-    
-   
-              
+    public float pathLength;
+
+
 
     public void GetTrackPath( BogeyPathScript bogey)
     {
@@ -88,6 +88,7 @@ public class TrackPath : Singleton<TrackPath> {
         _bogey.ownTrackPath = pathOwn;
         _bogey.otherBogey.ownTrackPath = pathOwn;
         _bogey.rollingStock.ownTrackPath = pathOwn;
+        _bogey.rollingStock.pathLength = GetPathLength(pathOwn);
         UnLockPreviousPath(pathPrevious);
     }
 
@@ -109,6 +110,20 @@ public class TrackPath : Singleton<TrackPath> {
             return null;
     }
 
+    public float GetPathLength(List<TrackPathUnit > paths)
+    {
+        float length = 0;
+        if (paths != null)
+        {
+            foreach (TrackPathUnit item in paths)
+            {
+                length += item.math.GetDistance();
+            }
+        }
+        return length;
+    }
+        
+
     private void Awake()
     {
         trackList = FindObjectsOfType<TrackPathUnit>();
@@ -126,41 +141,4 @@ public class TrackPath : Singleton<TrackPath> {
     }
 
    
-
-
-    /*
-BGCcMath temp;
-// ordered forward track list
-orderedForwardTracklist = pathList;
-   for (int i = 0; i<orderedForwardTracklist.Length - 1; i++)
-   {
-       for (int j = i + 1; j<pathList.Length; j++)
-       {
-           // if one Path point is more left than other path
-           if(orderedForwardTracklist[i].Curve.Points.First().PositionWorld.x > orderedForwardTracklist[j].Curve.Points.First().PositionWorld.x)
-           {
-               temp = orderedForwardTracklist[i];
-               orderedForwardTracklist[i] = orderedForwardTracklist[j];
-               orderedForwardTracklist[j] = temp;
-           }
-       }
-   }
-
-   // ordered backward track list
-   orderedBackwardTracklist = pathList;
-   for (int i = 0; i<orderedBackwardTracklist.Length - 1; i++)
-   {
-       for (int j = i + 1; j<pathList.Length; j++)
-       {
-           // if one Path point is more left than other path
-           if (orderedBackwardTracklist[i].Curve.Points.Last().PositionWorld.x > orderedBackwardTracklist[j].Curve.Points.Last().PositionWorld.x)
-           {
-               temp = orderedBackwardTracklist[i];
-               orderedBackwardTracklist[i] = orderedBackwardTracklist[j];
-               orderedBackwardTracklist[j] = temp;
-           }
-       }
-   }
-
-*/
 }

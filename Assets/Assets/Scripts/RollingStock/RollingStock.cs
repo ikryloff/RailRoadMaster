@@ -7,6 +7,7 @@ public class RollingStock : MonoBehaviour
 {
     private RollingStock rollingStock;
     private Rigidbody rollingStockRB;
+    
     [SerializeField]
     private string number;    
     private int compositionNumberofRS;
@@ -25,12 +26,14 @@ public class RollingStock : MonoBehaviour
     Transform rsTransform;
 
     public float distance;
+    public float distanceInPath;
     public bool isDirectionChanged;
     public int isMoving;
 
     public float acceleration;
     public float force;
     public List<TrackPathUnit> ownTrackPath;
+    public float pathLength;
     TrackPath trackPath;
 
     public BogeyPathScript[] bogeys;
@@ -49,13 +52,16 @@ public class RollingStock : MonoBehaviour
 
     public bool isConnectedLeft;
     public bool isConnectedRight;
+    public CompositionManager compositionManager;
+    
+    
 
-
+    public static int test;
 
     private void Awake()    {
         trackPath = FindObjectOfType<TrackPath>();
-        switchManager = FindObjectOfType<SwitchManager>();
-        
+        compositionManager = FindObjectOfType<CompositionManager>();
+        switchManager = FindObjectOfType<SwitchManager>();        
         rsTransform = gameObject.GetComponent<Transform>();
 
         // set bogeys to RS
@@ -91,14 +97,14 @@ public class RollingStock : MonoBehaviour
 
         acceleration = 0;
         isMoving = 1;
-        
-                
-        
+
+        CalcDistanceInPath();
+        FindCloseCars();
     }
 
     void Update()
     {
-
+        CalcDistanceInPath();
         if (engine)
         {
             acceleration = engine.acceleration;
@@ -135,42 +141,57 @@ public class RollingStock : MonoBehaviour
 
         if (force != 0)
         {
-            if(!isConnectedRight)
-                GetDistanceToRightCar();
-            if(!isConnectedLeft)
-                GetDistanceToLeftCar();
-        }            
-        CheckConnectionToCar();       
+            FindCloseCars();
+            //if(!isConnectedRight)
+            //   GetDistanceToRightCar();
+            //if(!isConnectedLeft)
+            //  GetDistanceToLeftCar();
+        }
+        CheckConnectionToCar();    
+        
     }
 
     public void GetDistanceToLeftCar()
     {
         bool pathIsFree = true;
-        float toCarDist = mathTemp.leftBogey.distance;
-        for (int i = ownTrackPath.IndexOf(mathTemp) - 1; i >= 0; i--)
-        {
-            if (!ownTrackPath[i].hasObjects)
+        float toCarDist = 0;
+        BogeyPathScript nextTrackBogey = null;
+       
+        if (!nextTrackBogey)
+        {           
+            toCarDist = bogeyA.distance;
+            for (int i = bogeyA.ownTrackPath.IndexOf(bogeyA.mathTemp) - 1; i >= 0; i--)
             {
-                toCarDist += ownTrackPath[i].math.GetDistance();                
-            }
-            else if (ownTrackPath[i].hasObjects)
-            {
-                if(ownTrackPath[i].rightBogey != bogeyA)                    
+                if (!bogeyA.ownTrackPath[i].hasObjects)
                 {
-                    toCarDist += ownTrackPath[i].math.GetDistance() - ownTrackPath[i].rightBogey.distance;
-                    leftCarToConnect = ownTrackPath[i].rightBogey.rollingStock;
+                    toCarDist += bogeyA.ownTrackPath[i].math.GetDistance();
+                }
+                else 
+                {
+                    if(bogeyA.ownTrackPath[i].rightBogey && bogeyA.ownTrackPath[i].rightBogey != bogeyB)
+                    {
+                        toCarDist += bogeyA.ownTrackPath[i].math.GetDistance() - bogeyA.ownTrackPath[i].rightBogey.distance;
+                        leftCarToConnect = bogeyA.ownTrackPath[i].rightBogey.rollingStock;
+                        pathIsFree = false;
+                        break;
+                    }                    
+                }
+                pathIsFree = true;
+            }
+            for (int i = bogeyA.mathTemp.bogeys.IndexOf(bogeyA) - 1; i >= 0; i--)
+            {
+                if (bogeyA.mathTemp.bogeys[i] && bogeyA.mathTemp.bogeys[i] != bogeyB)
+                {
+                    nextTrackBogey = bogeyA.mathTemp.bogeys[i];
+                    toCarDist = bogeyA.distance - nextTrackBogey.distance;
+                    leftCarToConnect = bogeyA.mathTemp.bogeys[i].rollingStock;
                     pathIsFree = false;
                     break;
-                }                
+                }
             }
-            pathIsFree = true;
-        }
-        if (mathTemp.bogeys.Count > 2 && mathTemp.bogeys.IndexOf(bogeyA) > 0) // if bogey in track minimum second
-        {
-            toCarDist = bogeyA.distance - mathTemp.bogeys[mathTemp.bogeys.IndexOf(bogeyA) - 1].distance;
-            pathIsFree = false;
-        }
-            
+
+        }        
+                    
         if (pathIsFree)
             distanceToLeftCar = 999999;
         else
@@ -179,33 +200,44 @@ public class RollingStock : MonoBehaviour
 
     public void GetDistanceToRightCar()
     {
-        bool pathIsFree = true;
-        float toCarDist = mathTemp.math.GetDistance() - mathTemp.rightBogey.distance;
-        for (int i = ownTrackPath.IndexOf(mathTemp) + 1; i < ownTrackPath.Count; i++)
+        bool pathIsFree = true;        
+        float toCarDist = 0;
+        BogeyPathScript nextTrackBogey = null;     
+        if(!nextTrackBogey)
         {
-            if (!ownTrackPath[i].hasObjects)
+            toCarDist = bogeyB.mathTemp.math.GetDistance() - bogeyB.distance;
+            for (int i = bogeyB.ownTrackPath.IndexOf(bogeyB.mathTemp) + 1; i < bogeyB.ownTrackPath.Count; i++)
             {
-                toCarDist += ownTrackPath[i].math.GetDistance();
-            }
-            else if (ownTrackPath[i].hasObjects)
-            {
-                if (ownTrackPath[i].leftBogey != bogeyB)
+                
+                if (!bogeyB.ownTrackPath[i].hasObjects)
                 {
-                    toCarDist += ownTrackPath[i].leftBogey.distance;
-                    rightCarToConnect = ownTrackPath[i].leftBogey.rollingStock;
-                    pathIsFree = false;
-                    break;
+                    toCarDist += bogeyB.ownTrackPath[i].math.GetDistance();
                 }
+                else 
+                {
+                    if(bogeyB.ownTrackPath[i].leftBogey && bogeyB.ownTrackPath[i].leftBogey != bogeyA)
+                    {
+                        toCarDist += bogeyB.ownTrackPath[i].leftBogey.distance;
+                        rightCarToConnect = bogeyB.ownTrackPath[i].leftBogey.rollingStock;
+                        pathIsFree = false;
+                        break;
+                    }                                   
+                }
+                pathIsFree = true;
             }
-            pathIsFree = true;
-        }
-        if (mathTemp.bogeys.Count > 2 && mathTemp.bogeys.IndexOf(bogeyB) < mathTemp.bogeys.Count - 1) // if bogey in track not last
-        {
-            print(mathTemp.bogeys.IndexOf(bogeyB) + " rs" + bogeyB.rollingStock.name);
-            toCarDist = mathTemp.bogeys[mathTemp.bogeys.IndexOf(bogeyB) + 1].distance - bogeyB.distance;
-            pathIsFree = false;
         }
 
+        for (int i = bogeyB.mathTemp.bogeys.IndexOf(bogeyB) + 1; i < bogeyB.mathTemp.bogeys.Count; i++)
+        {
+            if (bogeyB.mathTemp.bogeys[i] && bogeyB.mathTemp.bogeys[i] != bogeyA)
+            {
+                nextTrackBogey = bogeyB.mathTemp.bogeys[i];
+                toCarDist = nextTrackBogey.distance - bogeyB.distance;
+                rightCarToConnect = bogeyB.mathTemp.bogeys[i].rollingStock;
+                pathIsFree = false;
+                break;
+            }
+        }
         if (pathIsFree)
             distanceToRightCar = 999999;
         else
@@ -214,21 +246,86 @@ public class RollingStock : MonoBehaviour
 
     public void CheckConnectionToCar()
     {
-        if(!isConnectedRight && distanceToRightCar < 37)
-        {            
-            rightCarToConnect.engine = engine;
-            rightCarToConnect.isConnectedLeft = true;
-            isConnectedRight = true;
-        }
-        if (!isConnectedLeft &&  distanceToLeftCar < 41)
+        if(rightCarToConnect)
+            distanceToRightCar = rightCarToConnect.distanceInPath - distanceInPath;
+        if(leftCarToConnect)
+            distanceToLeftCar = distanceInPath - leftCarToConnect.distanceInPath;
+
+        if(!isConnectedRight  && distanceToRightCar < 90)
         {
-            leftCarToConnect.engine = engine;
-            leftCarToConnect.isConnectedRight = true;
+            isConnectedRight = true;
+            rightCarToConnect.isConnectedLeft = true;
+            rightCarToConnect.leftCarToConnect = this;            
+            rightCarToConnect.engine = engine;
+            
+        }
+        if (!isConnectedLeft &&  distanceToLeftCar < 89)
+        {
             isConnectedLeft = true;
+            leftCarToConnect.isConnectedRight = true;
+            leftCarToConnect.rightCarToConnect = this;            
+            leftCarToConnect.engine = engine;            
+        }
+
+        if (isConnectedRight)
+        {
+            if (rightCarToConnect.leftCarToConnect == null || !rightCarToConnect.isConnectedLeft)
+            {
+                rightCarToConnect = null;
+                isConnectedRight = false;
+            } 
+        }
+        if (isConnectedLeft)
+        {
+            if (leftCarToConnect.rightCarToConnect == null || !leftCarToConnect.isConnectedRight)
+            {
+                leftCarToConnect = null;
+                isConnectedLeft = false;
+            }
+        }
+
+        //  correction of couplers positions
+        if (isConnectedLeft )
+        {
+            if( leftCarToConnect.mathTemp == mathTemp &&  
+                leftCarToConnect.distance > 40 && distance < mathTemp.math.GetDistance() - 40  &&
+                Mathf.Abs(leftCarToConnect.distance - distance + 41 - bogeyA.offset + bogeyB.offset) > 0.5)
+            {
+                leftCarToConnect.distance = distance - 41 + bogeyA.offset - bogeyB.offset;
+                leftCarToConnect.bogeyA.distance = bogeyA.distance - 41 + bogeyA.offset - bogeyB.offset;
+                leftCarToConnect.bogeyB.distance = bogeyB.distance - 41 + bogeyA.offset - bogeyB.offset;
+                print("Correction " + ++test);
+            }
         }
 
     }
 
+    public void FindCloseCars()
+    {
+        float temp = 0;
+        float left = 99999;
+        float right = 99999;
+        leftCarToConnect = null;
+        rightCarToConnect = null;
+        foreach (RollingStock item in compositionManager.cars)
+        {            
+            if(item.ownTrackPath.Contains(mathTemp) && item != this)
+            {                
+                temp = distanceInPath - item.distanceInPath;
+                if (temp > 0 && temp < left)
+                {
+                    left = temp;
+                    leftCarToConnect = item;
+                }
+                else if (temp < 0 && Mathf.Abs(temp) < right)
+                {
+                    right = temp;
+                    rightCarToConnect = item;
+                }
+            }
+        }
+        
+    }
 
     // forced changing direction
     public void ChangeDirection()
@@ -248,8 +345,25 @@ public class RollingStock : MonoBehaviour
         rsTransform.rotation = Quaternion.Euler(0, angle, 0);
     }
 
-   
+    public void CalcDistanceInPath()
+    {
+        distanceInPath = 0;
+        foreach (TrackPathUnit item in ownTrackPath)
+        {
+            if (item == mathTemp)
+            {
+                distanceInPath += distance;
+                break;
+            }
+            else
+                distanceInPath += item.math.GetDistance();
+        }
+    }
 
+    public void MakeRSList()
+    {
+        
+    }
 
     public string Number
     {

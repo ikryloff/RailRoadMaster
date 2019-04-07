@@ -49,24 +49,27 @@ public class TrackPathUnit : MonoBehaviour {
     public void MakeOrderedBogeysList()
     {
         BogeyPathScript temp = null;
-        if(bogeys.Count > 2)
-        for (int i = 0; i < bogeys.Count - 1; i++)
+        if(bogeys.Count > 1)
         {
-            for (int j = i + 1; j < bogeys.Count; j++)
+            for (int i = 0; i < bogeys.Count - 1; i++)
             {
-                if (bogeys[i].distance > bogeys[j].distance)
+                for (int j = i + 1; j < bogeys.Count; j++)
                 {
-                    temp = bogeys[i];
-                    bogeys[i] = bogeys[j];
-                    bogeys[j] = temp;
+                    if (bogeys[i].distance > bogeys[j].distance)
+                    {
+                        temp = bogeys[i];
+                        bogeys[i] = bogeys[j];
+                        bogeys[j] = temp;
+                    }
                 }
             }
-        }
-        else if(bogeys.Count > 0)
-        {
             leftBogey = bogeys.First();
             rightBogey = bogeys.Last();
+        }   
+        else if (bogeys.Count == 0)
+        {
+            leftBogey = null;
+            rightBogey = null;
         }
-        
     }
 }
