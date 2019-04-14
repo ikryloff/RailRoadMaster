@@ -25,13 +25,14 @@ public class CameraController : MonoBehaviour {
     public float cameraSize;
     public Texture2D cursorForFocus;
     private bool isFocusModeIsOn;
-    public float speed;
+    private float speed = 1;
     float scrollSpeed = 10;
 
     private void Awake()
     {
+        
 #if UNITY_ANDROID
-        QualitySettings.vSyncCount = 0;    
+        QualitySettings.vSyncCount = 0;  
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 #endif
     }
@@ -114,11 +115,10 @@ public class CameraController : MonoBehaviour {
             float prevTouchMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
             float touchMagnitude = (touchZero.position - touchOne.position).magnitude;
 
-            float deltaMagnitudeDiff = prevTouchMagnitude - touchMagnitude;
-
+            float deltaMagnitudeDiff = prevTouchMagnitude - touchMagnitude;            
             Camera.main.fieldOfView += deltaMagnitudeDiff * 0.1f;
-            Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, 4f, 45f);
-            
+            Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, 4f, 70f);
+
         }
 
     }

@@ -51,7 +51,7 @@ public class Engine : MonoBehaviour
     public static int instructionHandler;
 
     private Rigidbody engine;
-    private RollingStock engineRS;
+    public RollingStock engineRS;
     
     [SerializeField]
     private List<RollingStock> expectedСars;
@@ -107,15 +107,20 @@ public class Engine : MonoBehaviour
     public PathMaker pathmaker;
     int speed;
     public float acceleration;
+    public TrackPath trackPath;
+    SwitchManager switchManager;
+
+    public List<TrackCircuit> tcList;
 
     private void Awake()
     {
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
         route = GameObject.Find("Route").GetComponent<Route>();
-        
+        tcList = new List<TrackCircuit>();
         ExpectedСars = new List<RollingStock>();
-        EngineRS = GetComponent<RollingStock>();
-
+        engineRS = GetComponent<RollingStock>();
+        trackPath = FindObjectOfType<TrackPath>();
+        switchManager = FindObjectOfType<SwitchManager>();
         // Cashing hand switches
 
         switch18 = pathmaker.GetSwitchByName("Switch_18");
@@ -139,7 +144,7 @@ public class Engine : MonoBehaviour
         InformationUpdateFunction();
         InvokeRepeating("InformationUpdateFunction", 0.3f, 0.3f);
         acceleration = 0;
-
+        
         
 
     }
@@ -150,19 +155,21 @@ public class Engine : MonoBehaviour
         else
         {
             if (Math.Abs(speed) < maxSpeed)
-                acceleration += 0.1f * direction;
+                acceleration += 0.2f * direction * Time.deltaTime;
             else if (Math.Abs(speed) > maxSpeed)
             {
-                acceleration -= 0.3f * speed/Math.Abs(speed);                
+                acceleration -= 0.6f * speed/Math.Abs(speed) * Time.deltaTime;                
             }
         } 
         if(brakes && speed == 0)
         {
             acceleration = 0;
         }
+        
     }
 
     
+
     void InformationUpdateFunction()
     {
         if (EngineRS.Number == "8888")
@@ -177,14 +184,15 @@ public class Engine : MonoBehaviour
     /// <summary>
     /// //////////////////////////////////////////////////////////////////////////////////
     /// </summary>
-    void FixedUpdate()
+    void Update()
     {
+
         //CheckMovingDirection();
         PrintHandler();
         //GetTrack();
+        
 
-       
-        speed = (int)(engineRS.force * 30);
+        speed = (int)(engineRS.Translation * 15);
         
         
         if (IsDrivingByInstructionsIsOn)
@@ -199,13 +207,14 @@ public class Engine : MonoBehaviour
     public void ReleaseBrakes()
     {
         brakes = false;
-        if (cm.CompositionsList.Any())
+        /*if (cm.CompositionsList.Any())
         {
             foreach (RollingStock rs in cm.CompositionsList[EngineRS.CompositionNumberofRS])
             {
                 rs.Brakes = false;
             }
         }
+        */
 
     }
    
@@ -228,19 +237,7 @@ public class Engine : MonoBehaviour
         instructionHandler = 0;
     }
     
-    public void EngineUpdateTheView()
-    {
-        if (direction == 1)
-        {
-            pathmaker.GetFullPath(direction);
-        }        
-        if (direction == -1)
-        {
-            pathmaker.GetFullPath(direction);
-        }
-        GetAllExpectedCarsByDirection(direction);
-
-    }
+   
 
     public void EngineInstructionsForward()
     {
@@ -421,7 +418,7 @@ public class Engine : MonoBehaviour
 
     public void GetTrack()
     {
-        Track = EngineRS.TrackCircuit;
+        Track = EngineRS.OwnTrackCircuit;
     }
 
     public void GetDistanceToLight(TrafficLights tLights)

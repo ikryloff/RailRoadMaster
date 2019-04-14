@@ -5,15 +5,17 @@ using UnityEngine;
 public class WheelsRolling : MonoBehaviour {    
     public RollingStock car;
     public float speed;
+    private Transform wheel;
 
     void Start()
     {
-        car = gameObject.transform.root.GetComponent<RollingStock>();        
+        car = gameObject.transform.root.GetComponent<RollingStock>();
+        wheel = GetComponent<Transform>();
     }
-
-    // Update is called once per frame
+        
     void Update () {
-        speed = car.force;
-        transform.Rotate(-speed * 10f, 0, 0);
+        if(car.OwnEngine)
+            speed = car.OwnEngine.acceleration;
+        wheel.Rotate(0, 0, -speed * 10f);
 	}
 }

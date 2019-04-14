@@ -106,7 +106,11 @@ public class Route : Singleton<Route> {
 
     }
 
-    
+    private void Update()
+    {
+        CheckRoutePresense();
+    }
+
 
     public TrackCircuit GetTrackCircuitByName( string _track)
     {
@@ -117,28 +121,18 @@ public class Route : Singleton<Route> {
         }
         return null;
     }
-        
+      
 
-
-    private void FixedUpdate()
+    public void CheckRoutePresense()
     {
-
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            pathMaker.GetFullPath(engine.direction);
-        }
-        
-
-
-        if(routes != null)
+        if (routes != null)
         {
             for (int i = 0; i < routes.Count; i++)
             {
                 if (routes[i].TrackCircuits[0].hasCarPresence)
                 {
-                    if(!IsShunting(routes[i].TrafficLights))
-                        routes[i].StartLight.SetLightColor(0);                    
+                    if (!IsShunting(routes[i].TrafficLights))
+                        routes[i].StartLight.SetLightColor(0);
                 }
                 if (CheckRouteUsed(routes[i]))
                 {
@@ -150,7 +144,6 @@ public class Route : Singleton<Route> {
 
         }
     }
-
 
     /// Make routes
     /// 
@@ -198,9 +191,8 @@ public class Route : Singleton<Route> {
         {
             startLight.lightDirection = -1;
             route.routeDirection = -1;
-        }
+        }       
         
-        engine.EngineUpdateTheView();
     }      
 
     private void RouteManage(RouteObject ro,  string routeName)
@@ -631,7 +623,7 @@ public class Route : Singleton<Route> {
     public void DestroyRouteByRouteName(string _routeName)
     {
         DestroyRoute(GetRouteByName(_routeName));
-        engine.EngineUpdateTheView();
+        
     }
     
 
@@ -654,7 +646,7 @@ public class Route : Singleton<Route> {
         Destroy(ro);
         if (!Routes.Any())
             cancelRouteButton.interactable = false;
-        engine.EngineUpdateTheView();
+        
     }
 
     public void DestroyRouteByLight(TrafficLights hitLight)
@@ -675,7 +667,7 @@ public class Route : Singleton<Route> {
                 }
             }
         }
-        engine.EngineUpdateTheView();
+        
 
     }
 

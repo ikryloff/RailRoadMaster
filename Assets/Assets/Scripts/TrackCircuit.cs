@@ -1,11 +1,11 @@
 ﻿using BansheeGz.BGSpline.Components;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TrackCircuit : MonoBehaviour
 {
-
     private string trackName;
     public bool hasCarPresence;
     private int useMode;
@@ -23,30 +23,35 @@ public class TrackCircuit : MonoBehaviour
     private string[] trackLightsNames;
     [SerializeField]
     private TrafficLights[] trackLights;
-    [SerializeField]
+    [SerializeField]    
     private TrafficLightsManager trafficLightsManager;
     public PathHolder pathHolder;    
     public bool isSwitch;
     public Switch switchTrack;
     public Route route;
-
+    public RollingStock engineRS;
     public Color32 colorPresence;
     public Color32 colorInRoute;
     public Color32 colorInPath;
     public Color32 colorTransparent;
     public Color32 colorInUse;
 
-    public bool isInRoute;
+    public bool isInRoute;    
     public bool isInPath;
     public bool isInUse;
-
+    public Engine engine;
+    SwitchManager switchManager;
     public TrackPathUnit [] paths;
+    private TrackPath trackPath;
 
     private void Awake()
     {
-        trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
-        pathHolder = GameObject.Find("PathHolder").GetComponent<PathHolder>();
+        switchManager = FindObjectOfType<SwitchManager>();
+        trackPath = FindObjectOfType<TrackPath>();
+        trafficLightsManager = FindObjectOfType<TrafficLightsManager>();
+        engine = FindObjectOfType<Engine>(); ;
         isSwitch = GetComponentInParent<Switch>();
+        engineRS = engine.GetComponent<RollingStock>();
         switchTrack = GetComponentInParent<Switch>();
         if (!isSwitch)
         {
@@ -63,7 +68,7 @@ public class TrackCircuit : MonoBehaviour
 
         foreach (TrackPathUnit item in paths)
         {
-            item.trackCircuit = this; 
+            item.TrackCircuit = this; 
         }
         GetTrackLightsByTrack();
 
@@ -76,28 +81,14 @@ public class TrackCircuit : MonoBehaviour
 }
 
     private void Update()
-    {
-        CheckPresence();
+    {        
         PresenceFunction();
+        IndicationTrackInPath(engineRS.OwnPath);
         TrackCircuitColor();
         CheckInRoute();
+        
     }
-
-    public void CheckPresence()
-    {
-
-        foreach (TrackPathUnit item in paths)
-        {
-            if (item.hasObjects)
-            {
-                hasCarPresence = true;
-                break;
-            }
-            else
-                hasCarPresence = false;
-                
-        }
-    }
+   
 
     public void CheckInRoute()
     {
@@ -128,8 +119,9 @@ public class TrackCircuit : MonoBehaviour
         
     }
 
+    
     public void TrackCircuitColor()
-    {
+    {               
 
         if (isInPath)
         {
@@ -187,6 +179,22 @@ public class TrackCircuit : MonoBehaviour
         }
 
 
+    }
+
+    public void IndicationTrackInPath(List<TrackPathUnit> paths)
+    {
+        if (switchManager.IsSwitchModeOn && trackPath.trackList != null && paths != null)
+        {
+            foreach (TrackPathUnit item in trackPath.trackList)
+            {
+                if (item.isActiveAndEnabled && item.TrackCircuit.isInPath)
+                    item.TrackCircuit.isInPath = false;
+            }
+            foreach (TrackPathUnit item in paths)
+            {
+                item.TrackCircuit.isInPath = true;
+            }
+        }
     }
 
 

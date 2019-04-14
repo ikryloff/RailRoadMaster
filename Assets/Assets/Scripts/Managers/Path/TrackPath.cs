@@ -8,46 +8,57 @@ using UnityEngine;
 public class TrackPath : Singleton<TrackPath> {    
     
     [SerializeField]    
-    private TrackPathUnit[] trackList;
+    public TrackPathUnit[] trackList;
     public BGCcMath nextTrack;
     public BGCcMath changedTrack;
+    public Engine engine;
 
     public float pathLength;
 
 
 
-    public void GetTrackPath( BogeyPathScript bogey)
+    public void GetTrackPath( MovableObject movable)
     {
-        CleanAndLockPreviousPath(bogey.ownTrackPath);        
-        StartCoroutine(GetTrackPathCoroutine(bogey));
+        
+        CleanAndLockPreviousPath(movable.OwnPath);
+        StartCoroutine(GetTrackPathCoroutine(movable));
+        
+        
     }
 
     private void CleanAndLockPreviousPath(List<TrackPathUnit> ownTrackPath)
     {
-        foreach (TrackPathUnit item in ownTrackPath)
+      
+        if(ownTrackPath != null)
         {
-            item.trackCircuit.isInPath = false;
-            item.trackCircuit.isInUse = true;
-            if (item.trackCircuit.isSwitch)
-                item.trackCircuit.switchTrack.isSwitchInUse = true;
+            foreach (TrackPathUnit item in ownTrackPath)
+            {
+                item.TrackCircuit.isInUse = true;
+                if (item.TrackCircuit.isSwitch)
+                    item.TrackCircuit.switchTrack.isSwitchInUse = true;
+            }
         }
+      
     }
 
     private void UnLockPreviousPath(List<TrackPathUnit> ownTrackPath)
     {
-        foreach (TrackPathUnit item in ownTrackPath)
+        if (ownTrackPath != null)
         {
-           item.trackCircuit.isInUse = false;
-            if (item.trackCircuit.isSwitch)
-             item.trackCircuit.switchTrack.isSwitchInUse = false;
+            foreach (TrackPathUnit item in ownTrackPath)
+            {
+                item.TrackCircuit.isInUse = false;
+                if (item.TrackCircuit.isSwitch)
+                    item.TrackCircuit.switchTrack.isSwitchInUse = false;
+            }
         }
     }
 
-    IEnumerator GetTrackPathCoroutine(BogeyPathScript _bogey )
+    IEnumerator GetTrackPathCoroutine(MovableObject movable )
     {
-        TrackPathUnit _current = _bogey.mathTemp;
+        TrackPathUnit _current = movable.OwnTrack;
         List<TrackPathUnit> pathPrevious = new List<TrackPathUnit>();
-        pathPrevious = _bogey.ownTrackPath;
+        pathPrevious = movable.OwnPath;
         List<TrackPathUnit> pathOwn = new List<TrackPathUnit>();
         pathOwn.Add(_current);
         int i = 0;
@@ -57,24 +68,22 @@ public class TrackPath : Singleton<TrackPath> {
             foreach (TrackPathUnit item in trackList)
             {
                 
-                if (!item.math.isActiveAndEnabled)
+                if (!item.trackMath.isActiveAndEnabled)
                     continue;
                 if (!pathOwn.Contains(item))
                 {
 
-                    if (item.math.Curve.Points.First().PositionWorld == pathOwn[i].math.Curve.Points.Last().PositionWorld)
+                    if (item.trackMath.Curve.Points.First().PositionWorld == pathOwn[i].trackMath.Curve.Points.Last().PositionWorld)
                     {
-                        pathOwn.Insert(pathOwn.IndexOf(pathOwn[i]) + 1, item);
-                        pathOwn[i].trackCircuit.isInPath = true;
-                        i = 0;
+                        pathOwn.Insert(pathOwn.IndexOf(pathOwn[i]) + 1, item);                        
+                        i = 0;                        
                         counting = false;
                         break;
                     }
-                    if (item.math.Curve.Points.Last().PositionWorld == pathOwn[i].math.Curve.Points.First().PositionWorld)
+                    if (item.trackMath.Curve.Points.Last().PositionWorld == pathOwn[i].trackMath.Curve.Points.First().PositionWorld)
                     {
-                        pathOwn.Insert(pathOwn.IndexOf(pathOwn[i]), item);
-                        pathOwn[i].trackCircuit.isInPath = true;
-                        i = 0;
+                        pathOwn.Insert(pathOwn.IndexOf(pathOwn[i]), item);                        
+                        i = 0;                        
                         counting = false;
                         break;
                     }
@@ -85,11 +94,9 @@ public class TrackPath : Singleton<TrackPath> {
                 i++;
             yield return new WaitForFixedUpdate();
         }        
-        _bogey.ownTrackPath = pathOwn;
-        _bogey.otherBogey.ownTrackPath = pathOwn;
-        _bogey.rollingStock.ownTrackPath = pathOwn;
-        _bogey.rollingStock.pathLength = GetPathLength(pathOwn);
-        UnLockPreviousPath(pathPrevious);
+        movable.OwnPath = pathOwn;        
+        //movable.rollingStock.pathLength = GetPathLength(pathOwn);
+        UnLockPreviousPath(pathPrevious);        
     }
 
 
@@ -112,21 +119,22 @@ public class TrackPath : Singleton<TrackPath> {
 
     public float GetPathLength(List<TrackPathUnit > paths)
     {
-        float length = 0;
+        float length = 0;               
         if (paths != null)
         {
             foreach (TrackPathUnit item in paths)
             {
-                length += item.math.GetDistance();
+                length += item.trackMath.GetDistance(); 
             }
         }
         return length;
-    }
-        
+    }       
+    
 
     private void Awake()
     {
         trackList = FindObjectsOfType<TrackPathUnit>();
+        engine = FindObjectOfType<Engine>();
     }
 
     private void Start()

@@ -11,14 +11,14 @@ public class SwitchManager : Singleton<SwitchManager>
     public GameObject[] switchObj;
     private Renderer rend;
     private Route route;
-    private bool isSwitchModeOn;
+    public bool isSwitchModeOn;
     [SerializeField]
     private RemoteControlScript rcs;
     [SerializeField]
     private Engine engine;
     private TrafficLightsManager trafficLightsManager;
     public PathMaker pathMaker;
-    BogeyPathScript[] bogeys;
+    MovableObject[] movables;
 
 
 
@@ -47,7 +47,7 @@ public class SwitchManager : Singleton<SwitchManager>
             sw.layer = 2;
         }
 
-        bogeys = FindObjectsOfType<BogeyPathScript>();
+        movables = FindObjectsOfType<MovableObject>();
     }
     void Start () {
         IsSwitchModeOn = true;
@@ -114,7 +114,7 @@ public class SwitchManager : Singleton<SwitchManager>
 
     public void UpdatePathAfterSwitch()
     {
-        foreach (BogeyPathScript item in bogeys)
+        foreach (MovableObject item in movables)
         {
             item.UpdatePath();
         }
