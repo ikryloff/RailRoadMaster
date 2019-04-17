@@ -83,8 +83,8 @@ public class TrackCircuit : MonoBehaviour
     private void Update()
     {        
         PresenceFunction();
-        IndicationTrackInPath(engineRS.OwnPath);
-        TrackCircuitColor();
+        //IndicationTrackInPath(engineRS.OwnPath);
+        //TrackCircuitColor();
         CheckInRoute();
         
     }

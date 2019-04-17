@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class WheelsRolling : MonoBehaviour {    
-    public RollingStock car;
-    public float speed;
+public class WheelsRolling : MonoBehaviour {
+    private RollingStock car;
+    private float speed;
     private Transform wheel;
 
     void Start()

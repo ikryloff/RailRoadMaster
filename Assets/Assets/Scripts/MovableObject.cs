@@ -2,8 +2,6 @@
 using System.Linq;
 using UnityEngine;
 
-
-
 public abstract class MovableObject : MonoBehaviour
 {
 
@@ -24,9 +22,6 @@ public abstract class MovableObject : MonoBehaviour
     // Moving distance per frame
     public float Translation { get; private set; }
     
-
-
-
     public void MoveByPath()
     {
         

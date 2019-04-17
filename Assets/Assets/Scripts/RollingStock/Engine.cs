@@ -155,10 +155,10 @@ public class Engine : MonoBehaviour
         else
         {
             if (Math.Abs(speed) < maxSpeed)
-                acceleration += 0.2f * direction * Time.deltaTime;
+                acceleration += 0.15f * direction * Time.deltaTime;
             else if (Math.Abs(speed) > maxSpeed)
             {
-                acceleration -= 0.6f * speed/Math.Abs(speed) * Time.deltaTime;                
+                acceleration -= 0.54f * speed/Math.Abs(speed) * Time.deltaTime;                
             }
         } 
         if(brakes && speed == 0)

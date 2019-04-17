@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class TrackPath : Singleton<TrackPath> {    
+public class TrackPath : Singleton<TrackPath>, IManageable {    
     
     [SerializeField]    
     public TrackPathUnit[] trackList;
@@ -15,7 +15,7 @@ public class TrackPath : Singleton<TrackPath> {
 
     public float pathLength;
 
-
+   
 
     public void GetTrackPath( MovableObject movable)
     {
@@ -130,23 +130,34 @@ public class TrackPath : Singleton<TrackPath> {
         return length;
     }       
     
-
-    private void Awake()
+    
+    public void Init()
     {
         trackList = FindObjectsOfType<TrackPathUnit>();
         engine = FindObjectOfType<Engine>();
+        foreach (TrackPathUnit item in trackList)
+        {
+            item.Init();
+        }
+        SetClosePaths();
     }
 
-    private void Start()
+    public void SetClosePaths()
     {
-      
+        foreach (TrackPathUnit track in trackList)
+        {
+            foreach (TrackPathUnit _track in trackList)
+            {
+                if(track.LeftPoint == _track.RightPoint)
+                {
+                    track.LeftTrackPathUnits.Add(_track);
+                }
+                if (track.RightPoint == _track.LeftPoint)
+                {
+                    track.RightTrackPathUnits.Add(_track);
+                }
+            }
+        }
+
     }
-
-
-    private void Update()
-    {       
-        
-    }
-
-   
 }

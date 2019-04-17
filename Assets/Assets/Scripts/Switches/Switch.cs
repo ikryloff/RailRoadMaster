@@ -2,17 +2,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class Switch : MonoBehaviour {
+public class Switch : MonoBehaviour, IManageable {
     [SerializeField]
-    private GameObject switchPhysicsTurn;
+    private SwitchCurve switchCurve;
     [SerializeField]
-    public GameObject switchPhysicsStraight;
-    [SerializeField]
-    public GameObject turnIndicatorObj;
-    [SerializeField]
-    private GameObject straightIndicatorObj;
-    public SpriteRenderer turnIndicator;
-    public SpriteRenderer straightIndicator;
+    private SwitchStraightPart switchStraightPart;    
+    
     private SwitchManager switchManager;    
     private TrafficLightsManager tlm;    
     public bool isLockedByRS;
@@ -20,11 +15,9 @@ public class Switch : MonoBehaviour {
     public bool isSwitchInUse;
     [SerializeField]
     TrackCircuit[] trackCircuits;
-    public Animator anim;
+    [SerializeField]
+    private Animator animator;
     private string animMethod;
-    public GameTime gameTime;
-    
-    Route route;
 
     [SerializeField]
     private bool isSwitchStraight;
@@ -32,27 +25,17 @@ public class Switch : MonoBehaviour {
     
 
 
-    void Awake ()
+    public void Init()
     {
-               
+        switchCurve = transform.GetComponentInChildren<SwitchCurve>();
+        switchStraightPart = transform.GetComponentInChildren<SwitchStraightPart>();
         trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
         switchManager = FindObjectOfType<SwitchManager>(); 
         tlm = FindObjectOfType<TrafficLightsManager>();
-        gameTime = FindObjectOfType<GameTime>();            
-        route = GameObject.Find("Route").GetComponent<Route>();
-       
-                
-    }
-    private void Start()
-    {
-        
-        if (transform.Find("Lever"))
-            anim = transform.Find("Lever").GetComponent<Animator>();
-        IsSwitchStraight = true;
-        DirectionStraight();        
-    }
+        animator = transform.GetComponentInChildren<Animator>();
+        SetDirectionStraight();
 
-
+    }    
 
     public void ChangeDirection()
     {        
@@ -60,19 +43,36 @@ public class Switch : MonoBehaviour {
         {
             if (IsSwitchStraight)
             {                               
-                DirectionTurn();
+                SetDirectionTurn();
             }
             else
             {                               
-                DirectionStraight();
+                SetDirectionStraight();
             }
             tlm.CheckHandSwitches();
             switchManager.UpdatePathAfterSwitch();
         }
         else Debug.Log("Locked");
     } 
-    
-    
+      
+    public void SetDirectionStraight()
+    {        
+        if (animator)
+            animator.SetBool("TurnSwitch", false);
+        switchCurve.Hide();
+        switchStraightPart.Show();        
+        IsSwitchStraight = true;        
+        
+    }
+    public void SetDirectionTurn()
+    {
+        
+        if (animator)
+            animator.SetBool("TurnSwitch", true);
+        switchStraightPart.Hide();
+        switchCurve.Show();        
+        IsSwitchStraight = false;        
+    }   
 
     public bool IsSwitchStraight
     {
@@ -86,28 +86,6 @@ public class Switch : MonoBehaviour {
             isSwitchStraight = value;
         }
     }
-
-    public void DirectionStraight()
-    {
-        
-        if (anim)
-            anim.SetBool("TurnSwitch", false);
-        switchPhysicsTurn.SetActive(false);
-        switchPhysicsStraight.SetActive(true);        
-        IsSwitchStraight = true;
-        
-        
-    }
-    public void DirectionTurn()
-    {
-        
-        if (anim)
-            anim.SetBool("TurnSwitch", true);
-        switchPhysicsStraight.SetActive(false);
-        switchPhysicsTurn.SetActive(true);        
-        IsSwitchStraight = false;        
-    }   
-
    
 
 }

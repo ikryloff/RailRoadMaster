@@ -1,16 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SwitchManager : Singleton<SwitchManager>
+public class SwitchManager : Singleton<SwitchManager>, IManageable
 {
 
     private GameObject switchObject;
     [SerializeField]
     private GameObject[] indicators;
     public Switch[] switches;
-    public GameObject[] switchObj;
     private Renderer rend;
-    private Route route;
     public bool isSwitchModeOn;
     [SerializeField]
     private RemoteControlScript rcs;
@@ -35,23 +33,26 @@ public class SwitchManager : Singleton<SwitchManager>
             isSwitchModeOn = value;
         }
     }
-    private void Awake()    {
-
-        switches = FindObjectsOfType<Switch>();       
-        switchObj = GameObject.FindGameObjectsWithTag("RailSwitch");
+    public void Init()
+    {
+        switches = FindObjectsOfType<Switch>();
+        SwitchesInitilisation();
         trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
         indicators = GameObject.FindGameObjectsWithTag("Indication");
-        route = GameObject.Find("Route").GetComponent<Route>();
-        foreach (GameObject sw in switchObj)
-        {
-            sw.layer = 2;
-        }
-
         movables = FindObjectsOfType<MovableObject>();
     }
+
+    private void SwitchesInitilisation()
+    {
+        for (int i = 0; i < switches.Length; i++)
+        {
+            Switch sw = switches[i];
+            sw.Init();
+        }
+    }
+
     void Start () {
-        IsSwitchModeOn = true;
-             
+        IsSwitchModeOn = true;             
         RunIndicationMode();
     }
 	

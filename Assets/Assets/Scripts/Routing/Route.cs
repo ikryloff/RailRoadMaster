@@ -804,11 +804,11 @@ public class Route : Singleton<Route> {
             {
                 if (direction == Constants.DIR_STR)
                 {
-                    sw.DirectionStraight();                    
+                    sw.SetDirectionStraight();                    
                 }
                 else
                 {
-                    sw.DirectionTurn();                   
+                    sw.SetDirectionTurn();                   
                 }                
             }
         }
