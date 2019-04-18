@@ -31,18 +31,21 @@ public class TrackPath : Singleton<TrackPath>, IManageable {
       
         if(ownTrackPath != null)
         {
+            /*
             foreach (TrackPathUnit item in ownTrackPath)
             {
                 item.TrackCircuit.isInUse = true;
                 if (item.TrackCircuit.isSwitch)
                     item.TrackCircuit.switchTrack.isSwitchInUse = true;
             }
+            */
         }
       
     }
 
     private void UnLockPreviousPath(List<TrackPathUnit> ownTrackPath)
     {
+        /*
         if (ownTrackPath != null)
         {
             foreach (TrackPathUnit item in ownTrackPath)
@@ -52,52 +55,41 @@ public class TrackPath : Singleton<TrackPath>, IManageable {
                     item.TrackCircuit.switchTrack.isSwitchInUse = false;
             }
         }
+        */
     }
-
-    IEnumerator GetTrackPathCoroutine(MovableObject movable )
+       
+    IEnumerator GetTrackPathCoroutine(MovableObject movable)
     {
-        TrackPathUnit _current = movable.OwnTrack;
+        SetEachPathClosePaths();
+        TrackPathUnit currentTrack = movable.OwnTrack;
         List<TrackPathUnit> pathPrevious = new List<TrackPathUnit>();
         pathPrevious = movable.OwnPath;
         List<TrackPathUnit> pathOwn = new List<TrackPathUnit>();
-        pathOwn.Add(_current);
-        int i = 0;
-        while (i != pathOwn.Count)
+        TrackPathUnit tempLeft = currentTrack.LeftTrackPathUnit;
+        TrackPathUnit tempRight = currentTrack.RightTrackPathUnit;
+        pathOwn.Add(currentTrack);
+        
+        while (tempLeft != null || tempRight != null)
         {
-            bool counting = true;
-            foreach (TrackPathUnit item in trackList)
+            if(tempLeft != null)
             {
-                
-                if (!item.trackMath.isActiveAndEnabled)
-                    continue;
-                if (!pathOwn.Contains(item))
-                {
-
-                    if (item.trackMath.Curve.Points.First().PositionWorld == pathOwn[i].trackMath.Curve.Points.Last().PositionWorld)
-                    {
-                        pathOwn.Insert(pathOwn.IndexOf(pathOwn[i]) + 1, item);                        
-                        i = 0;                        
-                        counting = false;
-                        break;
-                    }
-                    if (item.trackMath.Curve.Points.Last().PositionWorld == pathOwn[i].trackMath.Curve.Points.First().PositionWorld)
-                    {
-                        pathOwn.Insert(pathOwn.IndexOf(pathOwn[i]), item);                        
-                        i = 0;                        
-                        counting = false;
-                        break;
-                    }
-                }
-               
+                pathOwn.Insert(0, tempLeft);
+                tempLeft = tempLeft.LeftTrackPathUnit;
             }
-            if (counting)
-                i++;
+            if (tempRight != null)
+            {
+                pathOwn.Add(tempRight);
+                tempRight = tempRight.RightTrackPathUnit;
+            }
+
             yield return new WaitForFixedUpdate();
-        }        
-        movable.OwnPath = pathOwn;        
+        }
+        movable.OwnPath = pathOwn;
         //movable.rollingStock.pathLength = GetPathLength(pathOwn);
-        UnLockPreviousPath(pathPrevious);        
+        UnLockPreviousPath(pathPrevious);
     }
+
+
 
 
     public TrackPathUnit GetNextTrack(TrackPathUnit _current, List<TrackPathUnit> _path)
@@ -142,6 +134,7 @@ public class TrackPath : Singleton<TrackPath>, IManageable {
         SetClosePaths();
     }
 
+    // For each TPU set left and right TPunits Lists
     public void SetClosePaths()
     {
         foreach (TrackPathUnit track in trackList)
@@ -159,5 +152,13 @@ public class TrackPath : Singleton<TrackPath>, IManageable {
             }
         }
 
+    }
+    // For each TPU set left and right TPunit wich is Active at the moment
+    public void SetEachPathClosePaths()
+    {
+        foreach (TrackPathUnit track in trackList)
+        {
+            track.SetOwnClosePaths();
+        }
     }
 }

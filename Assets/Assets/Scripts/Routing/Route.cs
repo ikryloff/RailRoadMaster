@@ -160,11 +160,6 @@ public class Route : Singleton<Route> {
             route.TrafficLights = tl;
             routes.Add(route);
             route.RouteName = routeName;
-
-            //Message
-           // messageText = string.Format("OK, prepare route from {0} at {1}", startLight.name, endLight.name);
-           // textBuilder.PrintMessage(messageText, "Yardmaster:");
-            //
             RouteLightsManage(tl, true);
             RouteManage(route, routeName);
 
@@ -174,10 +169,7 @@ public class Route : Singleton<Route> {
         }
         else
         {
-            //Message
-          //  messageText = string.Format("We have another route from {0} ", startLight.name);
-          //  textBuilder.PrintMessage(messageText, "Yardmaster:");
-            ///
+          
             print("Duplicate");
         }            
 

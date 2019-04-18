@@ -2,6 +2,7 @@
 public class TrackCircuitPresence {
 
     private TrackCircuit tempTrack;
+
     public TrackCircuitPresence(TrackCircuit trackCircuit)
     {
         tempTrack = trackCircuit;

@@ -60,7 +60,7 @@ public class TrackCircuit : MonoBehaviour
         }
         else if(isSwitch && tag == "SingleSwitch")
         {
-            paths = transform.parent.GetComponentsInChildren<TrackPathUnit>();
+            paths = transform.parent.GetComponentsInChildren<TrackPathUnit>(true);
             indicator = transform.parent.GetComponentsInChildren<SpriteRenderer>();
         }
         
