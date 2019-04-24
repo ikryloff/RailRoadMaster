@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class SwitchManager : Singleton<SwitchManager>, IManageable
@@ -7,19 +8,15 @@ public class SwitchManager : Singleton<SwitchManager>, IManageable
     private GameObject switchObject;
     [SerializeField]
     private GameObject[] indicators;
-    public Switch[] switches;
+    public Switch[] Switches { get; private set; }
     private Renderer rend;
     public bool isSwitchModeOn;
-    [SerializeField]
-    private RemoteControlScript rcs;
-    [SerializeField]
-    private Engine engine;
     private TrafficLightsManager trafficLightsManager;
-    public PathMaker pathMaker;
     MovableObject[] movables;
 
+    public Dictionary<string, Switch> SwitchDict { get; set; }
 
-
+    
 
     public bool IsSwitchModeOn
     {
@@ -35,20 +32,24 @@ public class SwitchManager : Singleton<SwitchManager>, IManageable
     }
     public void Init()
     {
-        switches = FindObjectsOfType<Switch>();
+        Switches = FindObjectsOfType<Switch>();
         SwitchesInitilisation();
         trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
         indicators = GameObject.FindGameObjectsWithTag("Indication");
-        movables = FindObjectsOfType<MovableObject>();
     }
 
     private void SwitchesInitilisation()
     {
-        for (int i = 0; i < switches.Length; i++)
-        {
-            Switch sw = switches[i];
+        SwitchDict = new Dictionary<string, Switch>();
+        foreach (Switch sw in Switches)
+        { 
+            // save Switch in dictionary
+            SwitchDict.Add(sw.name, sw);
+            //initialize
             sw.Init();
         }
+        SwitchDict.Add("", null);
+
     }
 
     void Start () {
@@ -57,42 +58,39 @@ public class SwitchManager : Singleton<SwitchManager>, IManageable
     }
 	
 	void Update ()
-    {       
+    {
+        TurnHandSwitchListener();
 
-        if (!rcs.IsRemoteControllerOn)
+    }
+
+    private void TurnHandSwitchListener()
+    {
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
-            if (!EventSystem.current.IsPointerOverGameObject())
-            {
-                Vector3 click = Vector3.one;
+            Vector3 click = Vector3.one;
 
-                if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    RaycastHit hit;
-                    if (Physics.Raycast (ray, out hit))
-                    {
-                        click = hit.point;
-                    }
-                    
-                    //print("hit " + hit.collider.name);
-                    if (hit.collider != null && hit.collider.tag == "Lever")
-                    {
-                        switchObject = hit.collider.transform.parent.gameObject;
-                        Switch sw = switchObject.GetComponent<Switch>();
-                        sw.ChangeDirection();                       
-                        engine.GetAllExpectedCarsByDirection(engine.direction);
-                        engine.GetExpectedCar();
-                    }
+                    click = hit.point;
+                }
+
+                //print("hit " + hit.collider.name);
+                if (hit.collider != null && hit.collider.tag == "Lever")
+                {
+                    switchObject = hit.collider.transform.parent.gameObject;
+                    Switch sw = switchObject.GetComponent<Switch>();
+                    sw.SetSwitchDirection(Switch.SwitchDir.Change);
                 }
             }
-            if (Input.GetKeyDown(KeyCode.Space))
-            {                
-                RunIndicationMode();
-            }            
         }
-
-
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            RunIndicationMode();
+        }
     }
 
     public void RunIndicationMode()
@@ -112,13 +110,10 @@ public class SwitchManager : Singleton<SwitchManager>, IManageable
                 
         }
     }
+   
 
-    public void UpdatePathAfterSwitch()
+    public void OnStart()
     {
-        foreach (MovableObject item in movables)
-        {
-            item.UpdatePath();
-        }
+        throw new System.NotImplementedException();
     }
-
 }

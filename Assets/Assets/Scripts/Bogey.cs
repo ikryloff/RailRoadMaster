@@ -7,7 +7,6 @@ public class Bogey : MovableObject
     //  Class provides track with presence of bogey
     private TrackCircuitPresence presence;
     public float offset;
-    public SwitchManager switchManager;
     private bool isRightBogey;
 
     
@@ -16,12 +15,8 @@ public class Bogey : MovableObject
 
     private void Awake()
     {
-        Path = FindObjectOfType<TrackPath>();
         OwnTransform = gameObject.GetComponent<Transform>();
-
-        switchManager = FindObjectOfType<SwitchManager>();
         rollingStock = GetComponentInParent<RollingStock>();
-
         OwnEngine = rollingStock.GetComponent<Engine>();
         bogeyPos = offset > 0 ? 1 : -1;
         isRightBogey = bogeyPos == 1 ? true : false;       
@@ -35,16 +30,18 @@ public class Bogey : MovableObject
         OwnTrack = rollingStock.OwnTrack;        
         OwnTrackCircuit = OwnTrack.TrackCircuit;
         presence = new TrackCircuitPresence(OwnTrackCircuit);
-        UpdatePath();
+        
     }
 
     void Update()
     {
+        //base class method of moving
         MoveByPath();
         presence.SetPresence(this, OwnTrackCircuit);
         ImproveBogeysPosition();
 
     }
+    
     void ImproveBogeysPosition()
     {
         if(rollingStock.OwnTrack == OwnTrack)

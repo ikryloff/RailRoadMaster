@@ -19,21 +19,29 @@ public class TrackPathUnit : MonoBehaviour, IManageable {
 
     public void Init()
     {
-        trackMath = GetComponent<BGCcMath>();        
+        trackMath = GetComponent<BGCcMath>();
         LeftPoint = trackMath.Curve.Points.First().PositionWorld;
         RightPoint = trackMath.Curve.Points.Last().PositionWorld;
         LeftTrackPathUnits = new List<TrackPathUnit>();
         RightTrackPathUnits = new List<TrackPathUnit>();
-    }   
+    }
+
+    public void OnStart()
+    {
+        throw new System.NotImplementedException();
+    }
 
     public void SetOwnClosePaths()
     {
+        LeftTrackPathUnit = null;
+        RightTrackPathUnit = null;
         foreach (TrackPathUnit item in LeftTrackPathUnits)
         {
             if (item.isActiveAndEnabled)
-            {                
+            {
                 LeftTrackPathUnit = item;
             }
+            
         }
 
         foreach (TrackPathUnit item in RightTrackPathUnits)
@@ -41,7 +49,7 @@ public class TrackPathUnit : MonoBehaviour, IManageable {
             if (item.isActiveAndEnabled)
             {
                 RightTrackPathUnit = item;
-            }
+            }            
         }
     }
    

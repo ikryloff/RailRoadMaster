@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TrafficLightsManager : Singleton<TrafficLightsManager> {
+public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable {
 
     private bool isStart = true;
     private string startRoute;
     private string endRoute;
-    private TrafficLights startLight;
-    private TrafficLights endLight;
+    private TrafficLight startLight;
+    private TrafficLight endLight;
     [SerializeField]
-    public TrafficLights[] trafficLights;
-    private TrafficLights tempLight = null;
+    public TrafficLight[] trafficLights;
+    private TrafficLight tempLight = null;
     [SerializeField]
     private Route route;   
     [SerializeField]
@@ -31,14 +31,14 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
     [SerializeField]
     private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
     [SerializeField]
-    private TrafficLights end14_22SW, end22_14SW, end9_18, end10_20, end11_20, end12CH, end12N, end13CH, end13N, m3, endM3, end10_18;
+    private TrafficLight end14_22SW, end22_14SW, end9_18, end10_20, end11_20, end12CH, end12N, end13CH, end13N, m3, endM3, end10_18;
     Switch[] switches;
-    public TrafficLights[] ends;
+    public TrafficLight[] ends;
+
+    public Dictionary<string, TrafficLight> TLDict { get; set; }
 
 
-
-
-    public void SetRouteByLights(TrafficLights firstLight, TrafficLights secondLight)
+    public void SetRouteByLights(TrafficLight firstLight, TrafficLight secondLight)
     {
         SetLightsInRoute(firstLight);
         SetLightsInRoute(secondLight);
@@ -54,8 +54,13 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         return null;
     } 
 
+    public void Init()
+    {
+        trafficLights = FindObjectsOfType<TrafficLight>();
+        MakeTLDictionary();
+    }
 
-    public void SetLightsInRoute(TrafficLights light)
+    public void SetLightsInRoute(TrafficLight light)
     {
         if (rcs.IsRemoteControllerOn)
         {
@@ -113,7 +118,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         cancelButton.interactable = true;
     }
 
-    private void ShowPossibleTrafficLightsButtons(TrafficLights _startLight)
+    private void ShowPossibleTrafficLightsButtons(TrafficLight _startLight)
     {
         foreach (var btn in ListOfScriptedTLButtons)
         {
@@ -131,10 +136,19 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
 
     }
 
-    private void Awake()
+    public void MakeTLDictionary()
     {
-        trafficLights= FindObjectsOfType<TrafficLights>();
+        TLDict = new Dictionary<string, TrafficLight>();
+        foreach (TrafficLight tl in trafficLights)
+        {
+            TLDict.Add(tl.name, tl);
 
+        }
+        TLDict.Add("", null);
+    }
+
+    private void Awake()
+    {                
         tempBtns = Resources.FindObjectsOfTypeAll<Button>();
         TrafficlightsButtons = new List<Button>();
         for (int i = 0; i < tempBtns.Length; i++)
@@ -193,7 +207,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
        
 
     // Check possible Routes By Lights
-    public bool IsPossibleLight (String[][] arr, TrafficLights first, TrafficLights second )
+    public bool IsPossibleLight (String[][] arr, TrafficLight first, TrafficLight second )
     {
         string start = first.Name;
         string end = second.Name;
@@ -213,10 +227,11 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         return false;
     }
 
-    public void MakeRouteIfPossible(TrafficLights startLight, TrafficLights endLight)
+    public void MakeRouteIfPossible(TrafficLight startLight, TrafficLight endLight)
     {
         if (IsPossibleLight(Constants.POSSIBLE_LIGHTS, startLight, endLight))
         {
+            
             route.MakeRoute(startLight, endLight);
             SetLightsNames(startLight.Name, endLight.Name);
         }
@@ -232,9 +247,9 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         lightText.text = start + " -> " + end;
     }
     
-    public TrafficLights GetTrafficLightByName(string lightName)
+    public TrafficLight GetTrafficLightByName(string lightName)
     {
-        foreach (TrafficLights tl in trafficLights)
+        foreach (TrafficLight tl in trafficLights)
         {
             if (tl.name ==lightName)
             {                
@@ -246,7 +261,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
 
 
 
-    public TrafficLights StartLight
+    public TrafficLight StartLight
     {
         get
         {
@@ -259,7 +274,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         }
     }
 
-    public TrafficLights EndLight
+    public TrafficLight EndLight
     {
         get
         {
@@ -404,7 +419,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         return null;
     }
 
-    public TrafficLights GetEndByName(string _endName)
+    public TrafficLight GetEndByName(string _endName)
     {
         foreach (var e in trafficLights)
         {
@@ -414,5 +429,8 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager> {
         return null;
     }
 
-
+    public void OnStart()
+    {
+        throw new NotImplementedException();
+    }
 }

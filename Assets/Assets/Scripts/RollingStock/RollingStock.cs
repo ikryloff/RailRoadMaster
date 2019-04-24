@@ -6,13 +6,14 @@ using System;
 
 public class RollingStock : MovableObject
 {
+    public float PositionInPath { get; set; }
+
     private RollingStock rollingStock;
     private Rigidbody rollingStockRB;
     [SerializeField]
     private TrackPathUnit thisRSTrack;
-    public string Number { get; set; }    
-    private int compositionNumberofRS;
-    private string compositionNumberString;
+    public string Number { get; set; }   
+    
     public bool brakes = true;    
     private Coupler activeCoupler;
     private Coupler passiveCoupler;
@@ -21,10 +22,9 @@ public class RollingStock : MovableObject
     public float breakeForce;
 
      
-    SwitchManager switchManager;   
     [SerializeField]
     private float rsPosition;
-    public float distanceInPath;
+
     public bool isDirectionChanged;    
 
     public float acceleration;
@@ -44,28 +44,26 @@ public class RollingStock : MovableObject
     private float angle;
     private Vector3 dir;
 
-
+    
     public float distanceToRightCar;
     public float distanceToLeftCar;
 
     public bool isConnectedLeft;
     public bool isConnectedRight;
-    public CompositionManager compositionManager;
     private float coupleDist = 88;
     
-    
+    public bool IsConnectedRight { get; set; }
+    public int CompositionNumber { get; set; }
+
 
     public static int test;
 
     private void Awake()
     {
-        
+        EventManager.onPathChanged += UpdatePath;
         OwnTrack = thisRSTrack;
         OwnEngine = GetComponent<Engine>();
-        rsTransform = GetComponent<Transform>();
-        compositionManager = FindObjectOfType<CompositionManager>();
-
-        switchManager = FindObjectOfType<SwitchManager>();
+        rsTransform = GetComponent<Transform>();                
         OwnPosition = rsPosition;
         
         // set couplers to RS
@@ -74,7 +72,7 @@ public class RollingStock : MovableObject
         SetBogeys();
         OwnTrackCircuit = OwnTrack.TrackCircuit;
 
-
+        IsConnectedRight = false;
         
     }
 
@@ -100,23 +98,29 @@ public class RollingStock : MovableObject
     }
 
     void Update()
-    {
-        
+    {        
         MoveByPath();
         CalcPositionInPath();           
         FindCloseCars(); 
-        CheckConnectionToCar();
-        // for debug
-        rsPosition = OwnPosition;
+        CheckConnectionToCar();        
+        rsPosition = OwnPosition;  // for debug
+    }
 
+    public void UpdatePath()
+    {
+        TrackPath.Instance.GetTrackPath(this);
+        bogeyA.OwnPath = OwnPath;
+        bogeyB.OwnPath = OwnPath;
+        temp++;
+        print(temp);
     }
 
     public void CheckConnectionToCar()
     {
         if(rightCarToConnect)
-            distanceToRightCar = rightCarToConnect.distanceInPath - distanceInPath;
+            distanceToRightCar = rightCarToConnect.PositionInPath - PositionInPath;
         if(leftCarToConnect)
-            distanceToLeftCar = distanceInPath - leftCarToConnect.distanceInPath;
+            distanceToLeftCar = PositionInPath - leftCarToConnect.PositionInPath;
 
         if(rightCarToConnect && !isConnectedRight  && distanceToRightCar < coupleDist && Mathf.Abs(OwnTransform.position.x - rightCarToConnect.OwnTransform.position.x) < coupleDist)
         {
@@ -167,11 +171,11 @@ public class RollingStock : MovableObject
             float right = 99999;
             leftCarToConnect = null;
             rightCarToConnect = null;
-            foreach (RollingStock item in compositionManager.cars)
+            foreach (RollingStock item in CompositionManager.Instance.RollingStocks)
             {
                 if (item.OwnPath != null && item.OwnPath.Contains(OwnTrack) && item != this)
                 {
-                    temp = distanceInPath - item.distanceInPath;
+                    temp = PositionInPath - item.PositionInPath;
                     if (temp > 0 && temp < left)
                     {
                         left = temp;
@@ -209,17 +213,17 @@ public class RollingStock : MovableObject
     {
         if (OwnPath != null)
         {
-            distanceInPath = 0;
+            PositionInPath = 0;
             foreach (TrackPathUnit item in OwnPath)
             {
                 if (item == OwnTrack)
                 {
-                    distanceInPath += rsPosition;
+                    PositionInPath += rsPosition;
                     break;
                 }
                 else
                 {
-                    distanceInPath += item.trackMath.GetDistance();
+                    PositionInPath += item.trackMath.GetDistance();
                 }
             }
         }
@@ -245,7 +249,6 @@ public class RollingStock : MovableObject
     private void SetCouplers()
     {
 
-        Path = FindObjectOfType<TrackPath>();
         OwnTransform = gameObject.GetComponent<Transform>();
 
         ActiveCoupler = transform.Find("ActiveCoupler").GetComponent<Coupler>();
@@ -303,18 +306,7 @@ public class RollingStock : MovableObject
         }
     }
 
-    public int CompositionNumberofRS
-    {
-        get
-        {
-            return compositionNumberofRS;
-        }
-
-        set
-        {
-            compositionNumberofRS = value;
-        }
-    }
+   
 
     public bool Brakes
     {
@@ -329,18 +321,7 @@ public class RollingStock : MovableObject
         }
     }
 
-    public string CompositionNumberString
-    {
-        get
-        {
-            return compositionNumberString;
-        }
-
-        set
-        {
-            compositionNumberString = value;
-        }
-    }
+    
       
 
 }

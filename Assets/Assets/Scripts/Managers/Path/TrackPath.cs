@@ -7,15 +7,18 @@ using UnityEngine;
 
 public class TrackPath : Singleton<TrackPath>, IManageable {    
     
-    [SerializeField]    
-    public TrackPathUnit[] trackList;
-    public BGCcMath nextTrack;
-    public BGCcMath changedTrack;
-    public Engine engine;
-
+    public TrackPathUnit[] TrackList { get; private set; }
+    
     public float pathLength;
 
    
+    public void Init()
+    {
+        TrackList = FindObjectsOfType<TrackPathUnit>();
+        TrackPathUnitInit();
+        SetClosePaths();
+    }
+
 
     public void GetTrackPath( MovableObject movable)
     {
@@ -90,23 +93,23 @@ public class TrackPath : Singleton<TrackPath>, IManageable {
     }
 
 
+    private void TrackPathUnitInit()
+    {
+        foreach (TrackPathUnit item in TrackList)
+        {
+            item.Init();
+        }
+    }
 
 
     public TrackPathUnit GetNextTrack(TrackPathUnit _current, List<TrackPathUnit> _path)
     {
-        int num = _path.IndexOf(_current) + 1;
-        if (num < _path.Count)
-            return _path[num];
-        else
-            return null;
+        return _current.RightTrackPathUnit;
     }
+
     public TrackPathUnit GetPrevTrack(TrackPathUnit _current, List<TrackPathUnit> _path)
     {
-        int num = _path.IndexOf(_current) - 1;
-        if (num >= 0)
-            return _path[num];
-        else
-            return null;
+        return _current.LeftTrackPathUnit;        
     }
 
     public float GetPathLength(List<TrackPathUnit > paths)
@@ -123,23 +126,13 @@ public class TrackPath : Singleton<TrackPath>, IManageable {
     }       
     
     
-    public void Init()
-    {
-        trackList = FindObjectsOfType<TrackPathUnit>();
-        engine = FindObjectOfType<Engine>();
-        foreach (TrackPathUnit item in trackList)
-        {
-            item.Init();
-        }
-        SetClosePaths();
-    }
 
     // For each TPU set left and right TPunits Lists
     public void SetClosePaths()
     {
-        foreach (TrackPathUnit track in trackList)
+        foreach (TrackPathUnit track in TrackList)
         {
-            foreach (TrackPathUnit _track in trackList)
+            foreach (TrackPathUnit _track in TrackList)
             {
                 if(track.LeftPoint == _track.RightPoint)
                 {
@@ -156,9 +149,14 @@ public class TrackPath : Singleton<TrackPath>, IManageable {
     // For each TPU set left and right TPunit wich is Active at the moment
     public void SetEachPathClosePaths()
     {
-        foreach (TrackPathUnit track in trackList)
+        foreach (TrackPathUnit track in TrackList)
         {
             track.SetOwnClosePaths();
         }
+    }
+
+    public void OnStart()
+    {
+        SetClosePaths();
     }
 }

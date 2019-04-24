@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class Route : Singleton<Route> {
 
     [SerializeField]
-    private Switch sw2_4, sw6_8, sw10, sw12, sw14, sw16, sw1_3, sw5_17, sw7_9, sw11, sw13, sw15, sw18, sw20, sw19, sw21, sw22;
+    private Switch sw2, sw4, sw6, sw8, sw10, sw12, sw14, sw16, sw1_3, sw5, sw17, sw7_9, sw11, sw13, sw15, sw18, sw20, sw19, sw21, sw22;
 
     [SerializeField]
     private TrackCircuit 
@@ -34,10 +34,8 @@ public class Route : Singleton<Route> {
         tc12A,
         tc13,
         tc14,
-        tcsw_1_3top,
-        tcsw_1_3bot,
-        tcsw_5_17top,
-        tcsw_5_17bot,
+        tcsw1, tcsw3,
+        tcsw5, tcsw17,
         tcsw_7_9top,
         tcsw_7_9bot,
         tcsw_2_4top,
@@ -78,17 +76,19 @@ public class Route : Singleton<Route> {
     private Text lightText;
     [SerializeField]
     private Button cancelRouteButton;
+    [SerializeField]
+    private List<RouteItem> routeItems;
     SwitchManager switchManager;
     private TextBuilder textBuilder;
     private string messageText;
-    public PathMaker pathMaker;
-    
+    RouteDictionary routeDictionary;
    
 
     private void Awake()
     {
-        textBuilder = GameObject.FindObjectOfType<TextBuilder>();
-        TrackCircuit[] tempArr = GameObject.FindObjectsOfType<TrackCircuit>();
+        routeDictionary = FindObjectOfType<RouteDictionary>();
+        textBuilder = FindObjectOfType<TextBuilder>();
+        TrackCircuit[] tempArr = FindObjectsOfType<TrackCircuit>();
         trackCircuits = new List<TrackCircuit>();
         for (int i = 0; i < tempArr.Length; i++)
         {
@@ -97,18 +97,19 @@ public class Route : Singleton<Route> {
         }
      switchManager = FindObjectOfType<SwitchManager>();
 
+
     }
     void Start()
     {
         routes = new List<RouteObject>();
+        routeItems = new List<RouteItem>();
         engine = GameObject.Find("Engine").GetComponent<Engine>();
-        //Invoke("MakePathInBothDirections", 0.3f);
 
     }
 
     private void Update()
     {
-        CheckRoutePresense();
+        //CheckRoutePresense();
     }
 
 
@@ -149,17 +150,24 @@ public class Route : Singleton<Route> {
     /// 
 
     /// Make routes manager
-    public void MakeRoute(TrafficLights startLight, TrafficLights endLight)
+    public void MakeRoute(TrafficLight startLight, TrafficLight endLight)
     {
         startLight.lightDirection = 0;        
         routeName = startLight.Name + endLight.Name;
+        RouteItem routeItem = routeDictionary.RouteDict[routeName];
+        routeItem.InstantiateRoute();
+        EventManager.PathChanged();
+        /*
         if (CheckRouteForDuplicates(startLight.Name))
         {
-            TrafficLights[] tl = new TrafficLights[] { startLight, endLight };
-            route = gameObject.AddComponent<RouteObject>();            
+            TrafficLight[] tl = new TrafficLight[] { startLight, endLight };
+            route = gameObject.AddComponent<RouteObject>();
+            
             route.TrafficLights = tl;
             routes.Add(route);
-            route.RouteName = routeName;
+            route.RouteName = routeName;                       
+
+
             RouteLightsManage(tl, true);
             RouteManage(route, routeName);
 
@@ -183,381 +191,13 @@ public class Route : Singleton<Route> {
         {
             startLight.lightDirection = -1;
             route.routeDirection = -1;
-        }       
-        
+        }  
+        */
+
     }      
 
     private void RouteManage(RouteObject ro,  string routeName)
-    {
-        // Routes NI done
-        if (ro.RouteName == "NIM2")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw16 };
-            ro.SwitchesTurn = new Switch[] { sw6_8 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw16, tcsw_6_8top, tcsw_6_8bot, tcsw_2_4bot, tc6 };
-        }
-        else if (ro.RouteName == "NICH")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw6_8, sw16 };
-            ro.StartLight.SetLightColor(Constants.COLOR_GREEN);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw16, tcsw_6_8top, tcsw_2_4top, tcI_CH_2, tcI_CH };
-        }
-        
-        // Routes N2 done
-        else if (ro.RouteName == "N2CH")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw6_8 };
-            ro.SwitchesTurn = new Switch[] { sw16 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW_TOP_FLASH);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw16, tcsw_6_8top, tcsw_2_4top, tcI_CH_2, tcI_CH };
-        }
-        else if (ro.RouteName == "N2M2")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4 };
-            ro.SwitchesTurn = new Switch[] { sw16, sw6_8 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw16, tcsw_6_8top, tcsw_6_8bot, tcsw_2_4bot, tc6 };
-        }
-       
-        // Routes N3 done
-        else if (ro.RouteName == "N3CH")
-        {
-            ro.SwitchesStr = new Switch[] { sw10 , sw6_8 };
-            ro.SwitchesTurn = new Switch[] { sw2_4 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW_TOP_FLASH);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw10, tcsw_6_8bot, tcsw_2_4bot, tcsw_2_4top, tcI_CH_2, tcI_CH };
-        }
-        else if (ro.RouteName == "N3M2")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw10, sw6_8 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw10, tcsw_6_8bot, tcsw_2_4bot, tc6 };
-        }
-
-        // Routes N4 done
-        else if (ro.RouteName == "N4CH")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8 };
-            ro.SwitchesTurn = new Switch[] { sw12, sw10, sw2_4 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW_TOP_FLASH);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw12, tcsw10, tcsw_6_8bot, tcsw_2_4bot, tcsw_2_4top, tcI_CH_2, tcI_CH_2, tcI_CH };
-        }
-        else if (ro.RouteName == "N4M2")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4 };
-            ro.SwitchesTurn = new Switch[] { sw12, sw10 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw12, tcsw10, tcsw_6_8bot, tcsw_2_4bot, tc6 };
-        }
-
-        // Routes N5 done
-        else if (ro.RouteName == "N5CH")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8, sw12 };
-            ro.SwitchesTurn = new Switch[] { sw14, sw10, sw2_4 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW_TOP_FLASH);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw14, tcsw12, tcsw10, tcsw_6_8bot, tcsw_2_4bot, tcsw_2_4top, tcI_CH_2, tcI_CH };
-        }
-        else if (ro.RouteName == "N5M2")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4, sw12 };
-            ro.SwitchesTurn = new Switch[] { sw14, sw10 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw14, tcsw12, tcsw10, tcsw_6_8bot, tcsw_2_4bot, tc6 };
-        }
-
-        // Routes M3 done
-        else if (ro.RouteName == "M3M2")
-        {
-            ro.SwitchesStr = new Switch[] { sw14, sw6_8, sw12, sw2_4 };
-            ro.SwitchesTurn = new Switch[] { sw10 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw14, tcsw12, tcsw10, tcsw_6_8bot, tcsw_2_4bot, tc6 };
-        }
-
-        // Routes CH done
-        else if (ro.RouteName == "CHCH2")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4 };
-            ro.SwitchesTurn = new Switch[] { sw16 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_CH_2, tcsw_2_4top, tcsw_6_8top, tcsw16, tc2 };
-        }   
-        else if (ro.RouteName == "CHCHI")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw6_8, sw16 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_CH_2, tcsw_2_4top, tcsw_6_8top, tcsw16, tcI_16_15 };
-        }
-        else if (ro.RouteName == "CHCH3")
-        {
-            ro.SwitchesStr = new Switch[] { sw10, sw6_8 };
-            ro.SwitchesTurn = new Switch[] { sw2_4 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_CH_2, tcsw_2_4top, tcsw_2_4bot, tcsw_6_8bot, tcsw10, tc3};
-        }
-        else if (ro.RouteName == "CHCH4")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8 };
-            ro.SwitchesTurn = new Switch[] { sw12, sw10, sw2_4 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_CH_2, tcsw_2_4top, tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tc4 };
-        }
-        else if (ro.RouteName == "CHCH5")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8, sw12 };
-            ro.SwitchesTurn = new Switch[] { sw14, sw10, sw2_4 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] {tcI_CH_2, tcsw_2_4top, tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tcsw14, tc5 };
-        }
-
-        // Routes M2 done
-        else if (ro.RouteName == "M2NI")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw16 };
-            ro.SwitchesTurn = new Switch[] { sw6_8 };
-            ro.TrackCircuits = new TrackCircuit[] {  tcsw_2_4bot, tcsw_6_8bot, tcsw_6_8top, tcsw16, tcI_16_15 };
-        }
-        else if (ro.RouteName == "M2N2")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4 };
-            ro.SwitchesTurn = new Switch[] { sw16, sw6_8 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot, tcsw_6_8top, tcsw16, tc2 };
-        }
-        else if (ro.RouteName == "M2N3")
-        {
-            ro.SwitchesStr = new Switch[] { sw2_4, sw10, sw6_8 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot, tcsw10, tc3 };
-        }
-        else if (ro.RouteName == "M2N4")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4 };
-            ro.SwitchesTurn = new Switch[] { sw12, sw10 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tc4 };
-        }
-        else if (ro.RouteName == "M2N5")
-        {
-            ro.SwitchesStr = new Switch[] { sw6_8, sw2_4, sw12 };
-            ro.SwitchesTurn = new Switch[] { sw14, sw10 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tcsw14, tc5 };
-        }       
-        else if (ro.RouteName == "M2M3")
-        {
-            ro.SwitchesStr = new Switch[] { sw14, sw6_8, sw12, sw2_4 };
-            ro.SwitchesTurn = new Switch[] { sw10 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_2_4bot, tcsw_6_8bot, tcsw10, tcsw12, tcsw14, tcsw22 };
-        }
-
-        // Routes CHI done
-        else if (ro.RouteName == "CHIM1")
-        {
-            ro.SwitchesStr = new Switch[] { sw15, sw5_17, sw1_3 };
-            ro.SwitchesTurn = new Switch[] { sw7_9 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw15, tcsw_7_9top, tcsw_7_9bot, tcsw_5_17top, tcsw_1_3bot, tc7 };
-        }
-        else if (ro.RouteName == "CHIM5")
-        {
-            ro.SwitchesStr = new Switch[] { sw15 };
-            ro.SwitchesTurn = new Switch[] { sw7_9, sw5_17 };
-            ro.TrackCircuits = new TrackCircuit[] {  tcsw15, tcsw_7_9top, tcsw_7_9bot, tcsw_5_17top, tcsw_5_17bot, tc12 };
-        }
-        else if (ro.RouteName == "CHIN")
-        {
-            ro.SwitchesStr = new Switch[] { sw15, sw1_3, sw7_9 };
-            ro.StartLight.SetLightColor(Constants.COLOR_GREEN);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw15, tcsw_7_9top, tcsw_1_3top, tcI_1_N, tcI_N };
-        }
-
-        // Routes CH2 done
-        else if(ro.RouteName == "CH2M1")
-        {
-            ro.TrackCircuits = new TrackCircuit[] { tcsw15, tcsw_7_9top, tcsw_7_9bot, tcsw_5_17top, tcsw_1_3bot, tc7 };
-            ro.SwitchesStr = new Switch[] { sw5_17, sw1_3 };
-            ro.SwitchesTurn = new Switch[] { sw15, sw7_9 };
-            print(ro.RouteName);
-        }
-        else if (ro.RouteName == "CH2M5")
-        {
-            ro.SwitchesTurn = new Switch[] { sw7_9, sw5_17, sw15 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw15, tcsw_7_9top, tcsw_7_9bot, tcsw_5_17top, tcsw_5_17bot, tc12 };
-        }
-        else if (ro.RouteName == "CH2N")
-        {
-            ro.SwitchesStr = new Switch[] { sw1_3, sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw15 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW_TOP_FLASH);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw15, tcsw_7_9top, tcsw_1_3top, tcI_1_N, tcI_N };
-        }
-
-        // Routes CH3 done
-        else if (ro.RouteName == "CH3M1")
-        {
-            ro.SwitchesStr = new Switch[] { sw5_17, sw1_3, sw11, sw7_9 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_1_3bot, tc7 };
-        }
-        else if (ro.RouteName == "CH3M5")
-        {
-            ro.SwitchesStr = new Switch[] { sw11, sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw5_17};
-            ro.TrackCircuits = new TrackCircuit[] { tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_5_17bot, tc12 };
-        }
-        else if (ro.RouteName == "CH3N")
-        {
-            ro.SwitchesStr = new Switch[] { sw11, sw7_9, sw5_17};
-            ro.SwitchesTurn = new Switch[] { sw1_3 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW_TOP_FLASH);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_1_3bot, tcsw_1_3top, tcI_1_N, tcI_N };
-        }
-
-        // Routes CH4 done
-        else if (ro.RouteName == "CH4M1")
-        {
-            ro.SwitchesStr = new Switch[] { sw5_17, sw1_3, sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw13, sw11 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw13, tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_1_3bot, tc7 };
-        }
-        else if (ro.RouteName == "CH4M5")
-        {
-            ro.SwitchesStr = new Switch[] { sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw13, sw11, sw5_17};
-            ro.TrackCircuits = new TrackCircuit[] { tcsw13, tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_5_17bot, tc12 };
-        }
-        else if (ro.RouteName == "CH4N")
-        {
-            ro.SwitchesStr = new Switch[] { sw7_9, sw5_17 };
-            ro.SwitchesTurn = new Switch[] { sw11, sw13, sw1_3};
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW_TOP_FLASH);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw13, tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_1_3bot, tcsw_1_3top, tcI_1_N, tcI_N };
-        }
-
-        // Routes CH5 done
-        else if (ro.RouteName == "CH5M1")
-        {
-            ro.SwitchesStr = new Switch[] { sw5_17, sw1_3, sw7_9, sw13 };
-            ro.SwitchesTurn = new Switch[] { sw11 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw13, tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_1_3bot, tc7 };
-        }
-        else if (ro.RouteName == "CH5M5")
-        {
-            ro.SwitchesStr = new Switch[] { sw7_9, sw13 };
-            ro.SwitchesTurn = new Switch[] { sw11, sw5_17 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw13, tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_5_17bot, tc12 };
-        }
-        else if (ro.RouteName == "CH5N")
-        {
-            ro.SwitchesStr = new Switch[] { sw7_9, sw5_17, sw13 };
-            ro.SwitchesTurn = new Switch[] { sw11, sw1_3 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW_TOP_FLASH);
-            ro.TrackCircuits = new TrackCircuit[] { tcsw13, tcsw11, tcsw_7_9bot, tcsw_5_17top, tcsw_1_3bot, tcsw_1_3top, tcI_1_N, tcI_N };
-        }
-
-        // Routes M4 done
-        else if (ro.RouteName == "M4M5")
-        {
-            ro.SwitchesStr = new Switch[] { sw5_17 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_5_17bot, tc12 };
-        }
-
-        // Routes M5 done
-        else if (ro.RouteName == "M5M4")
-        {
-            ro.SwitchesStr = new Switch[] { sw5_17 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_5_17bot, tc8 };
-        }
-        else if (ro.RouteName == "M5CH2")
-        {
-            ro.SwitchesTurn = new Switch[] { sw7_9, sw5_17, sw15 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_5_17bot, tcsw_5_17top, tcsw_7_9bot, tcsw_7_9top, tcsw15, tc2 };
-        }
-        else if (ro.RouteName == "M5CHI")
-        {
-            ro.SwitchesStr = new Switch[] { sw15 };
-            ro.SwitchesTurn = new Switch[] { sw7_9, sw5_17 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_5_17bot, tcsw_5_17top, tcsw_7_9bot, tcsw_7_9top, tcsw15, tcI_16_15 };
-        }
-        else if (ro.RouteName == "M5CH3")
-        {
-            ro.SwitchesStr = new Switch[] { sw11, sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw5_17 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_5_17bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tc3 };
-        }
-        else if (ro.RouteName == "M5CH4")
-        {
-            ro.SwitchesStr = new Switch[] { sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw13, sw11, sw5_17 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_5_17bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tcsw13, tc4 };
-        }
-        else if (ro.RouteName == "M5CH5")
-        {
-            ro.SwitchesStr = new Switch[] { sw7_9, sw13 };
-            ro.SwitchesTurn = new Switch[] { sw11, sw5_17 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_5_17bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tcsw13, tc5 };
-        }
-
-        // Routes M1 done
-       
-        else if (ro.RouteName == "M1CH2")
-        {
-            ro.SwitchesStr = new Switch[] { sw1_3, sw5_17 };
-            ro.SwitchesTurn = new Switch[] { sw7_9, sw15 };            
-            ro.TrackCircuits = new TrackCircuit[] {  tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw_7_9top, tcsw15, tc2 };
-        }
-        else if (ro.RouteName == "M1CHI")
-        {
-            ro.SwitchesStr = new Switch[] { sw1_3, sw5_17, sw15 };
-            ro.SwitchesTurn = new Switch[] { sw7_9 };
-            ro.TrackCircuits = new TrackCircuit[] {  tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw_7_9top, tcsw15, tcI_16_15 };
-        }
-        else if (ro.RouteName == "M1CH3")
-        {
-            ro.SwitchesStr = new Switch[] { sw1_3, sw5_17, sw7_9, sw11 };            
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tc3 };
-        }
-        else if (ro.RouteName == "M1CH4")
-        {
-            ro.SwitchesStr = new Switch[] { sw1_3, sw5_17, sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw13, sw11 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tcsw13, tc4 };
-        }
-        else if (ro.RouteName == "M1CH5")
-        {
-            ro.SwitchesStr = new Switch[] { sw1_3, sw5_17, sw7_9, sw13 };
-            ro.SwitchesTurn = new Switch[] { sw11 };
-            ro.TrackCircuits = new TrackCircuit[] { tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tcsw13, tc5 };
-        }
-
-        // Routes N done
-        else if (ro.RouteName == "NNI")
-        {
-            ro.SwitchesStr = new Switch[] { sw1_3, sw7_9 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_1_N, tcsw_1_3top, tcsw_7_9top, tcsw15, tcI_16_15 };            
-        }
-        else if (ro.RouteName == "NN2")
-        {
-            ro.SwitchesStr = new Switch[] { sw1_3, sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw15 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_1_N, tcsw_1_3top, tcsw_7_9top, tcsw15, tc2 };
-        }
-        else if (ro.RouteName == "NN3")
-        {
-            ro.SwitchesStr = new Switch[] { sw5_17, sw7_9, sw11 };
-            ro.SwitchesTurn = new Switch[] { sw1_3 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_1_N, tcsw_1_3top, tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tc3 };
-        }
-        else if (ro.RouteName == "NN4")
-        {
-            ro.SwitchesStr = new Switch[] { sw5_17, sw7_9 };
-            ro.SwitchesTurn = new Switch[] { sw1_3, sw11, sw13 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_1_N, tcsw_1_3top, tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tcsw13, tc4 };
-        }
-        else if (ro.RouteName == "NN5")
-        {
-            ro.SwitchesStr = new Switch[] { sw5_17, sw7_9, sw13 };
-            ro.SwitchesTurn = new Switch[] { sw1_3, sw11 };
-            ro.StartLight.SetLightColor(Constants.COLOR_YELLOW);
-            ro.TrackCircuits = new TrackCircuit[] { tcI_1_N, tcsw_1_3top, tcsw_1_3bot, tcsw_5_17top, tcsw_7_9bot, tcsw11, tcsw13, tc4 };
-        }
-        ///////
-        else DestroyRoute(ro);
+    {        
 
         if (ro)
         {                        
@@ -569,8 +209,8 @@ public class Route : Singleton<Route> {
                     if((!IsShunting(ro.TrafficLights) && ro.TrackCircuits.Last().UseMode != Constants.TC_WAIT) || IsShunting(ro.TrafficLights))
                     {
                        // print("Make route direction " + ro.RouteName);
-                        RouteDirection(ro.SwitchesStr, Constants.DIR_STR);
-                        RouteDirection(ro.SwitchesTurn, Constants.DIR_TURN);
+                        //RouteDirection(ro.SwitchesStr, Constants.DIR_STR);
+                       // RouteDirection(ro.SwitchesTurn, Constants.DIR_TURN);
                         RouteLock(ro.TrackCircuits);
                         
                         //print("Route Locked " + ro.RouteName);
@@ -607,8 +247,8 @@ public class Route : Singleton<Route> {
     {
         foreach (TrackCircuit tc in trackCircuits)
         {
-            tc.UseMode = Constants.TC_WAIT;
-            tc.isInRoute = true;
+            //tc.UseMode = Constants.TC_WAIT;
+            //tc.isInRoute = true;
         }
     }
 
@@ -641,7 +281,7 @@ public class Route : Singleton<Route> {
         
     }
 
-    public void DestroyRouteByLight(TrafficLights hitLight)
+    public void DestroyRouteByLight(TrafficLight hitLight)
     {
         if (String.IsNullOrEmpty(hitLight.NameRouteOfLight))
         {
@@ -700,7 +340,7 @@ public class Route : Singleton<Route> {
     }
 
     // return true if al is ok, if track circuits are free
-    private bool CheckRootByPresence(TrackCircuit[] trackCircuits, TrafficLights [] trafficLights)
+    private bool CheckRootByPresence(TrackCircuit[] trackCircuits, TrafficLight [] trafficLights)
     {
         bool dangerPresence = true;
         TrackCircuit last = trackCircuits.Last();
@@ -709,10 +349,10 @@ public class Route : Singleton<Route> {
         for (int i = 0; i < trackCircuits.Length - 1; i++)
         {
             
-            if (trackCircuits[i].hasCarPresence)
+           // if (trackCircuits[i].hasCarPresence)
             {
                 
-                dangerPresence = false;
+               // dangerPresence = false;
             }
                 
         }
@@ -760,10 +400,10 @@ public class Route : Singleton<Route> {
         }
     }
 
-    public void RouteLightsManage(TrafficLights[] lights, bool isRoute)
+    public void RouteLightsManage(TrafficLight[] lights, bool isRoute)
     {
-        TrafficLights startLight = lights[0];
-        TrafficLights endLight = lights[1];
+        TrafficLight startLight = lights[0];
+        TrafficLight endLight = lights[1];
         
         if (isRoute)
         {
@@ -796,11 +436,11 @@ public class Route : Singleton<Route> {
             {
                 if (direction == Constants.DIR_STR)
                 {
-                    sw.SetDirectionStraight();                    
+                    //sw.SetDirectionStraight();                    
                 }
                 else
                 {
-                    sw.SetDirectionTurn();                   
+                    //sw.SetDirectionTurn();                   
                 }                
             }
         }
@@ -808,7 +448,7 @@ public class Route : Singleton<Route> {
 
     
     
-    private bool IsShunting(TrafficLights[] trafficLights)
+    private bool IsShunting(TrafficLight[] trafficLights)
     {
         return trafficLights[0].Name != "CH" && trafficLights[0].Name != "N" && trafficLights[1].Name != "CH" && trafficLights[1].Name != "N";
     }

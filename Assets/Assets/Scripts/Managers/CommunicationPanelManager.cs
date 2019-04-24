@@ -26,8 +26,8 @@ public class CommunicationPanelManager : Singleton<CommunicationPanelManager>
     [SerializeField]
     private Engine engine;
     private List<string[]> routeParseList;
-    private TrafficLights startLight;
-    private TrafficLights endLight;
+    private TrafficLight startLight;
+    private TrafficLight endLight;
     [SerializeField]
     private List<Button> routeBtns;
     private string[] routes;

@@ -3,13 +3,13 @@ using System.Collections;
 using UnityEngine;
 
 public class Switch : MonoBehaviour, IManageable {
+
     [SerializeField]
     private SwitchCurve switchCurve;
     [SerializeField]
     private SwitchStraightPart switchStraightPart;    
     
     private SwitchManager switchManager;    
-    private TrafficLightsManager tlm;    
     public bool isLockedByRS;
     public bool isLockedByRoute;
     public bool isSwitchInUse;
@@ -19,43 +19,43 @@ public class Switch : MonoBehaviour, IManageable {
     private Animator animator;
     private string animMethod;
 
-    [SerializeField]
-    private bool isSwitchStraight;
     
-    
+    public bool IsSwitchStraight { get; set; }
 
+    public static event Action OnPathChanged = delegate { };
 
     public void Init()
     {
         switchCurve = transform.GetComponentInChildren<SwitchCurve>();
         switchStraightPart = transform.GetComponentInChildren<SwitchStraightPart>();
         trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
-        switchManager = FindObjectOfType<SwitchManager>(); 
-        tlm = FindObjectOfType<TrafficLightsManager>();
         animator = transform.GetComponentInChildren<Animator>();
         SetDirectionStraight();
 
-    }    
+    }   
 
-    public void ChangeDirection()
-    {        
+    public enum SwitchDir
+    {
+        Straight,
+        Turn,
+        Change
+    }   
+
+    public void SetSwitchDirection(SwitchDir direction)
+    {
         if (!isLockedByRoute && !isLockedByRS && !isSwitchInUse)
         {
-            if (IsSwitchStraight)
-            {                               
-                SetDirectionTurn();
-            }
-            else
-            {                               
+            if (direction == SwitchDir.Straight)
                 SetDirectionStraight();
-            }
-            tlm.CheckHandSwitches();
-            switchManager.UpdatePathAfterSwitch();
+            if (direction == SwitchDir.Turn)
+                SetDirectionTurn();
+            if (direction == SwitchDir.Change)
+                ChangeSwitchDirection();            
         }
         else Debug.Log("Locked");
-    } 
-      
-    public void SetDirectionStraight()
+    }
+
+    private void SetDirectionStraight()
     {        
         if (animator)
             animator.SetBool("TurnSwitch", false);
@@ -64,7 +64,7 @@ public class Switch : MonoBehaviour, IManageable {
         IsSwitchStraight = true;        
         
     }
-    public void SetDirectionTurn()
+    private void SetDirectionTurn()
     {
         
         if (animator)
@@ -72,20 +72,23 @@ public class Switch : MonoBehaviour, IManageable {
         switchStraightPart.Hide();
         switchCurve.Show();        
         IsSwitchStraight = false;        
-    }   
-
-    public bool IsSwitchStraight
-    {
-        get
-        {
-            return isSwitchStraight;
-        }
-
-        set
-        {
-            isSwitchStraight = value;
-        }
     }
-   
+
+
+    private void ChangeSwitchDirection()
+    {
+
+        if (IsSwitchStraight)
+        {
+            SetDirectionTurn();
+        }
+        else
+        {
+            SetDirectionStraight();
+        }
+        EventManager.PathChanged();
+    }
+
+    public void OnStart() {  }
 
 }

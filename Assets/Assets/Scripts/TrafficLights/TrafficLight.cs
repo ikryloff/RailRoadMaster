@@ -1,9 +1,8 @@
 ﻿using BansheeGz.BGSpline.Components;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrafficLights : MonoBehaviour {
+public class TrafficLight : MonoBehaviour {
     [SerializeField]
     public Material closed;
     [SerializeField]
@@ -36,7 +35,6 @@ public class TrafficLights : MonoBehaviour {
     private Material lightColor;
     [SerializeField]
     private int intColor;
-    PathMaker pathMaker;
     public int lightDirection;
 
     //Colors for remote control
@@ -60,7 +58,6 @@ public class TrafficLights : MonoBehaviour {
         AddSignal(topYellowSignal);
         AddSignal(bottomYellowSignal);
         AddSignal(greenSignal);
-        pathMaker = FindObjectOfType<PathMaker>();
         engine = FindObjectOfType<Engine>();
 
     }
@@ -199,7 +196,7 @@ public class TrafficLights : MonoBehaviour {
         
     }      
 
-    public TrafficLights GetTrafficLightByName(string lightName)
+    public TrafficLight GetTrafficLightByName(string lightName)
     {
         if (lightName == Name)
                 return this;        

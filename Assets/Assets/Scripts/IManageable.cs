@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface IManageable
 {
-    void Init();	
+    void Init();
+    void OnStart();
 }

@@ -8,12 +8,12 @@ public class TrafficLightBtnScript : MonoBehaviour {
     [SerializeField]
     private Button button;
     [SerializeField]
-    private TrafficLights trafficLight;
+    private TrafficLight trafficLight;
     [SerializeField]
     private TrafficLightsManager trafficLightsManager;
     private bool isInteractable;
 
-    public TrafficLights TrafficLight
+    public TrafficLight TrafficLight
     {
         get
         {

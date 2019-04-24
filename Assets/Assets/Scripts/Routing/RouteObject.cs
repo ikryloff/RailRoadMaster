@@ -9,7 +9,7 @@ using UnityEngine;
 public class RouteObject : MonoBehaviour
 {
     private string routeName;
-    private TrafficLights [] trafficLights;
+    private TrafficLight [] trafficLights;
     private Switch[] switchesStr;
     private Switch[] switchesTurn;
     private TrackCircuit[] trackCircuits;
@@ -28,7 +28,7 @@ public class RouteObject : MonoBehaviour
         }
     }
 
-    public TrafficLights[] TrafficLights
+    public TrafficLight[] TrafficLights
     {
         get
         {
@@ -67,7 +67,7 @@ public class RouteObject : MonoBehaviour
         }
     }
 
-    public TrafficLights EndLight
+    public TrafficLight EndLight
     {
         get
         {
@@ -80,7 +80,7 @@ public class RouteObject : MonoBehaviour
         }
     }
 
-    public TrafficLights StartLight
+    public TrafficLight StartLight
     {
         get
         {

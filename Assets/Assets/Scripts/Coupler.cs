@@ -84,7 +84,7 @@ public class Coupler : MonoBehaviour
                     }
                 }
             }
-            cm.UpdateCompositionsInformation();
+
         }
     }
 

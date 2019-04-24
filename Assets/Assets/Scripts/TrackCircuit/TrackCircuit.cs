@@ -4,28 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class TrackCircuit : MonoBehaviour
+public class TrackCircuit : MonoBehaviour, IManageable
 {
     private string trackName;
     public bool hasCarPresence;
     private int useMode;
     private Switch switchTC;
-    [SerializeField]
-    private SpriteRenderer cellsTrack;
-    [SerializeField]
-    private SpriteRenderer cellsStraight;
-    [SerializeField]
-    private SpriteRenderer cellsTurn;
-    private SpriteRenderer[] allCells;
+   
     public SpriteRenderer[] indicator;
 
     [SerializeField]
     private string[] trackLightsNames;
     [SerializeField]
-    private TrafficLights[] trackLights;
+    private TrafficLight[] trackLights;
     [SerializeField]    
     private TrafficLightsManager trafficLightsManager;
-    public PathHolder pathHolder;    
     public bool isSwitch;
     public Switch switchTrack;
     public Route route;
@@ -40,52 +33,44 @@ public class TrackCircuit : MonoBehaviour
     public bool isInPath;
     public bool isInUse;
     public Engine engine;
-    SwitchManager switchManager;
     public TrackPathUnit [] paths;
     private TrackPath trackPath;
 
-    private void Awake()
+    public void Init()
     {
-        switchManager = FindObjectOfType<SwitchManager>();
-        trackPath = FindObjectOfType<TrackPath>();
-        trafficLightsManager = FindObjectOfType<TrafficLightsManager>();
-        engine = FindObjectOfType<Engine>(); ;
-        isSwitch = GetComponentInParent<Switch>();
-        engineRS = engine.GetComponent<RollingStock>();
+        paths = transform.GetComponentsInChildren<TrackPathUnit>();
+        SetTCToPaths();
         switchTrack = GetComponentInParent<Switch>();
-        if (!isSwitch)
-        {
-            paths = transform.GetComponentsInChildren<TrackPathUnit>();
-            indicator =  GetComponentsInChildren<SpriteRenderer>();
-        }
-        else if(isSwitch && tag == "SingleSwitch")
-        {
-            paths = transform.parent.GetComponentsInChildren<TrackPathUnit>(true);
-            indicator = transform.parent.GetComponentsInChildren<SpriteRenderer>();
-        }
-        
-        
+        isSwitch = GetComponentInParent<Switch>();
+        indicator = GetComponentsInChildren<SpriteRenderer>();
+    }
 
-        foreach (TrackPathUnit item in paths)
-        {
-            item.TrackCircuit = this; 
-        }
-        GetTrackLightsByTrack();
-
-        route = GameObject.Find("Route").GetComponent<Route>();
+    
+    private void Start()
+    {
         colorPresence = new Color32(255, 77, 77, 160);
         colorInRoute = new Color32(255, 210, 0, 160);
         colorInPath = new Color32(58, 227, 116, 160);
-        colorInUse =  new Color32(105, 165, 230, 160);
+        colorInUse = new Color32(105, 165, 230, 160);
         colorTransparent = new Color32(255, 255, 255, 0);
-}
+
+
+    }
+
+    private void SetTCToPaths()
+    {
+        foreach (TrackPathUnit item in paths)
+        {
+            item.TrackCircuit = this;
+        }
+    }
 
     private void Update()
     {        
-        PresenceFunction();
+        //PresenceFunction();
         //IndicationTrackInPath(engineRS.OwnPath);
         //TrackCircuitColor();
-        CheckInRoute();
+        //CheckInRoute();
         
     }
    
@@ -103,21 +88,6 @@ public class TrackCircuit : MonoBehaviour
             
     }
 
-    private void Start()
-    {
-           
-        useMode = Constants.TC_DEFAULT;
-        allCells = new SpriteRenderer[3];
-        allCells[0] = cellsTrack;
-        if (isSwitch)
-        {
-            switchTC = transform.parent.GetComponent<Switch>();
-            allCells[1] = cellsStraight;
-            allCells[2] = cellsTurn;
-        }
-        SetCellsLight(allCells, Constants.TC_DEFAULT);
-        
-    }
 
     
     public void TrackCircuitColor()
@@ -183,9 +153,9 @@ public class TrackCircuit : MonoBehaviour
 
     public void IndicationTrackInPath(List<TrackPathUnit> paths)
     {
-        if (switchManager.IsSwitchModeOn && trackPath.trackList != null && paths != null)
+        if (SwitchManager.Instance.IsSwitchModeOn && trackPath.TrackList != null && paths != null)
         {
-            foreach (TrackPathUnit item in trackPath.trackList)
+            foreach (TrackPathUnit item in trackPath.TrackList)
             {
                 if (item.isActiveAndEnabled && item.TrackCircuit.isInPath)
                     item.TrackCircuit.isInPath = false;
@@ -202,24 +172,20 @@ public class TrackCircuit : MonoBehaviour
     {
         if (hasCarPresence)
         {
-            if (tag == "SingleSwitch" || tag == "DoubleSwitch")
+            if (isSwitch)
             {
                 switchTC.isLockedByRS = true;
             }            
-            SetCellsLight(ReturnCells(), Constants.TC_OVER);            
+                        
         }
         else
         {
-            if (tag == "SingleSwitch" || tag == "DoubleSwitch")
+            if (isSwitch)
             {
                 switchTC.isLockedByRS = false;
-            }            
-            SetCellsLight(ReturnCells(), Constants.TC_DEFAULT);
-
+            }  
         }
-
-
-        GetTrackLightsByTrack();
+        //GetTrackLightsByTrack();
         
     }
        
@@ -244,7 +210,7 @@ public class TrackCircuit : MonoBehaviour
         set
         {
             useMode = value;
-            SetCellsLight(ReturnCells(), value);
+           
         }
     }
 
@@ -274,7 +240,7 @@ public class TrackCircuit : MonoBehaviour
         }
     }
 
-    public TrafficLights[] TrackLights
+    public TrafficLight[] TrackLights
     {
         get
         {
@@ -287,19 +253,7 @@ public class TrackCircuit : MonoBehaviour
         }
     }
 
-    public SpriteRenderer[] ReturnCells()
-    {
-        SpriteRenderer[] sr = new SpriteRenderer[2];
-        sr[0] = cellsTrack;
-        if (tag == "Switch")
-        {
-            if (switchTC.IsSwitchStraight)
-                sr[1] = cellsStraight;
-            else
-                sr[1] = cellsTurn;
-        }
-        return sr;
-    }
+   
 
     public void SetCellsLight(SpriteRenderer[] cells, int color)
     {
@@ -325,7 +279,7 @@ public class TrackCircuit : MonoBehaviour
 
     //order does matter
 
-    public void SetTrackLights(TrafficLights _left, TrafficLights _right)
+    public void SetTrackLights(TrafficLight _left, TrafficLight _right)
     {
         TrackLightsNames = new string[] { _left.Name, _right.Name };
     }
@@ -425,11 +379,18 @@ public class TrackCircuit : MonoBehaviour
         }
         
 
-        TrackLights = new TrafficLights[2];
+        TrackLights = new TrafficLight[2];
 
         for (int i = 0; i < TrackLightsNames.Length; i++)
         {
             TrackLights[i] = trafficLightsManager.GetTrafficLightByName(TrackLightsNames[i]);            
         }        
+    }
+
+    
+
+    public void OnStart()
+    {
+        throw new System.NotImplementedException();
     }
 }

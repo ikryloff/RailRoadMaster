@@ -8,9 +8,7 @@ public abstract class MovableObject : MonoBehaviour
     //Engine that moves Movable objects
     public Engine OwnEngine { get; set; }
 
-    //Whole Path of MovableObject
-    public TrackPath Path { get; set; }
-    
+   
     public TrackCircuit OwnTrackCircuit { get; set; }
 
     public float OwnPosition { get; set; }
@@ -21,7 +19,11 @@ public abstract class MovableObject : MonoBehaviour
     public bool IsMoving { get; set; }
     // Moving distance per frame
     public float Translation { get; private set; }
+
+    public static int temp = 0;
+
     
+
     public void MoveByPath()
     {
         
@@ -34,7 +36,7 @@ public abstract class MovableObject : MonoBehaviour
             MoveAndRotate();
             if (Translation > 0 &&  OwnPosition > OwnTrack.trackMath.GetDistance())
             {
-                OwnTrack = Path.GetNextTrack(OwnTrack, OwnPath);
+                OwnTrack = TrackPath.Instance.GetNextTrack(OwnTrack, OwnPath);
                 if (OwnTrack)
                 {
                     OwnPosition = 0;
@@ -48,18 +50,16 @@ public abstract class MovableObject : MonoBehaviour
             }
             if (Translation < 0 && OwnPosition < 0)
             {
-                OwnTrack = Path.GetPrevTrack(OwnTrack, OwnPath);
+                OwnTrack = TrackPath.Instance.GetPrevTrack(OwnTrack, OwnPath);
                 if (OwnTrack)
                 {
                     OwnPosition = OwnTrack.trackMath.GetDistance();
                 }
-
                 else
                 {
                    IsMoving = false;
                    OwnTrack = OwnPath.First();
                    OwnPosition = 0;
-
                 }
             }
             OwnTrackCircuit = OwnTrack.TrackCircuit;           
@@ -78,10 +78,7 @@ public abstract class MovableObject : MonoBehaviour
         OwnTransform.rotation *= Quaternion.Euler(0, -90, 0);
     }
 
-    public void UpdatePath()
-    {        
-        Path.GetTrackPath(this);     
-    }
+    
 
     
 

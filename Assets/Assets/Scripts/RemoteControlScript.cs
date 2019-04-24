@@ -76,7 +76,6 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
         foreach (GameObject item in switches)
         {
             tc = item.GetComponent<TrackCircuit>();
-            tc.SetCellsLight(tc.ReturnCells(), Constants.TC_WAIT);
         }              
     }
     public void DefaultSwitches()
@@ -84,7 +83,6 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
         foreach (GameObject item in switches)
         {
             tc = item.GetComponent<TrackCircuit>();
-            tc.SetCellsLight(tc.ReturnCells(), tc.UseMode);
         }
     }
 
