@@ -4,39 +4,47 @@ using UnityEngine;
 
 public class CompositionManager : Singleton<CompositionManager>, IManageable
 {
-    public static int CompositionID = 0;
-    public Dictionary<int, Composition> CompositionsDict { get; set; }
+    public static int CompositionID { get; set; }
+    public static Dictionary<int, Composition> CompositionsDict;
     public RollingStock[] RollingStocks { get; set; }
-   
-
-    
 
     public void Init()
     {
         RollingStocks = FindObjectsOfType<RollingStock>();
+        CompositionsDict = new Dictionary<int, Composition>();  // new Dict of compositions 
+        RollingStockInitialisation();
     }
 
     public void OnStart()
     {
-        InitializeCompositionDict();
+        UpdateCompositionDictionary();
+        RollingStockStarting();
     }
 
-
-    private void InitializeCompositionDict()
+    private void RollingStockInitialisation()
     {
-        CompositionsDict = new Dictionary<int, Composition>();        
         foreach (RollingStock rs in RollingStocks)
         {
-            if (!rs.IsConnectedRight)
-            {
-                Composition c = new Composition(CompositionID);                
-                CompositionsDict.Add(CompositionID, c);
-                c.RollingStocks.Add(rs);
-                rs.CompositionNumber = CompositionID;
-                //print("CompositionID " + CompositionID);
-                CompositionID++;
-
-            }
+            rs.Init();
         }
     }
+
+    private void RollingStockStarting()
+    {
+        foreach (RollingStock rs in RollingStocks)
+        {
+            rs.OnStart();
+        }
+    }
+
+
+    private void UpdateCompositionDictionary()
+    {
+        if (CompositionsDict.Count > 0)
+            CompositionsDict.Clear();
+        CompositionID = 0;
+        EventManager.OnCompositionChanged();       
+    }
+
+   
 }

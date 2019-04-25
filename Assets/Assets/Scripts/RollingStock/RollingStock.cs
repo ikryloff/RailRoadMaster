@@ -4,12 +4,12 @@ using BansheeGz.BGSpline.Components;
 using System.Linq;
 using System;
 
-public class RollingStock : MovableObject
+public class RollingStock : MovableObject, IManageable
 {
     public float PositionInPath { get; set; }
 
     private RollingStock rollingStock;
-    private Rigidbody rollingStockRB;
+
     [SerializeField]
     private TrackPathUnit thisRSTrack;
     public string Number { get; set; }   
@@ -18,6 +18,7 @@ public class RollingStock : MovableObject
     private Coupler activeCoupler;
     private Coupler passiveCoupler;
     private Coupler connectedToPassive; 
+
     [SerializeField]
     public float breakeForce;
 
@@ -30,21 +31,22 @@ public class RollingStock : MovableObject
     public float acceleration;
     public float movingSpeed;
     public float pathLength;
-    TrackPath trackPath;
+    
 
-    public Bogey[] bogeys;
-    public Bogey bogeyA;
-    public Bogey bogeyB;
-    Transform bogeyTransformA;
-    Transform bogeyTransformB;
-    Transform rsTransform;
+    private Bogey[] bogeys;
+    private Bogey bogeyA;
+    private Bogey bogeyB;
+    private Transform bogeyTransformA;
+    private Transform bogeyTransformB;
+    public RollingStock LeftCar { get; set; }
+    public RollingStock RightCar { get; set; }
     public RollingStock rightCarToConnect;
     public RollingStock leftCarToConnect;
-    
-    private float angle;
-    private Vector3 dir;
 
-    
+    Vector3 dir;
+    float angle;
+
+
     public float distanceToRightCar;
     public float distanceToLeftCar;
 
@@ -58,14 +60,15 @@ public class RollingStock : MovableObject
 
     public static int test;
 
-    private void Awake()
+ 
+    public void Init()
     {
         EventManager.onPathChanged += UpdatePath;
+        EventManager.onCompositionChanged += UpdateCarComposition;
         OwnTrack = thisRSTrack;
         OwnEngine = GetComponent<Engine>();
-        rsTransform = GetComponent<Transform>();                
         OwnPosition = rsPosition;
-        
+
         // set couplers to RS
         SetCouplers();
         // set bogeys to RS
@@ -73,30 +76,26 @@ public class RollingStock : MovableObject
         OwnTrackCircuit = OwnTrack.TrackCircuit;
 
         IsConnectedRight = false;
-        
     }
 
-   
-    private void Start()
+    public void OnStart()
     {
         UpdatePath();
         distanceToRightCar = 999999;
         distanceToLeftCar = 999999;
         rollingStock = GetComponent<RollingStock>();
-        rollingStockRB = GetComponent<Rigidbody>();        
         ActiveCoupler = transform.GetChild(0).GetComponent<Coupler>();
         PassiveCoupler = transform.GetChild(1).GetComponent<Coupler>();
-        Brakes = true;        
+        Brakes = true;
 
         acceleration = 0;
         IsMoving = true;
-        
+
         CalcPositionInPath();
-       
-        
-        
     }
 
+   
+   
     void Update()
     {        
         MoveByPath();
@@ -111,8 +110,47 @@ public class RollingStock : MovableObject
         TrackPath.Instance.GetTrackPath(this);
         bogeyA.OwnPath = OwnPath;
         bogeyB.OwnPath = OwnPath;
-        temp++;
+        temp++;                     // for debug
         print(temp);
+    }
+
+    public void UpdateCarComposition()
+    {
+        // if car not connected from right
+        if (!IsConnectedRight)  
+        {
+            // make new composition
+            Composition composition = new Composition(CompositionManager.CompositionID);                      
+            
+            // add composition in Dict
+            CompositionManager.CompositionsDict.Add(CompositionManager.CompositionID, composition);
+            // add rs in composition 
+            AddRSInComposition(this, composition, CompositionManager.CompositionID);
+            // if there ani connected to left cars
+            if (LeftCar)                                                                             
+            {
+                // temp car
+                RollingStock conLeft = LeftCar;
+                // add rs in composition
+                AddRSInComposition(conLeft, composition, CompositionManager.CompositionID);                    
+
+                while (conLeft.LeftCar != null)
+                {
+                    conLeft = conLeft.LeftCar;
+                    AddRSInComposition(conLeft, composition, CompositionManager.CompositionID);
+
+                }
+            }
+            //increase composition ID
+            CompositionManager.CompositionID++;
+
+        }
+    }
+
+    private void AddRSInComposition(RollingStock rs, Composition composition, int compositionID)
+    {
+        composition.RollingStocks.Add(rs);
+        rs.CompositionNumber = compositionID;
     }
 
     public void CheckConnectionToCar()
@@ -208,7 +246,7 @@ public class RollingStock : MovableObject
     }
    
     
-
+    // Get this car position in path
     public void CalcPositionInPath()
     {
         if (OwnPath != null)
@@ -222,9 +260,7 @@ public class RollingStock : MovableObject
                     break;
                 }
                 else
-                {
                     PositionInPath += item.trackMath.GetDistance();
-                }
             }
         }
     }
@@ -232,16 +268,10 @@ public class RollingStock : MovableObject
     private void SetBogeys()
     {
         bogeys = GetComponentsInChildren<Bogey>();
-        if (bogeys[0].transform.position.x < bogeys[1].transform.position.x)
-        {
-            bogeyA = bogeys[0];
-            bogeyB = bogeys[1];
-        }
-        else
-        {
-            bogeyA = bogeys[1];
-            bogeyB = bogeys[0];
-        }
+
+        bogeyA = bogeys[0].transform.position.x < bogeys[1].transform.position.x ? bogeys[0] : bogeys[1];
+        bogeyB = bogeyA == bogeys[0] ? bogeys[1] : bogeys[0];
+        
         bogeyTransformA = bogeyA.GetComponent<Transform>();
         bogeyTransformB = bogeyB.GetComponent<Transform>();
     }

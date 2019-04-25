@@ -7,6 +7,7 @@ public class EventManager : Singleton<EventManager> {
 
     public delegate void EventDelegate();
     public static EventDelegate onPathChanged;
+    public static EventDelegate onCompositionChanged;
 
     public static void PathChanged()
     {
@@ -14,4 +15,9 @@ public class EventManager : Singleton<EventManager> {
             onPathChanged();
     }
 
+    public static void OnCompositionChanged()
+    {
+        if (onCompositionChanged != null)
+            onCompositionChanged();
+    }
 }

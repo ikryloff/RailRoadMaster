@@ -39,7 +39,7 @@ public abstract class MovableObject : MonoBehaviour
                 OwnTrack = TrackPath.Instance.GetNextTrack(OwnTrack, OwnPath);
                 if (OwnTrack)
                 {
-                    OwnPosition = 0;
+                    OwnPosition = Translation;
                 }
                 else
                 {
@@ -53,7 +53,7 @@ public abstract class MovableObject : MonoBehaviour
                 OwnTrack = TrackPath.Instance.GetPrevTrack(OwnTrack, OwnPath);
                 if (OwnTrack)
                 {
-                    OwnPosition = OwnTrack.trackMath.GetDistance();
+                    OwnPosition = OwnTrack.trackMath.GetDistance() + Translation;
                 }
                 else
                 {
