@@ -42,23 +42,7 @@ public class Engine : MonoBehaviour
     [SerializeField]
     float breakeForce;
 
-    [SerializeField]
-    private string startCompositionNumber;
-
-    private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
-    [SerializeField]
-    private bool isEngineGoesAhead;
-    [SerializeField]
-    private bool isEngineMovesDistance;
-
-    [SerializeField]
-    private bool isEngineCanMove;
-    private string report;
-    [SerializeField]
-    TrafficLight tlForward;
-    [SerializeField]
-    TrafficLight tlBackward;
-    public int movingDirection;
+   
     int speed;
     public float acceleration;
     public TrackPath trackPath;
@@ -76,6 +60,7 @@ public class Engine : MonoBehaviour
 
         acceleration = 0;
     }
+
     public void MoveEngine()
     {
         if (Math.Abs(speed) == maxSpeed)

@@ -27,16 +27,13 @@ public class Bogey : MovableObject
         OwnPosition = rollingStock.OwnPosition + offset;
         OwnPath = rollingStock.OwnPath;
         OwnTrack = rollingStock.OwnTrack;        
-        OwnTrackCircuit = OwnTrack.TrackCircuit;
-       
-        
+        OwnTrackCircuit = OwnTrack.TrackCircuit;      
     }
 
     void Update()
     {
         //base class method of moving
-        MoveByPath();
-        
+        MoveByPath();        
         ImproveBogeysPosition();
 
     }

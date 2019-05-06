@@ -8,11 +8,13 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
     public static Dictionary<int, Composition> CompositionsDict;
     public RollingStock[] RollingStocks { get; set; }
     public RSConnection [] RSConnections { get; set; }
+    public RSComposition [] RSCompositions { get; set; }
 
     public void Init()
     {
         RollingStocks = FindObjectsOfType<RollingStock>();
         RSConnections = FindObjectsOfType<RSConnection>();
+        RSCompositions = FindObjectsOfType<RSComposition> ();
         CompositionsDict = new Dictionary<int, Composition>();  // new Dict of compositions 
         RollingStockInitialisation();
     }
@@ -29,10 +31,7 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         {
             rs.Init();
         }
-        foreach ( RSConnection rs in RSConnections )
-        {
-            rs.Init ();
-        }
+        
     }
 
     private void RollingStockStarting()

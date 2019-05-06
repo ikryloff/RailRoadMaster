@@ -4,13 +4,11 @@ public class Composition {
 
 	public int Number { get; set; }
 
-    public List<RSConnection> RSConnections { get; set; }
-
-    
+    public List<RSComposition> compositions { get; set; }
 
     public Composition(int number)
     {
-        RSConnections = new List<RSConnection>();
+        compositions = new List<RSComposition> ();
         Number = number;
     }
 

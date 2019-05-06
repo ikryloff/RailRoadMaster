@@ -15,7 +15,8 @@ public class RollingStock : MovableObject, IManageable
 
     [SerializeField]
     public float breakeForce;
-    public RSConnection rSConnection;
+    public RSConnection RSConnection;
+    public RSComposition RSComposition;
      
     [SerializeField]
     private float rsPosition;
@@ -44,8 +45,10 @@ public class RollingStock : MovableObject, IManageable
         OwnTrack = thisRSTrack;
         OwnEngine = GetComponent<Engine>();
         OwnPosition = rsPosition;
-        rSConnection = gameObject.GetComponent<RSConnection> ();
-
+        RSConnection = gameObject.GetComponent<RSConnection> ();
+        RSConnection.Init ();
+        RSComposition = gameObject.GetComponent<RSComposition> ();
+        RSComposition.Init ();
         // set bogeys to RS
         SetBogeys ();
         OwnTrackCircuit = OwnTrack.TrackCircuit;
@@ -61,7 +64,7 @@ public class RollingStock : MovableObject, IManageable
           
     void Update()
     {        
-        MoveByPath(); 
+        MoveByPath();
     }
 
     public void UpdatePath()
@@ -82,22 +85,23 @@ public class RollingStock : MovableObject, IManageable
        
     }
 
-    public void CalcPositionInPath()
-    {
+    public float GetPositionInPath()
+    {        
         if ( OwnPath != null )
         {
-            PositionInPath = 0;
+            float tempPosition = 0;
             foreach ( TrackPathUnit item in OwnPath )
             {
                 if ( item == OwnTrack )
                 {
-                    PositionInPath += OwnPosition;
-                    break;
+                    tempPosition += OwnPosition;
+                    return tempPosition;
                 }
                 else
-                    PositionInPath += item.PathLenght;
+                    tempPosition += item.PathLenght;
             }
         }
+        return -1;
     }
 
     private void SetBogeys()
@@ -118,6 +122,8 @@ public class RollingStock : MovableObject, IManageable
         OwnTransform.rotation = Quaternion.Euler(0, angle, 0);
         OwnTransform.rotation *= Quaternion.Euler(0, -90, 0);
     }
+
+    
 
 
 }
