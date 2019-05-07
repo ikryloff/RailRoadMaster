@@ -8,18 +8,7 @@ using UnityEngine.UI;
 
 public class Route : Singleton<Route> {
 
-    private RouteObject route;
-    private List <TrackCircuit> trackCircuits;
-    public Engine engine;
-    private TrackCircuit startTrack;
-    private TrackCircuit occupiedTrack;
-    private TrackCircuit lastRouteTrackForward;
-    private TrackCircuit lastRouteTrackBackward;
-    private Switch[] switches;
-    private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
-    IEnumerable<TrackCircuit> fullPath;
-    public List<TrackCircuit> fullTCPath;
-    private bool isRoute;
+    
     private string routeName;
     [SerializeField]
     private Text lightText;
@@ -34,17 +23,6 @@ public class Route : Singleton<Route> {
     public List<string> Routes = new List<string>();
 
 
-
-
-    private void Awake()
-    {
-       
-
-    }
-    void Start()
-    {
-        
-    }
 
     private void TestRoute()
     {
@@ -72,16 +50,11 @@ public class Route : Singleton<Route> {
 
     private void Update()
     {
-        //CheckRoutePresense();
         TestRoute ();
     }
 
 
 
-    /// Make routes
-    /// 
-
-    /// Make routes manager
     public void MakeRoute(TrafficLight startLight, TrafficLight endLight)
     {
 
@@ -102,81 +75,5 @@ public class Route : Singleton<Route> {
     }
 
 
-
-
-
-
-    public void RouteDirection(Switch[] arr, string direction)
-    {
-       if(arr != null)
-        {
-            foreach (Switch sw in arr)
-            {
-                if (direction == Constants.DIR_STR)
-                {
-                    //sw.SetDirectionStraight();                    
-                }
-                else
-                {
-                    //sw.SetDirectionTurn();                   
-                }                
-            }
-        }
-    }
-
-    
-
-    public IEnumerable<TrackCircuit> FullPath
-    {
-        get
-        {
-            return fullPath;
-        }
-
-        set
-        {
-            fullPath = value;
-        }
-    }
-
-   
-    public TrackCircuit OccupiedTrack
-    {
-        get
-        {
-            return occupiedTrack;
-        }
-
-        set
-        {
-            occupiedTrack = value;
-        }
-    }
-
-    public TrackCircuit LastRouteTrackForward
-    {
-        get
-        {
-            return lastRouteTrackForward;
-        }
-
-        set
-        {
-            lastRouteTrackForward = value;
-        }
-    }
-
-    public TrackCircuit LastRouteTrackBackward
-    {
-        get
-        {
-            return lastRouteTrackBackward;
-        }
-
-        set
-        {
-            lastRouteTrackBackward = value;
-        }
-    }
 }
 

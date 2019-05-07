@@ -6,6 +6,8 @@
     public static EventDelegate onPathUpdated;
     public static EventDelegate onCompositionChanged;
     public static EventDelegate onTrainSignalChanged;
+    public static EventDelegate onPause;
+    public static EventDelegate offPause;
 
 
     public static void PathChanged()
@@ -32,4 +34,15 @@
             onTrainSignalChanged ();
     }
 
+    public static void PauseOn()
+    {
+        if ( onPause != null )
+            onPause ();
+    }
+
+    public static void PauseOff()
+    {
+        if ( offPause != null )
+            offPause ();
+    }
 }

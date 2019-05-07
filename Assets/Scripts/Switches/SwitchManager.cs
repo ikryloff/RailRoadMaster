@@ -33,9 +33,10 @@ public class SwitchManager : Singleton<SwitchManager>, IManageable
     public void Init()
     {
         Switches = FindObjectsOfType<Switch>();
-        SwitchesInitilisation();
+        indicators = GameObject.FindGameObjectsWithTag ("Indication");
+        SwitchesInitilisation ();
         trafficLightsManager = GameObject.Find("TrafficLightsManager").GetComponent<TrafficLightsManager>();
-        indicators = GameObject.FindGameObjectsWithTag("Indication");
+        
     }
 
     private void SwitchesInitilisation()
@@ -114,6 +115,6 @@ public class SwitchManager : Singleton<SwitchManager>, IManageable
 
     public void OnStart()
     {
-        throw new System.NotImplementedException();
+        
     }
 }

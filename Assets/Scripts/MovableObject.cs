@@ -23,6 +23,7 @@ public abstract class MovableObject : MonoBehaviour
     public static int temp = 0;
 
     
+    
 
     public void MoveByPath()
     {
@@ -104,7 +105,6 @@ public abstract class MovableObject : MonoBehaviour
 
     
 
-    
 
 }
 

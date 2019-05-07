@@ -115,8 +115,7 @@ public class RollingStock : MovableObject, IManageable
 
     public override void MoveAndRotate()
     {
-        Vector3 tangent;
-        OwnTransform.position = OwnTrack.trackMath.CalcPositionAndTangentByDistance(OwnPosition, out tangent);
+        OwnTransform.position = bogeyLeftTransform.position + (bogeyRightTransform.position - bogeyLeftTransform.position) / 2;
         dir = bogeyRightTransform.position - bogeyLeftTransform.position;
         angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
         OwnTransform.rotation = Quaternion.Euler(0, angle, 0);
