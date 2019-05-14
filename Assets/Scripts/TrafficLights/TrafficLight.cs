@@ -1,6 +1,4 @@
-﻿using BansheeGz.BGSpline.Components;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TrafficLight : MonoBehaviour
 {
@@ -19,11 +17,8 @@ public class TrafficLight : MonoBehaviour
 
     public bool IsClosedForShunting { get; set; }
     public bool IsClosedForTrains { get; set; }
-    public float distance;
     const float flashTime = 1f;
     protected Animator yellowSignalFlashing;
-
-    public BGCcMath mathTemp;
 
     public virtual void LightOn( RouteItem route ) { }
     public virtual void LightOff() { }

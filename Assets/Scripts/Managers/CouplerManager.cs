@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CouplerManager : Singleton<CouplerManager>
 {
     [SerializeField]
     private Texture2D cursor;
-    private Coupler coupler;
+    private CouplerLever coupler;
     private CompositionManager cm;
     public GameObject[] couplerPictures;
     private bool isCouplerModeIsOn;
@@ -25,11 +26,40 @@ public class CouplerManager : Singleton<CouplerManager>
     private void Awake()
     {
         cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
-        couplerPictures = GameObject.FindGameObjectsWithTag("CouplerMode");
+
         IsCouplerModeIsOn = true;
         
     }
 
-    
-   
+    private void UncoupleListener()
+    {
+        if ( !EventSystem.current.IsPointerOverGameObject () )
+        {
+            Vector3 click = Vector3.one;
+
+            if ( Input.GetMouseButtonDown (0) )
+            {
+                Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+                RaycastHit hit;
+                if ( Physics.Raycast (ray, out hit) )
+                {
+                    click = hit.point;
+                }
+
+                print("hit " + hit.collider.name);
+                if ( hit.collider != null && hit.collider.tag == "ActiveCoupler" )
+                {
+                    coupler = hit.collider.GetComponent<CouplerLever>();
+                    coupler.Uncouple ();
+                }
+            }
+        }       
+    }
+
+    private void Update()
+    {
+        UncoupleListener ();
+    }
+
+
 }

@@ -20,15 +20,12 @@ public class RollingStock : MovableObject, IManageable
      
     [SerializeField]
     private float rsPosition;
-
+    public bool IsEngine { get; private set; }
     public bool isDirectionChanged;    
 
     public float acceleration;
     public float movingSpeed;
     public float pathLength;
-
-   
-
     private Bogey[] bogeys;
     public Bogey bogeyLeft { get; set; }
     public Bogey bogeyRight { get; set; }
@@ -44,7 +41,9 @@ public class RollingStock : MovableObject, IManageable
         OwnTransform = gameObject.GetComponent<Transform> ();
         OwnTrack = thisRSTrack;
         OwnEngine = GetComponent<Engine>();
+        if ( OwnEngine ) IsEngine = true;
         OwnPosition = rsPosition;
+        OwnRun = 0;
         RSConnection = gameObject.GetComponent<RSConnection> ();
         RSConnection.Init ();
         RSComposition = gameObject.GetComponent<RSComposition> ();

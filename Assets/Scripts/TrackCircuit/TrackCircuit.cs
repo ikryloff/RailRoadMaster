@@ -15,9 +15,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
     [SerializeField]
     private string[] trackLightsNames;
     [SerializeField]
-    private TrafficLight[] trackLights;
-    [SerializeField]    
-    private TrafficLightsManager trafficLightsManager;
+    private TrafficLight[] trackLights;    
     public Switch SwitchTrack { get; set; }
     public Route route;
     public RollingStock engineRS;
@@ -88,11 +86,6 @@ public class TrackCircuit : MonoBehaviour, IManageable
         
     }
    
-
-    
-
-
-    
     public void TrackCircuitColor()
     {               
 
@@ -366,7 +359,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
 
         for (int i = 0; i < TrackLightsNames.Length; i++)
         {
-            TrackLights[i] = trafficLightsManager.GetTrafficLightByName(TrackLightsNames[i]);            
+            TrackLights[i] = TrafficLightsManager.Instance.GetTrafficLightByName(TrackLightsNames[i]);            
         }        
     }
 

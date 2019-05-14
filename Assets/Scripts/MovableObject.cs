@@ -6,15 +6,12 @@ public abstract class MovableObject : MonoBehaviour
 {
 
     //Engine that moves Movable objects
-    public Engine OwnEngine { get; set; }
-
-   
+    public Engine OwnEngine { get; set; }   
     public TrackCircuit OwnTrackCircuit { get; set; }
-
     public float OwnPosition { get; set; }
+    public float OwnRun { get; set; }
     public List<TrackPathUnit> OwnPath { get; set; }
     public TrackPathUnit OwnTrack { get; set; }
-
     public Transform OwnTransform { get; set; }
     public bool IsMoving { get; set; }
     // Moving distance per frame
@@ -35,7 +32,8 @@ public abstract class MovableObject : MonoBehaviour
             
             // Moving
             OwnPosition += Translation;
-            
+            // Run of Movable Object
+            OwnRun += Translation;
             //Set presense to OwnTC
             OwnTrackCircuit.CarPresenceOn();
 

@@ -151,14 +151,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
     {                
         tempBtns = Resources.FindObjectsOfTypeAll<Button>();
         TrafficlightsButtons = new List<Button>();
-        for (int i = 0; i < tempBtns.Length; i++)
-        {
-            if (tempBtns[i].tag == "TrafficLightsButton")
-            {                
-                TrafficlightsButtons.Add(tempBtns[i]);
-            }
-
-        }
+       
 
         ListOfScriptedTLButtons = new List<TrafficLightBtnScript>();
         for (int i = 0; i < TrafficlightsButtons.Count; i++)

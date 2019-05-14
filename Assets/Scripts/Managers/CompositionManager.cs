@@ -21,7 +21,7 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
 
     public void OnStart()
     {
-        UpdateCompositionDictionary();
+        UpdateCompositions();
         RollingStockStarting();
     }
 
@@ -47,7 +47,7 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
     }
 
 
-    private void UpdateCompositionDictionary()
+    public void UpdateCompositions()
     {
         if (CompositionsDict.Count > 0)
             CompositionsDict.Clear();
@@ -55,5 +55,44 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         EventManager.OnCompositionChanged();       
     }
 
-   
+    public static void UpdateCarComposition(RollingStock rollingStock)
+    {
+        // make new composition
+        Composition composition = new Composition (CompositionManager.CompositionID);
+        //find Engine in this Car
+        if ( rollingStock.IsEngine )
+            composition.CompEngine = rollingStock.OwnEngine;
+        else
+            composition.CompEngine = null;
+        // add composition in Dict
+        CompositionsDict.Add (CompositionID, composition);
+        // add rs in composition 
+        AddRSInComposition (rollingStock.RSComposition, composition, CompositionID);
+        // temp car from left
+        RSConnection conLeft = rollingStock.RSConnection.LeftCar;
+        // if there any connected to left cars rs in composition
+        while ( conLeft != null )
+        {
+            AddRSInComposition (conLeft.RSComposition, composition, CompositionID);
+            if ( conLeft.RollingStock.IsEngine )
+                composition.CompEngine = conLeft.RollingStock.OwnEngine;
+            else
+                composition.CompEngine = null;
+            conLeft = conLeft.LeftCar;
+        }
+        //set quantity of cars in composition
+        composition.Quantity = composition.Cars.Count;
+        // set engine to all cars of composition
+        composition.SetEngineToAllCars ();
+        print ("ID:" + CompositionID + "  Cars: " + composition.Quantity);
+        //increase composition ID
+        CompositionID++;
+    }
+
+    public static void AddRSInComposition( RSComposition rs, Composition composition, int compositionID )
+    {
+        composition.Cars.Insert (0, rs);
+        rs.CompositionNumber = compositionID;
+    }
+
 }
