@@ -74,10 +74,14 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         while ( conLeft != null )
         {
             AddRSInComposition (conLeft.RSComposition, composition, CompositionID);
-            if ( conLeft.RollingStock.IsEngine )
-                composition.CompEngine = conLeft.RollingStock.OwnEngine;
-            else
-                composition.CompEngine = null;
+            if ( !composition.CompEngine )
+            {
+                if ( conLeft.RollingStock.IsEngine )
+                    composition.CompEngine = conLeft.RollingStock.OwnEngine;
+                else
+                    composition.CompEngine = null;
+            }
+            
             conLeft = conLeft.LeftCar;
         }
         //set quantity of cars in composition

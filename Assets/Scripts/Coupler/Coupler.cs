@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -32,10 +33,22 @@ public class Coupler : MonoBehaviour
         if(CouplerLever)
             CouplerLeverObject.SetActive (false);
     }
+
     public void SetLeverActive()
     {
         if ( CouplerLever )
             CouplerLeverObject.SetActive (true);
     }
 
+    public void MakeCouplerConnection()
+    {
+        IsInConnection = true;
+        SetLeverActive ();
+    }
+
+    public void DestroyCouplerConnection()
+    {
+        IsInConnection = false;
+        SetLeverUnactive ();
+    }
 }

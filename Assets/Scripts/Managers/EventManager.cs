@@ -8,7 +8,14 @@
     public static EventDelegate onTrainSignalChanged;
     public static EventDelegate onPause;
     public static EventDelegate offPause;
+    public static EventDelegate oNGameOver;
 
+
+    public static void GameOver()
+    {
+        if ( oNGameOver != null )
+            oNGameOver ();
+    }
 
     public static void PathChanged()
     {

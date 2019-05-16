@@ -625,3 +625,61 @@ Assets/Assets/Physics/Firm.physicsMaterial2D
 Assets/Assets/Physics/Firm.physicsMaterial2D
 Assets/Assets/Physics/NoFriction.physicsMaterial2D
 Assets/Assets/Physics/NoFriction3D.physicMaterial
+*.txt
+*.ttf
+Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01_UGUI.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark02.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark03.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark04.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/CameraController.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/ChatController.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/EnvMapAnimator.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/ObjectSpin.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/ShaderPropAnimator.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/SimpleScript.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/SkewTextExample.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TeleType.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TextConsoleSimulator.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TextMeshProFloatingText.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TextMeshSpawner.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_DigitValidator.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_ExampleScript_01.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_FrameRateCounter.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_PhoneNumberValidator.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextEventCheck.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextEventHandler.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextInfoDebugTool.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextSelector_A.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextSelector_B.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_UiFrameRateCounter.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/TMPro_InstructionOverlay.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/VertexColorCycler.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/VertexJitter.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/VertexShakeA.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/VertexShakeB.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/VertexZoom.cs
+Assets/TextMesh Pro/Examples & Extras/Scripts/WarpTextExample.cs
+Assets/TextMesh Pro/Examples & Extras/Sprites/DropCap Numbers.psd
+Assets/TextMesh Pro/Examples & Extras/Textures/Brushed Metal 3.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Engraved Wall Normal.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Engraved Wall.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Floor Cement.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Floor Tiles 1 - diffuse.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Floor Tiles 1 - normal.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Fruit Jelly (B&W).jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Gradient Diagonal (Color).jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Gradient Horizontal (Color).jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Gradient Vertical (Color).jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Mask Zig-n-Zag.psd
+Assets/TextMesh Pro/Examples & Extras/Textures/Sand Normal Map.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Small Crate_diffuse.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Small Crate_normal.jpg
+Assets/TextMesh Pro/Examples & Extras/Textures/Wipe Pattern - Circle.psd
+Assets/TextMesh Pro/Examples & Extras/Textures/Wipe Pattern - Diagonal.psd
+Assets/TextMesh Pro/Examples & Extras/Textures/Wipe Pattern - Radial Double.psd
+Assets/TextMesh Pro/Examples & Extras/Textures/Wipe Pattern - Radial Quad.psd
+Assets/TextMesh Pro/Resources/Shaders/TMPro.cginc
+Assets/TextMesh Pro/Resources/Shaders/TMPro_Properties.cginc
+Assets/TextMesh Pro/Resources/Shaders/TMPro_Surface.cginc
+Assets/TextMesh Pro/Sprites/EmojiOne.json
