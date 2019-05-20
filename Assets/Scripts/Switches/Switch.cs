@@ -26,7 +26,9 @@ public class Switch : MonoBehaviour, IManageable {
     public void Init()
     {
         switchCurve = transform.GetComponentInChildren<SwitchCurve>();
+        switchCurve.Init ();
         switchStraightPart = transform.GetComponentInChildren<SwitchStraightPart>();
+        switchStraightPart.Init ();
         trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
         animator = transform.GetComponentInChildren<Animator>();
         SetDirectionStraight();
@@ -58,8 +60,8 @@ public class Switch : MonoBehaviour, IManageable {
     {        
         if (animator)
             animator.SetBool("TurnSwitch", false);
-        switchCurve.Hide();
-        switchStraightPart.Show();        
+        switchCurve.Delete();
+        switchStraightPart.Install();        
         IsSwitchStraight = true;        
         
     }
@@ -68,8 +70,8 @@ public class Switch : MonoBehaviour, IManageable {
         
         if (animator)
             animator.SetBool("TurnSwitch", true);
-        switchStraightPart.Hide();
-        switchCurve.Show();        
+        switchStraightPart.Delete();
+        switchCurve.Install();        
         IsSwitchStraight = false;        
     }
 

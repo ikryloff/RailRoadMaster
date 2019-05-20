@@ -10,8 +10,11 @@ public class Composition {
 
     public List<RSComposition> Cars { get; set; }
 
+    public RollingStock MainCar { get; set; }
+        
     public Composition(int number)
     {
+        EventManager.onPathUpdated += SetPathToAllCars;
         Cars = new List<RSComposition> ();
         Number = number;
     }
@@ -19,18 +22,15 @@ public class Composition {
     {
         foreach ( RSComposition car in Cars )
         {
-            if ( CompEngine )
-            {
-                car.RollingStock.OwnEngine = CompEngine;
-                car.RollingStock.bogeyLeft.OwnEngine = CompEngine;
-                car.RollingStock.bogeyRight.OwnEngine = CompEngine;
-            }
-            else
-            {
-                car.RollingStock.OwnEngine = null;
-                car.RollingStock.bogeyLeft.OwnEngine = null;
-                car.RollingStock.bogeyRight.OwnEngine = null;
-            }
+            car.RollingStock.SetEngineToRS (CompEngine);
+        }
+    }
+
+    public void SetPathToAllCars()
+    {
+        foreach ( RSComposition car in Cars )
+        {
+            car.RollingStock.OwnPath = MainCar.OwnPath;
         }
 
     }

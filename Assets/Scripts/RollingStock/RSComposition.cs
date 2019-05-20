@@ -6,6 +6,8 @@ public class RSComposition : MonoBehaviour, IManageable
     public RSConnection RSConnection { get; set; }
     public Engine Engine { get; set; }
     public RollingStock RollingStock { get; private set; }
+    public bool IsMainCar { get; private set; }
+    public Composition CarComposition { get; set; }
 
     public void Init()
     {
@@ -24,8 +26,10 @@ public class RSComposition : MonoBehaviour, IManageable
         // if car not connected from right
         if ( !RSConnection.IsConnectedRight )
         {
+            IsMainCar = true;
             CompositionManager.UpdateCarComposition (RollingStock);
         }
+        else IsMainCar = false;
     }
 
     

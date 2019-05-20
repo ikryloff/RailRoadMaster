@@ -46,7 +46,6 @@ public class CouplerManager : Singleton<CouplerManager>
                     click = hit.point;
                 }
 
-                print("hit " + hit.collider.name);
                 if ( hit.collider != null && hit.collider.tag == "ActiveCoupler" )
                 {
                     coupler = hit.collider.GetComponent<CouplerLever>();

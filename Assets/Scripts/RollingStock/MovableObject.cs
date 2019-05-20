@@ -28,7 +28,7 @@ public abstract class MovableObject : MonoBehaviour
         if (OwnTrack)
         {
             // if engine attached move as engine, else 0 speed 
-            Translation = OwnEngine ? OwnEngine.acceleration : 0; 
+            Translation = OwnEngine ? OwnEngine.Acceleration : 0; 
             
             // Moving
             OwnPosition += Translation;

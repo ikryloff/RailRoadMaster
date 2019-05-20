@@ -1,13 +1,28 @@
 ﻿using UnityEngine;
-public abstract class SwitchParts : MonoBehaviour {
-       
-    public void Hide()
+public abstract class SwitchParts : MonoBehaviour, IManageable
+{
+    IndicatorPath indicator;
+
+    public void Delete()
     {
-        gameObject.SetActive(false);
+        gameObject.SetActive (false);
     }
 
-    public void Show()
+    public void Install()
     {
-        gameObject.SetActive(true);
+        gameObject.SetActive (true);
+        indicator.Show (UIManager.Instance.IsIndicate);
+    }
+
+   
+
+    public void Init()
+    {
+        indicator = GetComponentInChildren<IndicatorPath> ();
+    }
+
+    public void OnStart()
+    {
+        indicator.Show (UIManager.Instance.IsIndicate);
     }
 }

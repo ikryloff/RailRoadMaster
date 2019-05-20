@@ -68,9 +68,8 @@ public class RollingStock : MovableObject, IManageable
 
     public void UpdatePath()
     {
-        TrackPath.Instance.GetTrackPath(this);
-        bogeyLeft.OwnPath = OwnPath;
-        bogeyRight.OwnPath = OwnPath;        
+        if(RSComposition.IsMainCar)
+            TrackPath.Instance.GetTrackPath(this);              
     }
    
     // forced changing direction
@@ -121,7 +120,21 @@ public class RollingStock : MovableObject, IManageable
         OwnTransform.rotation *= Quaternion.Euler(0, -90, 0);
     }
 
-    
+    public void SetPathToRS(List<TrackPathUnit> path)
+    {
+        OwnPath = path;
+        bogeyLeft.OwnPath = path;
+        bogeyRight.OwnPath = path;
+    }
+
+    public void SetEngineToRS( Engine engine )
+    {
+        OwnEngine = engine;
+        bogeyLeft.OwnEngine = engine;
+        bogeyRight.OwnEngine = engine;
+    }
+
+
 
 
 }

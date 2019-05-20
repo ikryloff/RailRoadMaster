@@ -1,4 +1,5 @@
 ﻿using BansheeGz.BGSpline.Components;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,6 @@ public class TrackCircuit : MonoBehaviour, IManageable
     public bool HasCarPresence { get; set; }
     private int useMode;
    
-    public SpriteRenderer[] indicator;
-
     [SerializeField]
     private string[] trackLightsNames;
     [SerializeField]
@@ -25,23 +24,35 @@ public class TrackCircuit : MonoBehaviour, IManageable
     public Color32 colorTransparent;
     public Color32 colorInUse;
 
-    public bool isInRoute;    
-    public bool isInPath;
+    public bool IsInRoute { get; set; }
+    public bool IsInPath { get; set; }
     public bool isInUse;
     public Engine engine;
     public TrackPathUnit [] paths;
+    public IndicatorPath [] Indicators { get; set; }
 
 
     public void Init()
     {
         paths = transform.GetComponentsInChildren<TrackPathUnit>();
-        SetTCToPaths();
+        Indicators = transform.GetComponentsInChildren<IndicatorPath> ();
+        SetTCToPaths ();
+        SetTCToIndicators ();
         SwitchTrack = GetComponentInParent<Switch>();
-        indicator = GetComponentsInChildren<SpriteRenderer>();
     }
 
-    public void OnStart() { }
-    
+    private void SetTCToIndicators()
+    {
+        foreach ( IndicatorPath item in Indicators )
+        {
+            item.IndTrackCircuit = this;
+        }
+    }
+
+    public void OnStart()
+    {
+    }
+
     private void Start()
     {
         colorPresence = new Color32(255, 77, 77, 160);
@@ -60,7 +71,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
         foreach (TrackPathUnit item in paths)
         {
             item.TrackCircuit = this;
-        }
+        }        
     }
 
     public void CarPresenceOn()
@@ -80,85 +91,28 @@ public class TrackCircuit : MonoBehaviour, IManageable
     private void Update()
     {        
         
-        //IndicationTrackInPath(engineRS.OwnPath);
-        //TrackCircuitColor();
-        //CheckInRoute();
         
     }
    
     public void TrackCircuitColor()
     {               
 
-        if (isInPath)
-        {
-            if (isInUse)
-            {
-                if (indicator != null) //temp
-                {
-                    foreach (SpriteRenderer item in indicator)
-                    {
-                        item.color = colorInUse;
-                    }
-                }
-
-            }
-            if (isInRoute && !isInUse)
-            {
-                if (indicator != null) //temp
-                {
-                    foreach (SpriteRenderer item in indicator)
-                    {
-                        item.color = colorInRoute;
-                    }
-                }
-            }
-            if (HasCarPresence)
-            {
-                if (indicator != null) //temp
-                {
-                    foreach (SpriteRenderer item in indicator)
-                    {
-                        item.color = colorPresence;
-                    }
-                }
-
-            }
-            else if (!HasCarPresence && !isInRoute && !isInUse)
-            {
-                if (indicator != null) //temp
-                {
-                    foreach (SpriteRenderer item in indicator)
-                    {
-                        item.color = colorInPath;
-                    }
-                }
-
-            }
-        }
-        else
-        {
-            foreach (SpriteRenderer item in indicator)
-            {
-                item.color = colorTransparent;
-            }
-
-        }
-
+      
 
     }
 
     public void IndicationTrackInPath(List<TrackPathUnit> paths)
     {
-        if (SwitchManager.Instance.IsSwitchModeOn && TrackPath.Instance.TrackList != null && paths != null)
+        if ( TrackPath.Instance.TrackList != null && paths != null)
         {
             foreach (TrackPathUnit item in TrackPath.Instance.TrackList)
             {
-                if (item.isActiveAndEnabled && item.TrackCircuit.isInPath)
-                    item.TrackCircuit.isInPath = false;
+                if (item.isActiveAndEnabled && item.TrackCircuit.IsInPath)
+                    item.TrackCircuit.IsInPath = false;
             }
             foreach (TrackPathUnit item in paths)
             {
-                item.TrackCircuit.isInPath = true;
+                item.TrackCircuit.IsInPath = true;
             }
         }
     }

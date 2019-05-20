@@ -52,13 +52,15 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         if (CompositionsDict.Count > 0)
             CompositionsDict.Clear();
         CompositionID = 0;
-        EventManager.OnCompositionChanged();       
+        EventManager.CompositionChanged();       
     }
 
     public static void UpdateCarComposition(RollingStock rollingStock)
     {
-        // make new composition
-        Composition composition = new Composition (CompositionManager.CompositionID);
+         // make new composition
+        Composition composition = new Composition (CompositionID);
+        //set main car for paths
+        composition.MainCar = rollingStock;
         //find Engine in this Car
         if ( rollingStock.IsEngine )
             composition.CompEngine = rollingStock.OwnEngine;
@@ -97,6 +99,7 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
     {
         composition.Cars.Insert (0, rs);
         rs.CompositionNumber = compositionID;
+        rs.CarComposition = composition;
     }
 
 }

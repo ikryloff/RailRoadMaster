@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 public class TrackPath : Singleton<TrackPath>, IManageable
 {
@@ -10,7 +9,7 @@ public class TrackPath : Singleton<TrackPath>, IManageable
     public static int PathMade = 0;
 
     public float pathLength;
-
+    private TrackPathUnit currentTrack;
 
     public void Init()
     {
@@ -20,40 +19,29 @@ public class TrackPath : Singleton<TrackPath>, IManageable
     }
 
 
-    public void GetTrackPath( MovableObject movable )
+    public void GetTrackPath( RollingStock car )
     {
-
-        CleanAndLockPreviousPath (movable.OwnPath);
-        StartCoroutine (GetTrackPathCoroutine (movable));
-
-
+        StartCoroutine (GetTrackPathCoroutine (car));
     }
 
-    private void CleanAndLockPreviousPath( List<TrackPathUnit> ownTrackPath )
+    IEnumerator GetTrackPathCoroutine( RollingStock car )
     {
-
-        if ( ownTrackPath != null )
+        // if we change swithces in indication mode
+        if ( UIManager.Instance.IsIndicate )
         {
-
+            UIManager.Instance.TurnIndicationOff ();
+            UIManager.Instance.IsIndicate = true;
         }
-
-    }
-
-    private void UnLockPreviousPath( List<TrackPathUnit> ownTrackPath )
-    {
-
-    }
-
-    IEnumerator GetTrackPathCoroutine( MovableObject movable )
-    {
+            
         PathMade++;
+        print ("Made path# " + PathMade);
         SetEachPathClosePaths ();
-        TrackPathUnit currentTrack = movable.OwnTrack;
+        TrackPathUnit currentTrack = car.OwnTrack;
         List<TrackPathUnit> pathPrevious = new List<TrackPathUnit> ();
-        pathPrevious = movable.OwnPath;
         List<TrackPathUnit> pathOwn = new List<TrackPathUnit> ();
         TrackPathUnit tempLeft = currentTrack.LeftTrackPathUnit;
         TrackPathUnit tempRight = currentTrack.RightTrackPathUnit;
+        pathPrevious = car.OwnPath;
         pathOwn.Add (currentTrack);
 
         while ( tempLeft != null || tempRight != null )
@@ -71,14 +59,16 @@ public class TrackPath : Singleton<TrackPath>, IManageable
 
             yield return null;
         }
-        movable.OwnPath = pathOwn;
-        PathMade--;       
-        if (PathMade == 0 )
+        car.SetPathToRS (pathOwn);
+        PathMade--;
+        // if all paths of all compositions are made
+        if ( PathMade == 0 )
         {
             EventManager.PathUpdated ();
+            // if we turn swithces in indication mode
+            if( UIManager.Instance.IsIndicate )
+                UIManager.Instance.TurnIndicationOn ();         
         }
-            
-        UnLockPreviousPath (pathPrevious);
     }
 
 

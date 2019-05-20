@@ -13,7 +13,7 @@ public class WheelsRolling : MonoBehaviour {
         
     void Update () {
         if(car.OwnEngine)
-            speed = car.OwnEngine.acceleration;
+            speed = car.OwnEngine.Acceleration;
         wheel.Rotate(0, 0, -speed * 10f);
 	}
 }

@@ -46,6 +46,8 @@ public class RSConnection : MonoBehaviour, IManageable
         CouplerPointRight.MakePointConnection (otherCar);
         //Global Update all compositions
         CompositionManager.Instance.UpdateCompositions ();
+        //stops Engine after coupling
+        EventManager.CarsCoupled();
     }
 
     public void DestroyConnection()
@@ -102,7 +104,7 @@ public class RSConnection : MonoBehaviour, IManageable
             if ( RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset > 0.5 ||
                 RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset < -0.5 )
             {
-                print ("Improved  " + (RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset));
+                //print ("Improved  " + (RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset));
                 RightCar.RollingStock.OwnPosition = RollingStock.OwnPosition + rSOffset;
             }
 

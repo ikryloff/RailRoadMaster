@@ -2,19 +2,28 @@
 {
 
     public delegate void EventDelegate();
+
     public static EventDelegate onPathChanged;
     public static EventDelegate onPathUpdated;
     public static EventDelegate onCompositionChanged;
+    public static EventDelegate onCarsCoupled;
     public static EventDelegate onTrainSignalChanged;
     public static EventDelegate onPause;
     public static EventDelegate offPause;
-    public static EventDelegate oNGameOver;
+    public static EventDelegate onGameOver;
+    public static EventDelegate onIndicationStateChanged;
 
 
     public static void GameOver()
     {
-        if ( oNGameOver != null )
-            oNGameOver ();
+        if ( onGameOver != null )
+            onGameOver ();
+    }
+
+    public static void IndicationStateChanged()
+    {
+        if ( onIndicationStateChanged != null )
+            onIndicationStateChanged ();
     }
 
     public static void PathChanged()
@@ -29,10 +38,16 @@
             onPathUpdated ();
     }
 
-    public static void OnCompositionChanged()
+    public static void CompositionChanged()
     {
         if ( onCompositionChanged != null )
             onCompositionChanged ();
+    }
+
+    public static void CarsCoupled()
+    {
+        if ( onCarsCoupled != null )
+            onCarsCoupled ();
     }
 
     public static void OnTrainSignalChanged()

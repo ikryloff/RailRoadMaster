@@ -1,207 +1,120 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 
 public class Engine : MonoBehaviour
 {
-    public static int InstructionsHandler;
-
-    private Rigidbody engine;
-    public RollingStock engineRS;
-
-    
+    public int InstructionsHandler { get; set; }
+    public RollingStock EngineRS { get; private set; }
     private bool brakes = true;
-    [SerializeField]
-    private Text handlerTxt;
-    public CompositionManager cm;
-
-    public int direction;
-    private int directionInstructions;
-    public int maxSpeed;
-    private bool isDrivingByInstructionsIsOn;
     
-    public float ForPauseTempAcceleration { get; private set; }
-    int speed;
-    public float acceleration;
-    public TrackPath trackPath;
-    SwitchManager switchManager;
+    public int Direction { get; private set; }
+    public float MaxSpeed { get; private set; }
 
-    public List<TrackCircuit> tcList;
+    public float ForPauseTempAcceleration { get; private set; }
+    public int SpeedReal { get; private set; }
+    public float Acceleration { get; private set; }
+    const float accForce= 0.15f;
+    public EngineInertia Inertia { get; private set; }
+
+
     private bool isPaused;
 
     private void Awake()
     {
         EventManager.onPause += PauseMovingOn;
         EventManager.offPause += PauseMovingOff;
-        engineRS = GetComponent<RollingStock> ();
+        
+        Inertia = GetComponent<EngineInertia> ();
+        EngineRS = GetComponent<RollingStock> ();
     }
 
     void Start()
     {
-        acceleration = 0;
+        Acceleration = 0;        
     }
 
     void Update()
     {
         if ( !isPaused )
         {
-            PrintHandler ();
-            speed = (int)(engineRS.Translation * 15);
-            DriveByInstructions ();
-            MoveEngine ();
+            CalcRealSpeed ();
+            CalcMaxSpeed ();
+            MoveEngine (Time.deltaTime);
+            Inertia.AddFriction ();
         }
     }
 
-    public void MoveEngine()
+   
+
+    public void MoveEngine(float dt)
     {
-        if ( Math.Abs (speed) == maxSpeed )
-            acceleration += 0;
+        if ( Math.Abs (SpeedReal) == MaxSpeed )
+            Acceleration += 0;
         else
         {
-            if ( Math.Abs (speed) < maxSpeed )
-                acceleration += 0.1f * direction * Time.deltaTime;
-            else if ( Math.Abs (speed) > maxSpeed )
-            {
-                acceleration -= 0.5f * speed / Math.Abs (speed) * Time.deltaTime;
-            }
+            if ( Math.Abs (SpeedReal) < MaxSpeed )
+                Acceleration += (accForce - Inertia.InertiaValue * accForce) * Direction * dt;
+            else if ( Math.Abs (SpeedReal) > MaxSpeed )
+                Acceleration -= Inertia.GetBreakeForce() * GetOpositeDirection () * dt;
         }
-        if ( brakes && speed == 0 )
-        {
-            acceleration = 0;
-        }
+        if ( brakes && SpeedReal == 0 ) Acceleration = 0;
 
     }
 
-
-    public void ReleaseBrakes()
+    public int GetOpositeDirection()
     {
-        brakes = false;
-
+        return SpeedReal / Math.Abs (SpeedReal);
     }
 
-    public void EngineControllerReleaseAll()
+    public void CalcMaxSpeed()
     {
-        ReleaseBrakes ();
-    }
-
-    public void EngineControllerUseBrakes()
-    {
-        brakes = true;
-    }
-
-    public void EngineInstructionStop()
-    {
-        brakes = true;
-        direction = 0;
-        InstructionsHandler = 0;
-    }
-
-
-
-    public void EngineInstructionsForward()
-    {
-        direction = direction == -1 && direction != 0 ? -1 : 1;
-
-        ReleaseBrakes ();
-
-        if ( InstructionsHandler != 0 )
-        {
-            InstructionsHandler++;
-            if ( InstructionsHandler == 0 )
-            {
-                EngineInstructionStop ();
-
-            }
-        }
-        else
-        {
-            if ( speed >= -1 )
-            {
-                InstructionsHandler++;
-            }
-            else
-                InstructionsHandler = 0;
-            engineRS.ChangeDirection ();
-        }
-
-        if ( InstructionsHandler == 7 )
-            InstructionsHandler = 6;
-    }
-
-    public void EngineInstructionsBackwards()
-    {
-        direction = direction == 1 && direction != 0 ? 1 : -1;
-
-        ReleaseBrakes ();
-
-        if ( InstructionsHandler != 0 )
-        {
-            InstructionsHandler--;
-            if ( InstructionsHandler == 0 )
-            {
-                EngineInstructionStop ();
-
-            }
-        }
-        else
-        {
-            if ( speed <= 1 )
-            {
-                InstructionsHandler--;
-            }
-            else
-                InstructionsHandler = 0;
-            engineRS.ChangeDirection ();
-        }
-        if ( InstructionsHandler == -7 )
-            InstructionsHandler = -6;
-    }
-
-
-    public void DriveByInstructions()
-    {
+        HandlerValidation ();
+        Direction = InstructionsHandler > 0 ? 1 : -1;
 
         if ( InstructionsHandler == 0 )
         {
-            maxSpeed = 0;
-            EngineInstructionStop ();
+            MaxSpeed = 0;
+            Direction = 0;
+            brakes = true;
         }
+        else brakes = false;
 
         int absHandler = Mathf.Abs (InstructionsHandler);
-        if ( absHandler == 1 ) maxSpeed = 3;
-        if ( absHandler == 2 ) maxSpeed = 5;
-        if ( absHandler == 3 ) maxSpeed = 10;
-        if ( absHandler == 4 ) maxSpeed = 15;
-        if ( absHandler == 5 ) maxSpeed = 25;
-        if ( absHandler == 6 ) maxSpeed = 40;
-
+        if ( absHandler == 1 ) MaxSpeed = 3;
+        if ( absHandler == 2 ) MaxSpeed = 5;
+        if ( absHandler == 3 ) MaxSpeed = 10;
+        if ( absHandler == 4 ) MaxSpeed = 15;
+        if ( absHandler == 5 ) MaxSpeed = 25;
+        if ( absHandler == 6 ) MaxSpeed = 45;
     }
 
-    private void PrintHandler()
+    private void HandlerValidation()
     {
-        if ( direction > 0 )
-            handlerTxt.text = "  >>> " + Mathf.Abs (InstructionsHandler) + ">>> " + maxSpeed;
-        else if ( direction < 0 )
-            handlerTxt.text = maxSpeed + "  <<< " + Mathf.Abs (InstructionsHandler) + " <<<";
-        else
-            handlerTxt.text = "  <<< 0 >>>";
-    }
+        if ( InstructionsHandler > 6 ) InstructionsHandler = 6;
+        if ( InstructionsHandler < -6 ) InstructionsHandler = -6;
+    }  
 
     public void PauseMovingOn()
     {
-        ForPauseTempAcceleration = acceleration;
-        acceleration = 0;
+        ForPauseTempAcceleration = Acceleration;
+        Acceleration = 0;
         isPaused = true;
     }
 
     public void PauseMovingOff()
     {
-        acceleration = ForPauseTempAcceleration;
+        Acceleration = ForPauseTempAcceleration;
         isPaused = false;
     }
 
+    private void CalcRealSpeed()
+    {
+        SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 10);
+    }
 
+   
 
 }

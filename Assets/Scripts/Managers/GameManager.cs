@@ -1,29 +1,39 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager> {
 
     public GameObject gameOver;
-    public bool isGameOn = true;
+    private bool isGameOn = true;
+    private bool isPaused = false;
+    
 
     private void Awake()
     {
         gameOver.SetActive (false);
-        EventManager.oNGameOver += GameOver;
+        EventManager.onGameOver += GameOver;
+        
+        
     }
 
     private void Update()
     {
         if ( Input.GetKeyDown (KeyCode.P) )
         {
-            EventManager.PauseOn ();
+            if ( !isPaused )
+            {
+                EventManager.PauseOn ();
+                isPaused = true;
+            }
+            else
+            {
+                EventManager.PauseOff ();
+                isPaused = false;
+            }            
         }
-
-        if ( Input.GetKeyDown (KeyCode.O) )
-        {
-            EventManager.PauseOff ();
-        }
+       
 
         if ( Input.GetKeyDown (KeyCode.F2) )
         {
@@ -35,12 +45,11 @@ public class GameManager : Singleton<GameManager> {
             {
                 GameContinue ();
                 
-            }
-                
+            }                
         }
 
+       
     }
-
 
     public void GameOver()
     {
@@ -52,5 +61,7 @@ public class GameManager : Singleton<GameManager> {
         gameOver.SetActive (false);
         isGameOn = true;
     }
+
+   
 
 }

@@ -47,7 +47,7 @@ public class RouteItem : MonoBehaviour
     {
         foreach ( TrackCircuit tc in TrackCircuits )
         {
-            tc.isInRoute = true;
+            tc.IsInRoute = true;
         }
     }
 
@@ -55,18 +55,18 @@ public class RouteItem : MonoBehaviour
     {
         foreach ( TrackCircuit tc in TrackCircuits )
         {
-            tc.isInRoute = false;
+            tc.IsInRoute = false;
         }
     }
 
     private bool CheckTrainRoute()
     {
-        return TrackCircuits.All (t => !t.isInRoute && !t.HasCarPresence);
+        return TrackCircuits.All (t => !t.IsInRoute && !t.HasCarPresence);
     }
 
     private bool CheckShuntingRoute()
     {
-        if ( TrackCircuits.All (t => !t.isInRoute) ) // if all trackCircuits not in route
+        if ( TrackCircuits.All (t => !t.IsInRoute) ) // if all trackCircuits not in route
         {
             foreach ( Switch sw in SwitchesToStraight )
             {
