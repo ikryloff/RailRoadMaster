@@ -4,7 +4,7 @@ public class LoadingManager : MonoBehaviour
 
     void Awake()
     {
-        UIManager.Instance.Init ();
+        IndicationManager.Instance.Init ();
 
         TrackPath.Instance.Init();
 

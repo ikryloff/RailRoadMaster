@@ -12,23 +12,32 @@ public class RouteDictionary : Singleton<RouteDictionary>, IManageable
     // Scriptable obj array, contains all possible routes
     [SerializeField]
     private RouteData[] routeFiles;
-    
+    public Dictionary<int, PanelRoute> PanelRoutes { get; set; }
 
-    public Dictionary<string, RouteItem> RouteDict { get; set; }
+    public Dictionary<int, RouteItem> RouteDict { get; set; }
 
+    public RouteData [] RouteFiles
+    {
+        get
+        {
+            return routeFiles;
+        }
+      
+    }
 
     public void Init()
     {
         SwitchManager = FindObjectOfType<SwitchManager>();
         TrackCircuitManager = FindObjectOfType<TrackCircuitManager>();
         TrafficLightsManager = FindObjectOfType<TrafficLightsManager>();
-        MakeRouteDictionary();
+        MakeRouteDictionary();        
+        InstantiatePanelRoutesDictionary ();
 
     }
     // Take data from Scriptable objects and put it in cache
     private void MakeRouteDictionary()
     {
-        RouteDict = new Dictionary<string, RouteItem>();
+        RouteDict = new Dictionary<int, RouteItem>();
 
         foreach (RouteData routeFile in routeFiles)
         {
@@ -42,7 +51,8 @@ public class RouteDictionary : Singleton<RouteDictionary>, IManageable
             newRoute.IsShunting = routeFile.IsShunting;
             newRoute.IsStraight = routeFile.IsStraight;
             newRoute.DependsOnSignal = GetTL(routeFile.DependsOnSignal);
-            RouteDict.Add(newRoute.RouteName, newRoute);
+            newRoute.RouteNumber = routeFile.RouteNumber;
+            RouteDict.Add(newRoute.RouteNumber, newRoute);
             
         }      
 
@@ -91,6 +101,18 @@ public class RouteDictionary : Singleton<RouteDictionary>, IManageable
             tempList[i] = GetTL(list[i]);
         }
         return tempList;
+    }
+
+    private void InstantiatePanelRoutesDictionary()
+    {
+        PanelRoutes = new Dictionary<int, PanelRoute> ();
+        PanelRoute [] pr = FindObjectsOfType<PanelRoute> ();
+        foreach ( PanelRoute item in pr )
+        {
+            PanelRoutes.Add (item.Num, item);
+        }
+
+
     }
 
     public void OnStart()

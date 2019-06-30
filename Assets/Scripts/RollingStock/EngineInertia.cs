@@ -22,19 +22,19 @@ public class EngineInertia : MonoBehaviour
     private void Start()
     {
         InertiaValue = 0.2f;
-        BreakeForce = engineBreakeForce;        
+        BreakeForce = engineBreakeForce;
     }
 
     private void Update()
     {
-        
+
     }
 
     public void AddFriction()
     {
         if ( engine.SpeedReal != 0 )
         {
-            InertiaValue = 0.02f * GetNumOfCars() * Mathf.Exp (-0.14f * Mathf.Abs (engine.SpeedReal));
+            InertiaValue = 0.02f * GetNumOfCars () * Mathf.Exp (-0.14f * Mathf.Abs (engine.SpeedReal));
             //print (Value + " mult speed " + engine.SpeedReal);            
         }
         else
@@ -43,12 +43,12 @@ public class EngineInertia : MonoBehaviour
             InertiaValue = 0.2f;
         }
 
-        if ( engine.InstructionsHandler != 0 )
+        if ( engine.Brakes )
         {
-            BreakeForce = 0;
+            BreakeForce = engineBreakeForce + GetNumOfCars () * RSBreakeForce;
         }
         else
-            BreakeForce = engineBreakeForce + GetNumOfCars () * RSBreakeForce;
+            BreakeForce = 0;
 
     }
 
@@ -77,6 +77,6 @@ public class EngineInertia : MonoBehaviour
             BreakeForce = 1f * GetNumOfCars ();
             yield return null;
         }
-        print ("coroutine off");        
+        print ("coroutine off");
     }
 }

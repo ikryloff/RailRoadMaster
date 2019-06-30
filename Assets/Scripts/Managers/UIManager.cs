@@ -1,94 +1,34 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : Singleton<UIManager>, IManageable
+public class UIManager : Singleton<UIManager>
 {
 
-    Engine engine;
-    [SerializeField]
-    private Text handlerTxt;
-    public bool IsIndicate { get; set; }
-    public IndicatorPath [] Indicators { get; set; }
-    public SwitchParts [] SwitchParts { get; set; }
+    private CommunicationPanelManager communicationPanel;
+    private RoutePanelManager routePanel;
 
-    public void Init()
+    private void Awake()
     {
-        engine = FindObjectOfType<Engine> ();
-        handlerTxt.text = "  <<< 0 >>>  ";
-        Indicators = FindObjectsOfType<IndicatorPath> ();
-        SwitchParts = FindObjectsOfType<SwitchParts> ();
+        communicationPanel = FindObjectOfType<CommunicationPanelManager> ();
+        routePanel = FindObjectOfType<RoutePanelManager> ();
     }
 
     private void Start()
     {
-        TurnIndicationOff ();
+        DriveMode ();
     }
 
-    private void Update()
+    public void DriveMode()
     {
-        PrintHandler ();
-
-        if ( Input.GetKeyDown (KeyCode.Space) )
-        {
-            ToggleIndication ();
-        }
+        routePanel.Show (false);
+        communicationPanel.Show (true);
     }
 
-    public void PrintHandler()
+    public void RouteMode()
     {
-        if ( engine.Direction > 0 )
-            handlerTxt.text = " >>> " + Mathf.Abs (engine.InstructionsHandler) + " >>>  " + engine.MaxSpeed;
-        else if ( engine.Direction < 0 )
-            handlerTxt.text = engine.MaxSpeed + " <<< " + Mathf.Abs (engine.InstructionsHandler) + " <<< ";
-        else
-            handlerTxt.text = "  <<< 0 >>>";
-    }
-
-    public void ToggleIndication()
-    {
-        if ( IsIndicate )
-        {
-            TurnIndicationOff ();
-        }
-        else
-        {
-            TurnIndicationOn ();
-
-        }
-    }
-
-    public void TurnIndicationOn()
-    {
-        foreach ( TrackPathUnit item in engine.EngineRS.OwnPath)
-        {
-            foreach ( IndicatorPath ind in item.TrackCircuit.Indicators )
-            {
-                ind.Show (true);
-            }
-        }
-        IsIndicate = true;
-
-    }
-    public void TurnIndicationOff()
-    {
-        foreach ( IndicatorPath item in Indicators )
-        {
-            item.Show (false);
-        }
-
-        IsIndicate = false;
-    }
-
-
-    public void OnStart()
-    {
-        throw new System.NotImplementedException ();
-    }
-
-    internal void ReloadIndication()
-    {
-        ToggleIndication ();
-        ToggleIndication ();
+        routePanel.Show (true);
+        communicationPanel.Show (false);
     }
 }

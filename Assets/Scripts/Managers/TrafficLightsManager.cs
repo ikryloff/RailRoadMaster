@@ -38,11 +38,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
     public Dictionary<string, TrafficLight> TLDict { get; set; }
 
 
-    public void SetRouteByLights(TrafficLight firstLight, TrafficLight secondLight)
-    {
-        SetLightsInRoute(firstLight);
-        SetLightsInRoute(secondLight);
-    }
+   
 
     public Button GetButtonByTLName(string name)
     {
@@ -60,54 +56,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
         MakeTLDictionary();
     }
 
-    public void SetLightsInRoute(TrafficLight light)
-    {
-        if (rcs.IsRemoteControllerOn)
-        {
-            // Canceling Route
-            if (CancelRouteIsOn)
-            {
-                if (light != null && light.tag == Constants.LIGHTS_IN_ROUTE)
-                {
-                    
-                    IsStart = true;
-                    lightText.text = "None";
-                    ShowTrafficLightsButtons();
-                    
-                }
-                lightText.text = "Done";
-                cancelRouteIsOn = false;   
-            }
-            else
-            {
-                //Taking lights in route
-                if (light.tag == Constants.LIGHTS_FREE)
-                {
-                    if (IsStart)
-                    {
-                        startLight = light;
-                        SetLightsNames(startLight.Name);
-                        startLight.tag = Constants.LIGHTS_IN_ROUTE;
-                        IsStart = false;
-                        ShowPossibleTrafficLightsButtons(startLight);                        
-                    }
-                    else
-                    {
-                        endLight = light;
-                        MakeRouteIfPossible(startLight, endLight);
-                        IsStart = true;
-                        ShowTrafficLightsButtons();
-                    }
-                }
-                else if (light.tag == Constants.LIGHTS_IN_ROUTE && !IsStart)
-                {
-                    startLight.tag = Constants.LIGHTS_FREE;
-                    IsStart = true;
-                    lightText.text = "Wrong light in route";
-                }
-            } 
-        }  
-    }
+   
 
     public void ShowTrafficLightsButtons()
     {
@@ -220,20 +169,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
         return false;
     }
 
-    public void MakeRouteIfPossible(TrafficLight startLight, TrafficLight endLight)
-    {
-        if (IsPossibleLight(Constants.POSSIBLE_LIGHTS, startLight, endLight))
-        {
-            
-            route.MakeRoute(startLight, endLight);
-            SetLightsNames(startLight.Name, endLight.Name);
-        }
-        else
-        {
-            startLight.tag = Constants.LIGHTS_FREE;
-            lightText.text = "Wrong light";
-        }
-    }
+   
 
     void SetLightsNames(String start, String end = "")
     {

@@ -9,7 +9,6 @@ public class TrackCircuit : MonoBehaviour, IManageable
 {
     private string trackName;
     public bool HasCarPresence { get; set; }
-    private int useMode;
    
     [SerializeField]
     private string[] trackLightsNames;
@@ -17,16 +16,11 @@ public class TrackCircuit : MonoBehaviour, IManageable
     private TrafficLight[] trackLights;    
     public Switch SwitchTrack { get; set; }
     public Route route;
-    public RollingStock engineRS;
-    public Color32 colorPresence;
-    public Color32 colorInRoute;
-    public Color32 colorInPath;
-    public Color32 colorTransparent;
-    public Color32 colorInUse;
+    public RollingStock engineRS;   
 
     public bool IsInRoute { get; set; }
     public bool IsInPath { get; set; }
-    public bool isInUse;
+    public bool IsInUse { get; set; }
     public Engine engine;
     public TrackPathUnit [] paths;
     public IndicatorPath [] Indicators { get; set; }
@@ -55,11 +49,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
 
     private void Start()
     {
-        colorPresence = new Color32(255, 77, 77, 160);
-        colorInRoute = new Color32(255, 210, 0, 160);
-        colorInPath = new Color32(58, 227, 116, 160);
-        colorInUse = new Color32(105, 165, 230, 160);
-        colorTransparent = new Color32(255, 255, 255, 0);
+       
 
         CarPresenceOff();
 
@@ -118,31 +108,6 @@ public class TrackCircuit : MonoBehaviour, IManageable
     }
 
 
- 
-    
-
-
-    public int UseMode
-    {
-        get
-        {
-            if (HasCarPresence)
-            {
-                useMode = Constants.TC_OVER;
-            }
-            if (useMode == Constants.TC_OVER && !HasCarPresence)
-            {
-                useMode = Constants.TC_USED;
-            }
-            return useMode;
-        }
-
-        set
-        {
-            useMode = value;
-           
-        }
-    }
 
     public string TrackName
     {

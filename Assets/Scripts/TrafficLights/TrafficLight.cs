@@ -6,6 +6,7 @@ public class TrafficLight : MonoBehaviour
 
     [SerializeField]
     private string trafficLightName;
+  
 
     //Set objects in Editor
     public Lamp BlueSignal;

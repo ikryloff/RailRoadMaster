@@ -21,6 +21,8 @@ public class RouteData : ScriptableObject
     private bool isStraight;
     [SerializeField]
     private string dependsOnSignal;
+    [SerializeField]
+    private int routeNumber;
 
     public string RouteName
     {
@@ -91,5 +93,14 @@ public class RouteData : ScriptableObject
             return isStraight;
         }
         
+    }
+
+    public int RouteNumber
+    {
+        get
+        {
+            return routeNumber;
+        }
+
     }
 }

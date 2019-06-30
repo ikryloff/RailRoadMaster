@@ -27,10 +27,10 @@ public class TrackPath : Singleton<TrackPath>, IManageable
     IEnumerator GetTrackPathCoroutine( RollingStock car )
     {
         // if we change swithces in indication mode
-        if ( UIManager.Instance.IsIndicate )
+        if ( IndicationManager.Instance.IsIndicate )
         {
-            UIManager.Instance.TurnIndicationOff ();
-            UIManager.Instance.IsIndicate = true;
+            IndicationManager.Instance.TurnIndicationOff ();
+            IndicationManager.Instance.IsIndicate = true;
         }
             
         PathMade++;
@@ -66,8 +66,8 @@ public class TrackPath : Singleton<TrackPath>, IManageable
         {
             EventManager.PathUpdated ();
             // if we turn swithces in indication mode
-            if( UIManager.Instance.IsIndicate )
-                UIManager.Instance.TurnIndicationOn ();         
+            if( IndicationManager.Instance.IsIndicate )
+                IndicationManager.Instance.TurnIndicationOn ();         
         }
     }
 

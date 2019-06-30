@@ -30,7 +30,7 @@ public class Player : MonoBehaviour {
 
         if ( Input.GetKeyDown (KeyCode.UpArrow) )
         {
-            UIManager.Instance.ToggleIndication ();
+            IndicationManager.Instance.ToggleIndication ();
         }
     }
 

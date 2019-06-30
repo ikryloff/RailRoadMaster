@@ -17,63 +17,52 @@ public class Route : Singleton<Route> {
     [SerializeField]
     private List<RouteItem> routeItems;
     SwitchManager switchManager;
-    private TextBuilder textBuilder;
-    private string messageText;
+    private RouteValidation validation;
 
-    public List<string> Routes = new List<string>();
+    public List<int> Routes = new List<int>();
 
+       
 
-
-    private void TestRoute()
+    public void MakeRoute( int routeNum , int routeButton = -1)
     {
-        if ( Input.GetKeyDown (KeyCode.Y) )
-        {
-            RouteItem routeItem = RouteDictionary.Instance.RouteDict ["N2CH"];
-            routeItem.InstantiateRoute ();
-            Routes.Add (routeName);
-            EventManager.PathChanged ();
-        }
-
-        if ( Input.GetKeyDown (KeyCode.U) )
-        {
-            DestroyRoute ("N2CH");
-        }
-
-        if ( Input.GetKeyDown (KeyCode.T) )
-        {
-            RouteItem routeItem = RouteDictionary.Instance.RouteDict ["NN2"];
-            routeItem.InstantiateRoute ();
-            Routes.Add (routeName);
-            EventManager.PathChanged ();
-        }
+        RouteItem routeItem = RouteDictionary.Instance.RouteDict [routeNum];
+        routeItem.InstantiateRoute (routeButton);
+        print (routeButton);
+        Routes.Add (routeNum);
+        RouteDictionary.Instance.PanelRoutes [routeNum].Show (true);
+        EventManager.PathChanged ();
     }
 
-    private void Update()
+    public void DestroyRoute( int routeNum )
     {
-        TestRoute ();
-    }
-
-
-
-    public void MakeRoute(TrafficLight startLight, TrafficLight endLight)
-    {
-
-        routeName = startLight.Name + endLight.Name;
-        
-        RouteItem routeItem = RouteDictionary.Instance.RouteDict[routeName];
-        routeItem.InstantiateRoute();
-        Routes.Add (routeName);
-        EventManager.PathChanged();     
-    }
-
-    public void DestroyRoute( string routeName )
-    {
-        RouteItem routeItem = RouteDictionary.Instance.RouteDict [routeName];
+        RouteItem routeItem = RouteDictionary.Instance.RouteDict [routeNum];
         routeItem.DestroyRoute ();
-        Routes.Remove (routeName);
+        Routes.Remove (routeNum);
+        RouteDictionary.Instance.PanelRoutes [routeNum].Show (false);
 
     }
 
+    public bool CheckRoute( int routeNum )
+    {        
+        if ( validation.InputRouteIsNotDangerouse (routeNum) )
+            return true;
+        else
+            Debug.Log ("Danger Route");
+        return false;
+    }
 
+    public bool Validate( int routeNum )
+    {
+        if ( validation.InputRouteNumIsValid (routeNum) )
+            return true;
+        else
+            Debug.Log ("Wrong Num");
+        return false;
+    }
+
+    private void Start()
+    {
+        validation = new RouteValidation ();
+    }
 }
 

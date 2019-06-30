@@ -11,9 +11,9 @@ public class Switch : MonoBehaviour, IManageable {
     
     private SwitchManager switchManager;    
     public bool IsLockedByRS { get; set; }
-    public bool isSwitchInUse;
+    public bool IsSwitchInUse { get; set; }
     [SerializeField]
-    TrackCircuit[] trackCircuits;
+    public TrackCircuit TrackCircuit { get; set; }
     [SerializeField]
     private Animator animator;
     private string animMethod;
@@ -29,7 +29,7 @@ public class Switch : MonoBehaviour, IManageable {
         switchCurve.Init ();
         switchStraightPart = transform.GetComponentInChildren<SwitchStraightPart>();
         switchStraightPart.Init ();
-        trackCircuits = transform.GetComponentsInChildren<TrackCircuit>();
+        TrackCircuit = GetComponent<TrackCircuit>();
         animator = transform.GetComponentInChildren<Animator>();
         SetDirectionStraight();
 

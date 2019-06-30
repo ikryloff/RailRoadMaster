@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 public class RouteItem : MonoBehaviour
 {
@@ -11,25 +12,45 @@ public class RouteItem : MonoBehaviour
     public bool IsShunting { get; set; }
     public TrafficLight DependsOnSignal { get; set; }
     public bool IsStraight { get; set; }
+    public int RouteNumber { get; set; }
+    public TrackCircuit TargetTrack { get; set; }
+    public int RouteButton { get; set; }
+   
 
 
-    public void InstantiateRoute()
+    public void InstantiateRoute(int routeButton)
     {
-        bool temp = false;
-        if ( IsShunting && CheckShuntingRoute () )
-            temp = true;
-        else if ( !IsShunting && CheckTrainRoute () )
-            temp = true;
-        if ( temp )
-        {
-            SetAllSwitchesStraight ();
-            SetAllSwitchesTurn ();
-            AllTCInRouteOn ();
-            TrafficLightOn ();
-        }
-        else
-            Debug.Log ("Wrong Route");
+        TargetTrack = TrackCircuits.Last ();
+        RouteButton = routeButton;
+        SetAllSwitchesStraight ();
+        SetAllSwitchesTurn ();
+        AllTCInRouteOn ();
+        TrafficLightOn ();
+        print ("RouteMade");
+        StartCoroutine (CheckStartingRoute ());
     }
+
+    IEnumerator CheckStartingRoute()
+    {
+        while (true)
+        {
+            if( TrackCircuits.Any (t => t.HasCarPresence) )
+                break;
+            yield return null;
+        }        
+        StartCoroutine (CheckPassingRoute());
+    }
+
+    IEnumerator CheckPassingRoute()
+    {
+        StopCoroutine (CheckStartingRoute ());
+        while ( TrackCircuits.Any (t => t != TargetTrack && t.HasCarPresence) )
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        Route.Instance.DestroyRoute (RouteNumber);
+    }
+
 
     private void TrafficLightOn()
     {
@@ -59,29 +80,24 @@ public class RouteItem : MonoBehaviour
         }
     }
 
-    private bool CheckTrainRoute()
+    public bool CheckTrainRoute()
     {
-        return TrackCircuits.All (t => !t.IsInRoute && !t.HasCarPresence);
+        return TrackCircuits.All (t => !t.IsInRoute || !t.HasCarPresence);
     }
 
-    private bool CheckShuntingRoute()
+    public bool CheckShuntingRoute()
     {
-        if ( TrackCircuits.All (t => !t.IsInRoute) ) // if all trackCircuits not in route
+        foreach ( Switch sw in SwitchesToStraight )
         {
-            foreach ( Switch sw in SwitchesToStraight )
-            {
-                if ( sw.IsLockedByRS && !sw.IsSwitchStraight )
-                    return false;
-            }
-
-            foreach ( Switch sw in SwitchesToTurn )
-            {
-                if ( sw.IsLockedByRS && sw.IsSwitchStraight )
-                    return false;
-            }
+            if ( sw.TrackCircuit.IsInRoute || sw.TrackCircuit.HasCarPresence )
+                return false;
         }
-        else
-            return false;
+
+        foreach ( Switch sw in SwitchesToTurn )
+        {
+            if ( sw.TrackCircuit.IsInRoute || sw.TrackCircuit.HasCarPresence )
+                return false;
+        }
 
         return true;
     }
@@ -106,6 +122,8 @@ public class RouteItem : MonoBehaviour
     {
         TrafficLightOff ();
         AllTCInRouteOff ();
+        if ( RouteButton != -1 )
+            FindObjectOfType<RoutePanelManager> ().GetRouteButtonByNumber (RouteButton).SetRouteOff ();
     }
 
 }

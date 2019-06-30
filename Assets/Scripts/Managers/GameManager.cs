@@ -22,34 +22,59 @@ public class GameManager : Singleton<GameManager> {
     {
         if ( Input.GetKeyDown (KeyCode.P) )
         {
-            if ( !isPaused )
-            {
-                EventManager.PauseOn ();
-                isPaused = true;
-            }
-            else
-            {
-                EventManager.PauseOff ();
-                isPaused = false;
-            }            
+            Pause ();
         }
-       
+
 
         if ( Input.GetKeyDown (KeyCode.F2) )
         {
-            if ( isGameOn )
-            {                
-                EventManager.GameOver ();
-            }
-            else
-            {
-                GameContinue ();
-                
-            }                
+            GameOverOn ();
         }
 
-       
+
     }
+
+    private void GameOverOn()
+    {
+        if ( isGameOn )
+        {
+            EventManager.GameOver ();
+        }
+        else
+        {
+            GameContinue ();
+
+        }
+    }
+
+    public void Pause()
+    {
+        if ( !isPaused )
+        {
+            EventManager.PauseOn ();
+            isPaused = true;            
+        }
+        else
+        {
+            EventManager.PauseOff ();
+            isPaused = false;
+        }
+    }
+
+    public void PauseOn()
+    {
+        EventManager.PauseOn ();
+        isPaused = true;
+        print ("Paus");
+
+    }
+
+    public void PauseOff()
+    {
+        EventManager.PauseOff ();
+        isPaused = false;
+    }
+
 
     public void GameOver()
     {

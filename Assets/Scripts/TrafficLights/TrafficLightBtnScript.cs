@@ -34,13 +34,7 @@ public class TrafficLightBtnScript : MonoBehaviour {
         }
     }
 
-    void Start () {
-        button.onClick.AddListener(GetTrafficLight);
-	}
+    
 
-    private void GetTrafficLight()
-    {
-        trafficLightsManager.SetLightsInRoute(TrafficLight);
-    }
-   
+    
 }

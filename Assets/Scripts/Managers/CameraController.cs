@@ -12,13 +12,13 @@ public class CameraController : MonoBehaviour
     private float speed = 1;
     float scrollSpeed = 10;
     float d = 0;
-    private float zoomZ;
+    public float ZoomZ { get; private set; }
 
 
 
     private void Start()
     {
-        zoomZ = transform.position.z;
+        ZoomZ = transform.position.z;
     }
 
 
@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour
 
     public void CameraZoomY( float newZoom )
     {
-        zoomZ = -newZoom;
+        ZoomZ = -newZoom;
     }
 
      
@@ -63,7 +63,7 @@ void MoveCamera( float dt )
             transform.Translate (-touchDeltaPosition.x * speed, -touchDeltaPosition.y * speed, 0);
             desiredPosition = new Vector3 (transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
         }
-        desiredPosition.z = zoomZ;        
+        desiredPosition.z = ZoomZ;        
         smoothedPosition = Vector3.Lerp (transform.localPosition, desiredPosition, smoothSpeed * dt);
         transform.localPosition = smoothedPosition;
     }

@@ -11,7 +11,7 @@ public abstract class SwitchParts : MonoBehaviour, IManageable
     public void Install()
     {
         gameObject.SetActive (true);
-        indicator.Show (UIManager.Instance.IsIndicate);
+        indicator.Show (IndicationManager.Instance.IsIndicate);
     }
 
    
@@ -23,6 +23,6 @@ public abstract class SwitchParts : MonoBehaviour, IManageable
 
     public void OnStart()
     {
-        indicator.Show (UIManager.Instance.IsIndicate);
+        indicator.Show (IndicationManager.Instance.IsIndicate);
     }
 }

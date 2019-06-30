@@ -8,8 +8,8 @@ public class Engine : MonoBehaviour
 {
     public int InstructionsHandler { get; set; }
     public RollingStock EngineRS { get; private set; }
-    private bool brakes = true;
-    
+    public bool Brakes { get; private set; }
+
     public int Direction { get; private set; }
     public float MaxSpeed { get; private set; }
 
@@ -29,6 +29,7 @@ public class Engine : MonoBehaviour
         
         Inertia = GetComponent<EngineInertia> ();
         EngineRS = GetComponent<RollingStock> ();
+        Brakes = true;
     }
 
     void Start()
@@ -51,16 +52,31 @@ public class Engine : MonoBehaviour
 
     public void MoveEngine(float dt)
     {
-        if ( Math.Abs (SpeedReal) == MaxSpeed )
+        if ( Brakes && SpeedReal == 0 )
+        {
+            Acceleration = 0;          
+        }
+        
+        if ( SpeedReal != 0 && Math.Abs (SpeedReal) == MaxSpeed  )
+        {
+            Brakes = false;
             Acceleration += 0;
+        }
         else
         {
             if ( Math.Abs (SpeedReal) < MaxSpeed )
+            {
+                Brakes = false;
                 Acceleration += (accForce - Inertia.InertiaValue * accForce) * Direction * dt;
+            }                
             else if ( Math.Abs (SpeedReal) > MaxSpeed )
-                Acceleration -= Inertia.GetBreakeForce() * GetOpositeDirection () * dt;
+            {
+                Brakes = true;
+                Acceleration -= Inertia.GetBreakeForce () * GetOpositeDirection () * dt;
+            }
+                
         }
-        if ( brakes && SpeedReal == 0 ) Acceleration = 0;
+       
 
     }
 
@@ -78,9 +94,9 @@ public class Engine : MonoBehaviour
         {
             MaxSpeed = 0;
             Direction = 0;
-            brakes = true;
+            Brakes = true;
         }
-        else brakes = false;
+        else Brakes = false;
 
         int absHandler = Mathf.Abs (InstructionsHandler);
         if ( absHandler == 1 ) MaxSpeed = 3;
@@ -112,7 +128,7 @@ public class Engine : MonoBehaviour
 
     private void CalcRealSpeed()
     {
-        SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 10);
+        SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 30);
     }
 
    
