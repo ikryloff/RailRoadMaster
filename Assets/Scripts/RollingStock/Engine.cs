@@ -128,7 +128,7 @@ public class Engine : MonoBehaviour
 
     private void CalcRealSpeed()
     {
-        SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 30);
+        SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 25);
     }
 
    

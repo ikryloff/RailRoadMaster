@@ -79,6 +79,7 @@ public class GameManager : Singleton<GameManager> {
     public void GameOver()
     {
         isGameOn = false;
+        PauseOn ();
         gameOver.SetActive (true);
     }
     public void GameContinue()
