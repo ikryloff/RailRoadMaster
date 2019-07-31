@@ -64,6 +64,7 @@ public class TrackPath : Singleton<TrackPath>, IManageable
         // if all paths of all compositions are made
         if ( PathMade == 0 )
         {
+            print ("PathMade");
             EventManager.PathUpdated ();
             // if we turn swithces in indication mode
             if( IndicationManager.Instance.IsIndicate )

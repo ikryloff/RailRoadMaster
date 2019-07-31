@@ -142,8 +142,6 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
 
     private void Start()
     {
-        lightText.text = "None";
-
         Invoke("CheckHandSwitches", 0.5f);        
     }
        
@@ -180,7 +178,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
     {
         foreach (TrafficLight tl in trafficLights)
         {
-            if (tl.name ==lightName)
+            if (tl.name.Equals(lightName))
             {                
                 return tl;
             }            

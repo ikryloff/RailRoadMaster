@@ -11,28 +11,7 @@ public class Player : MonoBehaviour {
         engine = GetComponent<Engine> ();
     }
 
-    private void Update()
-    {
-        if ( Input.GetKeyDown (KeyCode.RightArrow) )
-        {
-            MoveForward ();
-        }
-
-        if ( Input.GetKeyDown (KeyCode.LeftArrow) )
-        {
-            MoveBack ();
-        }
-
-        if ( Input.GetKeyDown (KeyCode.DownArrow) )
-        {
-            Stop ();
-        }
-
-        if ( Input.GetKeyDown (KeyCode.UpArrow) )
-        {
-            IndicationManager.Instance.ToggleIndication ();
-        }
-    }
+    
 
     public void MoveForward()
     {

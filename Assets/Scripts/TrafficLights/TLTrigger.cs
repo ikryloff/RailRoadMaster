@@ -20,6 +20,6 @@ public class TLTrigger : MonoBehaviour
 
     private bool CheckViolation(int dir)
     {
-            return dir == signal.SignalDirection && signal.IsClosedForShunting && signal.IsClosedForTrains;       
+            return dir == signal.SignalDirection && signal.IsClosed;       
     }
 }

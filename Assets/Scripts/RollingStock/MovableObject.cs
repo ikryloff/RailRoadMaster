@@ -16,7 +16,7 @@ public abstract class MovableObject : MonoBehaviour
     public bool IsMoving { get; set; }
     // Moving distance per frame
     public float Translation { get; private set; }
-
+    private int koeff = 25;
     public static int temp = 0;
 
     
@@ -31,9 +31,9 @@ public abstract class MovableObject : MonoBehaviour
             Translation = OwnEngine ? OwnEngine.Acceleration : 0; 
             
             // Moving
-            OwnPosition += Translation;
+            OwnPosition += Translation * Time.deltaTime * koeff;
             // Run of Movable Object
-            OwnRun += Translation;
+            OwnRun += Translation * Time.deltaTime * koeff;
             //Set presense to OwnTC
             OwnTrackCircuit.CarPresenceOn();
 
@@ -69,7 +69,7 @@ public abstract class MovableObject : MonoBehaviour
         OwnTrack = TrackPath.Instance.GetPrevTrack(OwnTrack, OwnPath);
         if (OwnTrack)
         {
-            OwnPosition = OwnTrack.PathLenght + Translation;
+            OwnPosition = OwnTrack.PathLenght + Translation * Time.deltaTime * koeff;
         }
         else
         {
@@ -84,7 +84,7 @@ public abstract class MovableObject : MonoBehaviour
         OwnTrack = TrackPath.Instance.GetNextTrack(OwnTrack, OwnPath);
         if (OwnTrack)
         {
-            OwnPosition = Translation;
+            OwnPosition = Translation * Time.deltaTime * koeff;
         }
         else
         {

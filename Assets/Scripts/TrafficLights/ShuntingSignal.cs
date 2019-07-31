@@ -12,7 +12,7 @@ public class ShuntingSignal : TrafficLight {
         LampSwitchOff (blue, BlueSignal);
         LampSwitchOn (white, WhiteSignal);
 
-        IsClosedForShunting = false;       
+        IsClosed = false;       
     }
 
     public override void LightOff()
@@ -20,12 +20,13 @@ public class ShuntingSignal : TrafficLight {
         LampSwitchOn (blue, BlueSignal);
         LampSwitchOff (white, WhiteSignal);
 
-        IsClosedForShunting = true;
+        IsClosed = true;
         
     }
 
     protected override void Awake()
     {
+        GetPositionX = gameObject.transform.position.x;
         BlueSignal = GetComponentInChildren<TLBlueLamp>();
         WhiteSignal = GetComponentInChildren<TLWhiteLamp>();
         blue = BlueSignal.GetComponent<MeshRenderer>();
@@ -35,7 +36,7 @@ public class ShuntingSignal : TrafficLight {
 
     private void Start()
     {
-        IsClosedForTrains = true;
+        IsClosed = true;
         LightOff ();
            
     }

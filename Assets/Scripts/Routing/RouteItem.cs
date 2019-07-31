@@ -26,7 +26,6 @@ public class RouteItem : MonoBehaviour
         SetAllSwitchesTurn ();
         AllTCInRouteOn ();
         TrafficLightOn ();
-        print ("RouteMade");
         StartCoroutine (CheckStartingRoute ());
     }
 
@@ -37,7 +36,13 @@ public class RouteItem : MonoBehaviour
             if( TrackCircuits.Any (t => t.HasCarPresence) )
                 break;
             yield return null;
-        }        
+        }
+        if ( !IsShunting )
+        {
+            TrafficLightOff ();
+            //for all train passing through
+            RouteLights [0].IsClosed = false;
+        }
         StartCoroutine (CheckPassingRoute());
     }
 
@@ -82,7 +87,7 @@ public class RouteItem : MonoBehaviour
 
     public bool CheckTrainRoute()
     {
-        return TrackCircuits.All (t => !t.IsInRoute || !t.HasCarPresence);
+        return TrackCircuits.All (t => !t.IsInRoute && !t.HasCarPresence);
     }
 
     public bool CheckShuntingRoute()

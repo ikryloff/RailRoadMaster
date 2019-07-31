@@ -20,12 +20,12 @@ public class PanelRoute : MonoBehaviour, IHideable {
     private void Start()
     {
         IsExist = false;
-        Show (IsExist);
+        Show (false);
     }
 
     public void Show( bool isVisible )
     {
-        gameObject.SetActive (isVisible);        
+        gameObject.SetActive (isVisible); 
         IsExist = isVisible;
     }
 }

@@ -27,7 +27,6 @@ public class Route : Singleton<Route> {
     {
         RouteItem routeItem = RouteDictionary.Instance.RouteDict [routeNum];
         routeItem.InstantiateRoute (routeButton);
-        print (routeButton);
         Routes.Add (routeNum);
         RouteDictionary.Instance.PanelRoutes [routeNum].Show (true);
         EventManager.PathChanged ();

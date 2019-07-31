@@ -8,13 +8,14 @@ public class GameManager : Singleton<GameManager> {
     public GameObject gameOver;
     private bool isGameOn = true;
     private bool isPaused = false;
+    private RoutePanelManager routePanel;
     
 
     private void Awake()
     {
         gameOver.SetActive (false);
         EventManager.onGameOver += GameOver;
-        
+        routePanel = FindObjectOfType<RoutePanelManager> ();        
         
     }
 
@@ -31,6 +32,12 @@ public class GameManager : Singleton<GameManager> {
             GameOverOn ();
         }
 
+       
+        if ( Input.GetKeyDown (KeyCode.T) )
+        {
+            routePanel.CallOffRouteByNumber (613);
+
+        }
 
     }
 
@@ -65,8 +72,6 @@ public class GameManager : Singleton<GameManager> {
     {
         EventManager.PauseOn ();
         isPaused = true;
-        print ("Paus");
-
     }
 
     public void PauseOff()

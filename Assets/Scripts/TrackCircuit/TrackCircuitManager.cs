@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class TrackCircuitManager : Singleton<TrackCircuitManager>, IManageable {
 
-    TrackCircuit[] trackCircuits;
+    public TrackCircuit[] TrackCircuits { get; set; }
 
     public Dictionary<string, TrackCircuit> TCDict { get; set; }
 
     public void Init()
     {
-        trackCircuits = FindObjectsOfType<TrackCircuit>();
+        TrackCircuits = FindObjectsOfType<TrackCircuit>();
         MakeTrackCircuitDictionary();
     }
 
@@ -22,7 +22,7 @@ public class TrackCircuitManager : Singleton<TrackCircuitManager>, IManageable {
     private void MakeTrackCircuitDictionary()
     {
         TCDict = new Dictionary<string, TrackCircuit>();
-        foreach (TrackCircuit tc in trackCircuits)
+        foreach (TrackCircuit tc in TrackCircuits)
         {
             TCDict.Add(tc.name, tc);
             tc.Init();

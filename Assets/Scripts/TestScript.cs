@@ -1,18 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class TestScript : MonoBehaviour {
+public class TestScript : MonoBehaviour
+{
 
-    public Rigidbody rb;
+    private RoutePanelManager routePanel;
+    private EngineAI engineAI;
 
-	// Use this for initialization
-	void Start () {
-        rb = GetComponent<Rigidbody>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    void Start()
+    {
+        routePanel = FindObjectOfType<RoutePanelManager> ();
+        engineAI = FindObjectOfType<EngineAI> ();
+        Invoke ("Make1Route", 1f);
+        Invoke ("MoveBackSupper", 1f);
+    }
+
+
+    public void Make1Route()
+    {
+        routePanel.SetRouteByNumber (611);
+        routePanel.SetRouteByNumber (160);
+    }
+
+    public void MoveBackSupper()
+    {
+        engineAI.MoveBackSupper ();
+    }
+
 }

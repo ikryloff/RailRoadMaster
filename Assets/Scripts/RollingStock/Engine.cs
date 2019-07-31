@@ -15,8 +15,8 @@ public class Engine : MonoBehaviour
 
     public float ForPauseTempAcceleration { get; private set; }
     public int SpeedReal { get; private set; }
-    public float Acceleration { get; private set; }
-    const float accForce= 0.15f;
+    public float Acceleration { get; set; }
+    const float accForce= 0.015f;
     public EngineInertia Inertia { get; private set; }
 
 
@@ -43,14 +43,14 @@ public class Engine : MonoBehaviour
         {
             CalcRealSpeed ();
             CalcMaxSpeed ();
-            MoveEngine (Time.deltaTime);
+            MoveEngine ();            
             Inertia.AddFriction ();
         }
     }
 
    
 
-    public void MoveEngine(float dt)
+    public void MoveEngine()
     {
         if ( Brakes && SpeedReal == 0 )
         {
@@ -67,12 +67,12 @@ public class Engine : MonoBehaviour
             if ( Math.Abs (SpeedReal) < MaxSpeed )
             {
                 Brakes = false;
-                Acceleration += (accForce - Inertia.InertiaValue * accForce) * Direction * dt;
+                Acceleration += (accForce - Inertia.InertiaValue * accForce) * Direction;
             }                
             else if ( Math.Abs (SpeedReal) > MaxSpeed )
             {
                 Brakes = true;
-                Acceleration -= Inertia.GetBreakeForce () * GetOpositeDirection () * dt;
+                Acceleration -= Inertia.GetBreakeForce () * GetOpositeDirection ();
             }
                 
         }
@@ -92,9 +92,9 @@ public class Engine : MonoBehaviour
 
         if ( InstructionsHandler == 0 )
         {
-            MaxSpeed = 0;
-            Direction = 0;
+            MaxSpeed = 0;            
             Brakes = true;
+            Direction = 0;
         }
         else Brakes = false;
 
@@ -104,7 +104,7 @@ public class Engine : MonoBehaviour
         if ( absHandler == 3 ) MaxSpeed = 10;
         if ( absHandler == 4 ) MaxSpeed = 15;
         if ( absHandler == 5 ) MaxSpeed = 25;
-        if ( absHandler == 6 ) MaxSpeed = 45;
+        if ( absHandler == 6 ) MaxSpeed = 40;
     }
 
     private void HandlerValidation()
@@ -128,7 +128,7 @@ public class Engine : MonoBehaviour
 
     private void CalcRealSpeed()
     {
-        SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 25);
+        SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 5);
     }
 
    

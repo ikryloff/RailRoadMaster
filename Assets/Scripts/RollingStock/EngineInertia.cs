@@ -9,8 +9,8 @@ public class EngineInertia : MonoBehaviour
     private Engine engine;
     private RSComposition composition;
     private int compCarsQuantity;
-    const float engineBreakeForce = 0.35f;
-    const float RSBreakeForce = 0.1f;
+    const float engineBreakeForce = 0.02f;
+    const float RSBreakeForce = 0.012f;
 
     private void Awake()
     {
@@ -21,7 +21,7 @@ public class EngineInertia : MonoBehaviour
 
     private void Start()
     {
-        InertiaValue = 0.2f;
+        InertiaValue = 0.1f;
         BreakeForce = engineBreakeForce;
     }
 
@@ -34,13 +34,13 @@ public class EngineInertia : MonoBehaviour
     {
         if ( engine.SpeedReal != 0 )
         {
-            InertiaValue = 0.02f * GetNumOfCars () * Mathf.Exp (-0.14f * Mathf.Abs (engine.SpeedReal));
+            InertiaValue = 0.01f * GetNumOfCars () * Mathf.Exp (-0.07f * Mathf.Abs (engine.SpeedReal));
             //print (Value + " mult speed " + engine.SpeedReal);            
         }
         else
         {
-            BreakeForce = 0.3f;
-            InertiaValue = 0.2f;
+            BreakeForce = 0.05f;
+            InertiaValue = 0.02f;
         }
 
         if ( engine.Brakes )

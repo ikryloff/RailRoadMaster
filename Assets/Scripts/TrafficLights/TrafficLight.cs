@@ -16,11 +16,11 @@ public class TrafficLight : MonoBehaviour
     public Lamp BottomYellowSignal;
     public Lamp GreenSignal;
 
-    public bool IsClosedForShunting { get; set; }
-    public bool IsClosedForTrains { get; set; }
+    public bool IsClosed { get; set; }
     //where signal is looking at. 1 - to left, -1 to right
     [SerializeField]
     private int signalDirection;
+    public float GetPositionX;
     const float flashTime = 1f;
     protected Animator yellowSignalFlashing;
 

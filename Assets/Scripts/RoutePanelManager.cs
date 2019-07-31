@@ -26,17 +26,26 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         {
             but.UpdateButtonState ();
         }
+        foreach ( int r in Route.Instance.Routes )
+        {
+            RouteDictionary.Instance.PanelRoutes [r].Show (true);
+        }
+
     }
 
     public void Show( bool isVisible )
     {
+        routePanel.SetActive (isVisible);
         if ( isVisible )
+        {
             GameManager.Instance.PauseOn ();
+            Invoke ("UpdateButtonsStates", 0.1f);
+            ResetInput ();
+
+        }
         else
             GameManager.Instance.PauseOff ();
-        routePanel.SetActive (isVisible);
-        ResetInput ();
-        UpdateButtonsStates ();
+
     }
 
     public void GetInput( int input )
@@ -46,6 +55,9 @@ public class RoutePanelManager : MonoBehaviour, IHideable
             Input [Count] = input;
             Count++;
         }
+        else
+            GetRouteButtonByNumber (input).SetRouteOff ();
+
     }
 
     public void ResetInput()
@@ -55,16 +67,41 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         ResetButtonInput (Input [1]);
         Input [0] = -1;
         Input [1] = -1;
+        UpdateButtonsStates ();
     }
 
-    public void SetRoute()
+    public void SetRouteByNumber( int number, int but = -1 )
+    {
+        if ( Route.Instance.CheckRoute (number) )
+        {
+            Route.Instance.MakeRoute (number, but);
+            if ( but != -1 )
+                GetRouteButtonByNumber (but).SetInRouteShuntingFirst ();
+        }
+        else
+            print ("Wrong shit!");
+        ResetInput ();
+        
+    }
+    public void CallOffRouteByNumber( int number, int but = -1 )
+    {
+        if ( RouteDictionary.Instance.PanelRoutes [number].IsExist )
+        {
+            Route.Instance.DestroyRoute (number);
+            if ( but != -1 )
+                GetRouteButtonByNumber (but).SetRouteOff ();
+            ResetInput ();
+        }           
+    }
+
+    private void SetRoute()
     {
         if ( ValidateInput () )
         {
             routeNumber = Input [0] * 10 + Input [1];
             if ( Route.Instance.CheckRoute (routeNumber) )
             {
-                Route.Instance.MakeRoute (routeNumber, Input[0]);
+                Route.Instance.MakeRoute (routeNumber, Input [0]);
                 GetRouteButtonByNumber (Input [0]).SetInRouteShuntingFirst ();
             }
             else
@@ -73,7 +110,6 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         }
         else
             print ("Fuck your Input, Asshole");
-
     }
 
     public void CallOffRoute()
@@ -83,21 +119,10 @@ public class RoutePanelManager : MonoBehaviour, IHideable
             routeNumber = Input [0] * 10 + Input [1];
             if ( Route.Instance.Validate (routeNumber) )
             {
-                //may be player has changed order 
                 if ( RouteDictionary.Instance.PanelRoutes [routeNumber].IsExist )
                 {
                     DestroyRouteWithInputs (routeNumber);
-                }
-                else
-                {
-                    //may be player has changed order 
-                    routeNumber = Input [1] * 10 + Input [0];
-                    if ( RouteDictionary.Instance.PanelRoutes [routeNumber].IsExist )
-                    {
-                        DestroyRouteWithInputs (routeNumber);
-                    }
-                }
-
+                } 
             }
             else
                 print ("Wrong shit!");
@@ -107,17 +132,16 @@ public class RoutePanelManager : MonoBehaviour, IHideable
             print ("Fuck your Input, Asshole");
     }
 
-    
+
     private void DestroyRouteWithInputs( int route )
     {
         Route.Instance.DestroyRoute (route);
-        GetRouteButtonByNumber (Input [0]).SetRouteOff ();
-        GetRouteButtonByNumber (Input [1]).SetRouteOff ();
+        GetRouteButtonByNumber (Input [0]).SetRouteOff ();       
     }
 
     private void ResetButtonInput( int input )
     {
-        if ( input >= 0 )
+        if ( input >= 0 && input < 10 )
         {
             if ( !GetRouteButtonByNumber (input).IsStartsRoute )
             {
@@ -125,10 +149,10 @@ public class RoutePanelManager : MonoBehaviour, IHideable
             }
             else
                 GetRouteButtonByNumber (input).SetInRouteImage ();
-        }    
+        }
     }
 
-   
+
 
     private bool ValidateInput()
     {

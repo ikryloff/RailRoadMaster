@@ -53,7 +53,6 @@ public class RouteDictionary : Singleton<RouteDictionary>, IManageable
             newRoute.DependsOnSignal = GetTL(routeFile.DependsOnSignal);
             newRoute.RouteNumber = routeFile.RouteNumber;
             RouteDict.Add(newRoute.RouteNumber, newRoute);
-            
         }      
 
     }

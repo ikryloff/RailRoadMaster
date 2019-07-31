@@ -9,7 +9,7 @@ public class CouplerPoint : MonoBehaviour
     public CouplerObject CouplerObject { get; set; }
     public Transform PointTransform { get; private set; }
     public Vector3 PointLocalPosition { get; private set; }
-    private CouplerPoint otherPoint;
+    public CouplerPoint OtherPoint { get; set; }
     public Collider CouplerCollider { get; private set; }
 
 
@@ -28,15 +28,16 @@ public class CouplerPoint : MonoBehaviour
     {
         if ( IsAbleToConnect )
         {
-            otherPoint = other.GetComponent<CouplerPoint> ();
-            OtherRSConnection = otherPoint.RSConnection;
+            OtherPoint = other.GetComponent<CouplerPoint> ();
+            OtherRSConnection = OtherPoint.RSConnection;
             RSConnection.MakeConnection (OtherRSConnection);
         }
     }
 
     public void MakePointConnection( RSConnection otherCar )
     {
-        SetCouplerObjectToLookAt (otherCar.CouplerPointLeft);
+        OtherPoint = otherCar.CouplerPointLeft;
+        SetCouplerObjectToLookAt (OtherPoint);
         IsAbleToConnect = false;
         CouplerCollider.enabled = false;
         otherCar.CouplerPointLeft.CouplerCollider.enabled = false;
@@ -47,7 +48,7 @@ public class CouplerPoint : MonoBehaviour
     {
         PointTransform.localPosition = PointLocalPosition - new Vector3 (5, 0, 0);
         CouplerCollider.enabled = true;
-        otherPoint.CouplerCollider.enabled = true;
+        OtherPoint.CouplerCollider.enabled = true;
         IsAbleToConnect = true;        
         NullCouplerObjectToLookAt ();
     }
@@ -60,8 +61,8 @@ public class CouplerPoint : MonoBehaviour
 
     private void NullCouplerObjectToLookAt( )
     {
-        otherPoint.CouplerObject.OtherCouplerPoint = null;
-        otherPoint.CouplerObject.SetDefaultRotation ();
+        OtherPoint.CouplerObject.OtherCouplerPoint = null;
+        OtherPoint.CouplerObject.SetDefaultRotation ();
         CouplerObject.OtherCouplerPoint = null;
         CouplerObject.SetDefaultRotation ();
     }

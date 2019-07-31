@@ -41,8 +41,8 @@ public class RouteButton : MonoBehaviour
 
     private void SendNumber()
     {
-        panelManager.GetInput (number);
         SetPressedColor ();
+        panelManager.GetInput (number);        
     }
 
     public void SetPressedColor()

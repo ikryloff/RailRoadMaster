@@ -15,6 +15,7 @@ public class ExitSignal : TrafficLight
 
     protected override void Awake()
     {
+        GetPositionX = gameObject.transform.position.x;
         RedSignal = GetComponentInChildren<TLRedLamp> ();
         WhiteSignal = GetComponentInChildren<TLWhiteLamp> ();
         GreenSignal = GetComponentInChildren<TLGreenLamp> ();
@@ -51,7 +52,7 @@ public class ExitSignal : TrafficLight
         {
             if ( route.DependsOnSignal != null )
             {
-                if ( !route.DependsOnSignal.IsClosedForTrains )
+                if ( !route.DependsOnSignal.IsClosed )
                 {
                     if ( route.IsStraight )
                         ExitStraightLightOn ();
@@ -72,8 +73,7 @@ public class ExitSignal : TrafficLight
 
     public override void LightOff()
     {
-        IsClosedForShunting = true;
-        IsClosedForTrains = true;        
+        IsClosed = true;        
         StopSignalFlashing (yellowSignalFlashing);
         LampSwitchOn (red, RedSignal);
         LampSwitchOff (white, WhiteSignal);
@@ -86,9 +86,9 @@ public class ExitSignal : TrafficLight
 
     protected void UpdateSignals()
     {
-        if ( !IsClosedForTrains && depSignal )
+        if ( !IsClosed && depSignal )
         {
-            if (!depSignal.IsClosedForTrains )
+            if (!depSignal.IsClosed )
             {
                 if ( isStraight )
                     ExitStraightLightOn ();
@@ -109,7 +109,7 @@ public class ExitSignal : TrafficLight
         LightOff ();
         LampSwitchOn (white, WhiteSignal);
         LampSwitchOff (red, RedSignal);      
-        IsClosedForShunting = false;
+        IsClosed = false;
 
     }
 
@@ -120,7 +120,7 @@ public class ExitSignal : TrafficLight
         LampSwitchOn (green, GreenSignal);
 
         LampSwitchOff (red, RedSignal);
-        IsClosedForTrains = false;
+        IsClosed = false;
     }
 
     private void ExitTurnLightOn()
@@ -130,7 +130,7 @@ public class ExitSignal : TrafficLight
         LampSwitchOff (red, RedSignal);
         LampSwitchOff (white, WhiteSignal);
         LampSwitchOff (green, GreenSignal);
-        IsClosedForTrains = false;
+        IsClosed = false;
     }
 
     

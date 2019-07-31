@@ -14,6 +14,7 @@ public class EntranceSignal : TrafficLight
 
     protected override void Awake()
     {
+        GetPositionX = gameObject.transform.position.x;
         RedSignal = GetComponentInChildren<TLRedLamp> ();
         WhiteSignal = GetComponentInChildren<TLWhiteLamp> ();
         GreenSignal = GetComponentInChildren<TLGreenLamp> ();
@@ -32,7 +33,7 @@ public class EntranceSignal : TrafficLight
     private void Start()
     {
         LightOff ();
-        IsClosedForShunting = true;
+        IsClosed = true;
         EventManager.onTrainSignalChanged += UpdateSignals;
     }
 
@@ -44,7 +45,7 @@ public class EntranceSignal : TrafficLight
 
         if ( route.DependsOnSignal != null )
         {
-            if ( route.DependsOnSignal.IsClosedForTrains )
+            if ( route.DependsOnSignal.IsClosed )
             {
                 if ( route.IsStraight )
                     EntranceStraightLightToClosedOn ();
@@ -59,7 +60,7 @@ public class EntranceSignal : TrafficLight
                     EntranceTurnLightToOpenedOn ();
             }
 
-            IsClosedForTrains = false;
+            IsClosed = false;
         }
         else
             print ("no depend signal");
@@ -74,16 +75,16 @@ public class EntranceSignal : TrafficLight
         LampSwitchOff (green, GreenSignal);
         LampSwitchOff (topYellow, TopYellowSignal);
         LampSwitchOff (botYellow, BottomYellowSignal);
-        IsClosedForTrains = true;
+        IsClosed = true;
 
         EventManager.OnTrainSignalChanged ();
     }
 
     protected void UpdateSignals()
     {
-        if ( !IsClosedForTrains )
+        if ( !IsClosed )
         {
-            if ( depSignal.IsClosedForTrains )
+            if ( depSignal.IsClosed )
             {
                 if ( isStraight )
                     EntranceStraightLightToClosedOn ();
@@ -97,7 +98,7 @@ public class EntranceSignal : TrafficLight
                 else
                     EntranceTurnLightToOpenedOn ();
             }
-            IsClosedForTrains = false;
+            IsClosed = false;
             print ("Updated");
         }
 
