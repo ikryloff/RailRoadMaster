@@ -683,3 +683,9 @@ Assets/TextMesh Pro/Resources/Shaders/TMPro.cginc
 Assets/TextMesh Pro/Resources/Shaders/TMPro_Properties.cginc
 Assets/TextMesh Pro/Resources/Shaders/TMPro_Surface.cginc
 Assets/TextMesh Pro/Sprites/EmojiOne.json
+*.fbx
+*.exr
+Assets/Editor/Instant Screenshot/ScreenshotTaker.cs
+Assets/Assets/Scenes/Game/ReflectionProbe-0.exr
+*.log
+*.json

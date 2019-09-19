@@ -3,7 +3,7 @@
 public class CameraController : MonoBehaviour
 {
 
-    private float mapMovingSpeed = 50f;
+    private float mapMovingSpeed = 100f;
    
     private Vector3 desiredPosition;
     Vector3 smoothedPosition;

@@ -14,7 +14,7 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable {
 
     public void Init()
     {
-        engine = FindObjectOfType<Engine> ();
+        engine = GameObject.Find("Engine").GetComponent<Engine>();
         handlerTxt.text = "  <<< 0 >>>  ";
         Indicators = FindObjectsOfType<IndicatorPath> ();
         SwitchParts = FindObjectsOfType<SwitchParts> ();

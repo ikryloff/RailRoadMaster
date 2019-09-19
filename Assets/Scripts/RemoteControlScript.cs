@@ -47,7 +47,7 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
         {
             RunRemoteControl();
         }
-        remoteControll.transform.position = Camera.main.transform.position + axisZ;
+        //remoteControll.transform.position = Camera.main.transform.position + axisZ;
     }
    
 
@@ -55,14 +55,14 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
     {
         if (IsRemoteControllerOn)
         {
-            remoteControll.gameObject.SetActive(false);
+            //remoteControll.gameObject.SetActive(false);
             gamePanels.gameObject.SetActive(true);
             remoteControlPanel.gameObject.SetActive(false);
             IsRemoteControllerOn = false;
         }
         else
         {
-            remoteControll.gameObject.SetActive(true);
+            //remoteControll.gameObject.SetActive(true);
             gamePanels.gameObject.SetActive(false);
             remoteControlPanel.gameObject.SetActive(true);
             IsRemoteControllerOn = true;
