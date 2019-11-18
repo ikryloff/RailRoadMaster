@@ -3,7 +3,8 @@
 public class TLTrigger : MonoBehaviour
 {
     private TrafficLight signal;
-    private int direction;
+    private int direction;    
+    private RollingStock rs;
 
     void Start()
     {        
@@ -12,7 +13,8 @@ public class TLTrigger : MonoBehaviour
 
     private void OnTriggerEnter( Collider collider )
     {
-        direction = collider.GetComponent<MovableObject> ().Translation > 0 ? 1 : -1;
+        rs = collider.GetComponent<RollingStock> ();        
+        direction = rs.Translation > 0 ? 1 : -1;
         if(CheckViolation (direction))
             GameManager.Instance.GameOver ();
 

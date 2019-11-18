@@ -3,30 +3,38 @@ using UnityEngine;
 
 public class TrackCircuit : MonoBehaviour, IManageable
 {
-    private string trackName;
     public bool HasCarPresence { get; set; }
     public TrafficLight [] TrackLights { get; set; }
     public Switch SwitchTrack { get; set; }
     public Route route;
     public RollingStock engineRS;
-
+    public List<MovableObject> Cars { get; set; }
     public bool IsInRoute { get; set; }
-    public bool IsInPath { get; set; }
     public bool IsInUse { get; set; }
+    public bool IsInPath { get; set; }
     public Engine engine;
     public TrackPathUnit [] paths;
     public IndicatorPath [] Indicators { get; set; }
+    private Material colorBlocked;
+    private Material colorDefault;
+    private Material colorRoute;
 
 
     public void Init()
     {
+        Cars = new List<MovableObject> ();
         paths = transform.GetComponentsInChildren<TrackPathUnit> ();
         Indicators = transform.GetComponentsInChildren<IndicatorPath> ();
+        GetTCIndicatorPathUnits ();
         SetTCToPaths ();
+        SetTCToPathUnits ();
         SetTCToIndicators ();
         SwitchTrack = GetComponentInParent<Switch> ();
         TrackLights = new TrafficLight [2];
+
+
     }
+
 
     private void SetTCToIndicators()
     {
@@ -36,13 +44,17 @@ public class TrackCircuit : MonoBehaviour, IManageable
         }
     }
 
+
+
+
     public void OnStart()
     {
     }
 
     private void Start()
     {
-        CarPresenceOff ();
+        SetTCToSignals ();
+        UpdateCarPresence ();        
     }
 
     private void SetTCToPaths()
@@ -50,6 +62,44 @@ public class TrackCircuit : MonoBehaviour, IManageable
         foreach ( TrackPathUnit item in paths )
         {
             item.TrackCircuit = this;
+        }
+    }
+
+    private void SetTCToSignals()
+    {
+        foreach ( TrafficLight item in TrackLights )
+        {
+            if ( item )
+                item.PrevTC = this;
+        }
+    }
+
+
+    public void GetTCIndicatorPathUnits()
+    {
+        foreach ( IndicatorPath item in Indicators )
+        {
+            item.GetIndicatorsPathUnits ();
+        }
+    }
+
+    public void AddCars( MovableObject car )
+    {
+        if ( !Cars.Contains (car) )
+        {
+            Cars.Add (car);
+            UpdateCarPresence ();
+        }
+
+    }
+
+
+    public void RemoveCars( MovableObject car )
+    {
+        if ( Cars.Contains (car) )
+        {
+            Cars.Remove (car);
+            UpdateCarPresence ();
         }
     }
 
@@ -67,17 +117,19 @@ public class TrackCircuit : MonoBehaviour, IManageable
             SwitchTrack.IsLockedByRS = false;
     }
 
-    private void Update()
+    private void UpdateCarPresence()
     {
+        if ( Cars.Count == 0 && HasCarPresence )
+        {
+            CarPresenceOff ();
+        }
 
+        else if ( Cars.Count > 0 && !HasCarPresence )
+        {
+            CarPresenceOn ();
+        }
 
-    }
-
-    public void TrackCircuitColor()
-    {
-
-
-
+        GameEventManager.SendEvent ("StateTrack", this);
     }
 
     public void IndicationTrackInPath( List<TrackPathUnit> paths )
@@ -97,47 +149,25 @@ public class TrackCircuit : MonoBehaviour, IManageable
     }
 
 
-
-    public string TrackName
+    public void SetTCToPathUnits()
     {
-        get
+
+        foreach ( IndicatorPath ip in Indicators )
         {
-            return name;
-        }
-
-        set
-        {
-            trackName = value;
-        }
-    }
-
-
-
-
-
-
-
-    public void SetCellsLight( SpriteRenderer [] cells, int color )
-    {
-        if ( cells != null )
-        {
-            foreach ( SpriteRenderer cell in cells )
+            foreach ( PathIndicationUnit piu in ip.pathUnits )
             {
-                if ( cell )
-                {
-                    if ( color == Constants.TC_WAIT )
-                        cell.color = new Color32 (250, 240, 125, 255);
-                    else if ( color == Constants.TC_OVER )
-                        cell.color = new Color32 (215, 0, 0, 255);
-                    else
-                        cell.color = new Color32 (190, 190, 190, 255);
-                    if ( HasCarPresence )
-                        cell.color = new Color32 (215, 0, 0, 255);
-                }
+                piu.TrackCircuit = this;
+                piu.PIUMeshRend = piu.GetComponent<MeshRenderer> ();
             }
-
         }
     }
+
+
+
+
+
+
+
 
 
 

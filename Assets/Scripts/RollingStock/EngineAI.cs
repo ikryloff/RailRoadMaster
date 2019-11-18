@@ -5,12 +5,16 @@ using UnityEngine;
 public class EngineAI : MonoBehaviour {
 
     private Engine engine;
+    private RSConnection  connection;
+    private bool Enable;
 
     private void Awake()
     {
         engine = GetComponent<Engine> ();
-    }
-    
+        connection = engine.EngineRS.GetComponent<RSConnection> ();
+        Enable = true;
+    }       
+
     private void Update()
     {
         if ( Input.GetKeyDown (KeyCode.RightArrow) )
@@ -32,27 +36,47 @@ public class EngineAI : MonoBehaviour {
         {
             MoveBackSupper ();
         }
-      
+
+        if ( Input.GetKeyDown (KeyCode.E) )
+        {
+            engine.EngineRS.IsEngine = !engine.EngineRS.IsEngine;
+        }
+
+        if ( Input.GetKeyDown (KeyCode.U) )
+        {
+            engine.EngineRS.SetEngineToRS(engine);
+        }
+
+        if (Enable && engine.InstructionsHandler == 0 && engine.EngineRS.OwnTrack.name.Equals("PathTr3") )
+            Disconnect ();
+
     }
 
     public void MoveForward()
     {
-        engine.InstructionsHandler++;
+        engine.HandlerForward();
     }
 
     public void MoveBack()
     {
-        engine.InstructionsHandler--;
+        engine.HandlerBack();
     }
 
     public void MoveBackSupper()
     {
-        engine.Acceleration = -5;
+        MoveBack ();        
         engine.InstructionsHandler = -6;
     }
 
     public void Stop()
     {
-        engine.InstructionsHandler = 0;
+        engine.HandlerZero ();
+    }
+
+    public void Disconnect()
+    {
+        Enable = false;
+        connection.DestroyConnection ();
+        engine.EngineRS.IsEngine = false;
     }
 }

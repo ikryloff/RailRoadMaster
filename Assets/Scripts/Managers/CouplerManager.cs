@@ -1,35 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CouplerManager : Singleton<CouplerManager>
+public class CouplerManager : Singleton<CouplerManager>, IManageable
 {
     [SerializeField]
     private Texture2D cursor;
     private CouplerLever coupler;
     private CompositionManager cm;
     public GameObject[] couplerPictures;
-    private bool isCouplerModeIsOn;
+    public Coupler [] couplers;
+    private Camera mainCamera;
 
-    public bool IsCouplerModeIsOn
-    {
-        get
-        {
-            return isCouplerModeIsOn;
-        }
-
-        set
-        {
-            isCouplerModeIsOn = value;
-        }
-    }
-
-    private void Awake()
-    {
-        cm = GameObject.Find("CompositionManager").GetComponent<CompositionManager>();
-
-        IsCouplerModeIsOn = true;
-        
-    }
+  
 
     private void UncoupleListener()
     {
@@ -39,7 +21,7 @@ public class CouplerManager : Singleton<CouplerManager>
 
             if ( Input.GetMouseButtonDown (0) )
             {
-                Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+                Ray ray = mainCamera.ScreenPointToRay (Input.mousePosition);
                 RaycastHit hit;
                 if ( Physics.Raycast (ray, out hit) )
                 {
@@ -60,5 +42,22 @@ public class CouplerManager : Singleton<CouplerManager>
         UncoupleListener ();
     }
 
+    public void Init()
+    {
+        cm = FindObjectOfType<CompositionManager> ();
+        couplers = FindObjectsOfType<Coupler> ();
+        foreach ( Coupler item in couplers )
+        {
+            item.SetCouplers ();
+        }
+    }
 
+    public void OnStart()
+    {
+        mainCamera = FindObjectOfType<ConductorCameraController> ().GetComponent<Camera>();
+        foreach ( Coupler item in couplers )
+        {
+            item.SetLevers ();
+        }
+    }
 }

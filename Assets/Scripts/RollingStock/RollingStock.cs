@@ -15,20 +15,19 @@ public class RollingStock : MovableObject, IManageable
 
     [SerializeField]
     public float breakeForce;
-    public RSConnection RSConnection;
-    public RSComposition RSComposition;
-     
+    public RSConnection RSConnection { get; set; }
+    public RSComposition RSComposition { get; set; }
+
     [SerializeField]
     private float rsPosition;
-    public bool IsEngine { get; private set; }
+    public bool IsEngine { get; set; }
     public bool isDirectionChanged;    
 
-    public float acceleration;
     public float movingSpeed;
     public float pathLength;
     private Bogey[] bogeys;
-    public Bogey bogeyLeft { get; set; }
-    public Bogey bogeyRight { get; set; }
+    public Bogey BogeyLeft { get; set; }
+    public Bogey BogeyRight { get; set; }
     private Transform bogeyLeftTransform;
     private Transform bogeyRightTransform;
 
@@ -51,37 +50,22 @@ public class RollingStock : MovableObject, IManageable
         // set bogeys to RS
         SetBogeys ();
         OwnTrackCircuit = OwnTrack.TrackCircuit;
+        OwnTrackCircuit.AddCars (this);
     }
 
     public void OnStart()
     {
         Brakes = true;
-        acceleration = 0;
         IsMoving = true;
-        UpdatePath ();               
+        UpdatePath ();    
+        
     }
-          
-    void Update()
-    {        
-        MoveByPath();
-    }
-
+         
     public void UpdatePath()
     {
-        if(RSComposition.IsMainCar)
-            TrackPath.Instance.GetTrackPath(this);              
+        TrackPath.Instance.GetTrackPath(this);        
     }
    
-    // forced changing direction
-    public void ChangeDirection()
-    {
-        acceleration *= -1;
-        if(!IsMoving)
-        {
-            IsMoving = true;
-        }
-       
-    }
 
     public float GetPositionInPath()
     {        
@@ -105,36 +89,49 @@ public class RollingStock : MovableObject, IManageable
     private void SetBogeys()
     {
         bogeys = GetComponentsInChildren<Bogey>();
-        bogeyLeft = bogeys[0].transform.position.x < bogeys[1].transform.position.x ? bogeys[0] : bogeys[1];
-        bogeyRight = bogeyLeft == bogeys[0] ? bogeys[1] : bogeys[0];
-        bogeyLeftTransform = bogeyLeft.GetComponent<Transform>();
-        bogeyRightTransform = bogeyRight.GetComponent<Transform>();
+        BogeyLeft = bogeys[0].transform.position.x < bogeys[1].transform.position.x ? bogeys[0] : bogeys[1];
+        BogeyRight = BogeyLeft == bogeys[0] ? bogeys[1] : bogeys[0];
+        bogeyLeftTransform = BogeyLeft.GetComponent<Transform>();
+        bogeyRightTransform = BogeyRight.GetComponent<Transform>();
     }
-
+    
     public override void MoveAndRotate()
     {
-        OwnTransform.position = bogeyLeftTransform.position + (bogeyRightTransform.position - bogeyLeftTransform.position) / 2;
+        OwnTransform.position = OwnTrack.trackMath.CalcPositionByDistance (OwnPosition);
         dir = bogeyRightTransform.position - bogeyLeftTransform.position;
         angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
         OwnTransform.rotation = Quaternion.Euler(0, angle, 0);
         OwnTransform.rotation *= Quaternion.Euler(0, -90, 0);
     }
-
+    
     public void SetPathToRS(List<TrackPathUnit> path)
     {
         OwnPath = path;
-        bogeyLeft.OwnPath = path;
-        bogeyRight.OwnPath = path;
+        BogeyLeft.OwnPath = path;
+        BogeyRight.OwnPath = path;
     }
 
     public void SetEngineToRS( Engine engine )
     {
         OwnEngine = engine;
-        bogeyLeft.OwnEngine = engine;
-        bogeyRight.OwnEngine = engine;
+        BogeyLeft.OwnEngine = engine;
+        BogeyRight.OwnEngine = engine;
     }
 
+    public bool GetCoupledLeft()
+    {
+        return RSConnection.LeftCar;
+    }
 
+    public bool GetCoupledRight()
+    {
+        return RSConnection.RightCar;
+    }
+
+    public float GetPositionX()
+    {
+        return OwnTransform.position.x;
+    }
 
 
 }

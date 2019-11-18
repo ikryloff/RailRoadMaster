@@ -14,6 +14,7 @@ public class RouteButton : MonoBehaviour
     Color32 colorOpened;
     Color32 colorHasPresence;
     Color32 colorDefault;
+    private Button button;
 
 
     public int Number
@@ -31,6 +32,7 @@ public class RouteButton : MonoBehaviour
         panelManager = FindObjectOfType<RoutePanelManager> ();
         GetComponent<Button> ().onClick.AddListener (SendNumber);
         buttonImage = GetComponent<Image> ();
+        button = GetComponent<Button> ();
 
         colorPressed = new Color32 (80, 90, 150, 255);
         colorOpened = new Color32 (218, 223, 230, 255);
@@ -41,13 +43,14 @@ public class RouteButton : MonoBehaviour
 
     private void SendNumber()
     {
-        SetPressedColor ();
+        SetPressedColor ();        
         panelManager.GetInput (number);        
     }
 
     public void SetPressedColor()
     {
         buttonImage.color = colorPressed;
+        button.interactable = false;
     }
 
     public void SetInRouteShuntingFirst()
@@ -58,6 +61,7 @@ public class RouteButton : MonoBehaviour
 
     public void UpdateButtonState()
     {
+        button.interactable = true;
         if ( IsStartsRoute )
             return;
         foreach ( TrackCircuit item in tracks )
@@ -81,6 +85,7 @@ public class RouteButton : MonoBehaviour
     public void SetRouteOff()
     {
         IsStartsRoute = false;
-        buttonImage.color = colorDefault; 
+        buttonImage.color = colorDefault;
+        button.interactable = true;
     }
 }

@@ -12,7 +12,7 @@ public class TrackPathUnit : MonoBehaviour, IManageable {
     public Vector3 LeftPoint { get; private set; }
     public Vector3 RightPoint { get; private set; }
     public List<TrackPathUnit> LeftTrackPathUnits { get; set; }
-    public List<TrackPathUnit> RightTrackPathUnits { get; set; }
+    public List<TrackPathUnit> RightTrackPathUnits { get; set; }    
     public TrackPathUnit LeftTrackPathUnit { get; set; }
     public TrackPathUnit RightTrackPathUnit { get; set; }
     public float PathLenght { get; private set; }

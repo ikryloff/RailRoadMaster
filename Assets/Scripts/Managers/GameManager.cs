@@ -13,6 +13,7 @@ public class GameManager : Singleton<GameManager> {
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
         gameOver.SetActive (false);
         EventManager.onGameOver += GameOver;
         routePanel = FindObjectOfType<RoutePanelManager> ();        
@@ -93,6 +94,11 @@ public class GameManager : Singleton<GameManager> {
         isGameOn = true;
     }
 
-   
+    public void QuitGame()
+    {
+        Application.Quit ();
+    }
+
+
 
 }

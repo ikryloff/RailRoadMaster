@@ -27,14 +27,13 @@ public class TrackPath : Singleton<TrackPath>, IManageable
     IEnumerator GetTrackPathCoroutine( RollingStock car )
     {
         // if we change swithces in indication mode
-        if ( IndicationManager.Instance.IsIndicate )
+        if ( IndicationManager.Instance.IsPathIndicate )
         {
-            IndicationManager.Instance.TurnIndicationOff ();
-            IndicationManager.Instance.IsIndicate = true;
+            IndicationManager.Instance.TurnPathIndicationOff ();
+            IndicationManager.Instance.IsPathIndicate = true;
         }
             
         PathMade++;
-        print ("Made path# " + PathMade);
         SetEachPathClosePaths ();
         TrackPathUnit currentTrack = car.OwnTrack;
         List<TrackPathUnit> pathPrevious = new List<TrackPathUnit> ();
@@ -65,10 +64,7 @@ public class TrackPath : Singleton<TrackPath>, IManageable
         if ( PathMade == 0 )
         {
             print ("PathMade");
-            EventManager.PathUpdated ();
-            // if we turn swithces in indication mode
-            if( IndicationManager.Instance.IsIndicate )
-                IndicationManager.Instance.TurnIndicationOn ();         
+            EventManager.PathUpdated ();                    
         }
     }
 

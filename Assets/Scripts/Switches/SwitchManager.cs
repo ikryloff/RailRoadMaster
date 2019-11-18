@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 public class SwitchManager : Singleton<SwitchManager>, IManageable
 {
-
+    private Camera mainCamera;
     private GameObject switchObject;
     [SerializeField]
     private GameObject [] indicators;
@@ -21,7 +21,7 @@ public class SwitchManager : Singleton<SwitchManager>, IManageable
         indicators = GameObject.FindGameObjectsWithTag ("Indication");
         SwitchesInitilisation ();
         trafficLightsManager = GameObject.Find ("TrafficLightsManager").GetComponent<TrafficLightsManager> ();
-
+        mainCamera = FindObjectOfType<ConductorCameraController> ().GetComponent<Camera> ();
     }
 
     private void SwitchesInitilisation()

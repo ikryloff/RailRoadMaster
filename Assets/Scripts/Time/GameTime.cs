@@ -5,10 +5,6 @@ using UnityEngine;
 public class GameTime : Singleton<GameTime>
 {
 
-    public bool timeCondition = false;
-
-
-   
 
     public IEnumerator WaitSomeSeconds(float seconds)
     {

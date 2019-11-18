@@ -15,10 +15,12 @@ public class RouteItem : MonoBehaviour
     public int RouteNumber { get; set; }
     public TrackCircuit TargetTrack { get; set; }
     public int RouteButton { get; set; }
-   
+    public int RouteDirection { get; set; }
 
 
-    public void InstantiateRoute(int routeButton)
+
+
+    public void InstantiateRoute( int routeButton )
     {
         TargetTrack = TrackCircuits.Last ();
         RouteButton = routeButton;
@@ -31,36 +33,53 @@ public class RouteItem : MonoBehaviour
 
     IEnumerator CheckStartingRoute()
     {
-        while (true)
+        while ( true )
         {
-            if( TrackCircuits.Any (t => t.HasCarPresence) )
+            if ( TrackCircuits.Any (t => t.HasCarPresence && t != TargetTrack) )
                 break;
             yield return null;
         }
         if ( !IsShunting )
         {
             TrafficLightOff ();
-            //for all train passing through
-            RouteLights [0].IsClosed = false;
+            //for all trains passing through
+            RouteLights [0].Trigger.enabled = false;
         }
-        StartCoroutine (CheckPassingRoute());
+        // enter route
+        AllTCInUseOn();
+        StartCoroutine (CheckPassingRoute ());
     }
 
     IEnumerator CheckPassingRoute()
     {
-        StopCoroutine (CheckStartingRoute ());
+        StopCoroutine (CheckStartingRoute ());        
         while ( TrackCircuits.Any (t => t != TargetTrack && t.HasCarPresence) )
         {
-            yield return new WaitForSeconds(0.5f);
+            
+            yield return new WaitForSeconds (0.5f);
         }
+        
+        if ( !IsShunting )
+            RouteLights [0].Trigger.enabled = true;        
         Route.Instance.DestroyRoute (RouteNumber);
+
     }
 
 
     private void TrafficLightOn()
     {
-        //light TL with parameters
+        //light TLs with parameters
         RouteLights [0].LightOn (this);
+        if ( RouteDirection == -1 )
+        {
+            if ( TargetTrack.TrackLights [0] != null )
+                TargetTrack.TrackLights [0].Trigger.enabled = true;
+        }
+        else
+        {
+            if ( TargetTrack.TrackLights [1] != null )
+                TargetTrack.TrackLights [1].Trigger.enabled = true;
+        }
     }
 
     private void TrafficLightOff()
@@ -74,7 +93,19 @@ public class RouteItem : MonoBehaviour
         foreach ( TrackCircuit tc in TrackCircuits )
         {
             tc.IsInRoute = true;
+            GameEventManager.SendEvent ("StateTrack", tc);
         }
+        
+    }
+
+    private void AllTCInUseOn()
+    {
+        foreach ( TrackCircuit tc in TrackCircuits )
+        {
+            tc.IsInUse = true;
+            GameEventManager.SendEvent ("StateTrack", tc);
+        }
+
     }
 
     private void AllTCInRouteOff()
@@ -82,6 +113,8 @@ public class RouteItem : MonoBehaviour
         foreach ( TrackCircuit tc in TrackCircuits )
         {
             tc.IsInRoute = false;
+            tc.IsInUse = false;
+            GameEventManager.SendEvent ("StateTrack", tc);
         }
     }
 
@@ -125,6 +158,7 @@ public class RouteItem : MonoBehaviour
 
     public void DestroyRoute()
     {
+        print ("Destroyed");
         TrafficLightOff ();
         AllTCInRouteOff ();
         if ( RouteButton != -1 )

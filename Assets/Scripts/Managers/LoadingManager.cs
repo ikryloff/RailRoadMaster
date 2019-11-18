@@ -6,7 +6,7 @@ public class LoadingManager : MonoBehaviour
 
     void Awake()
     {
-        Application.targetFrameRate = 60;
+        //Application.targetFrameRate = 60;
 
         IndicationManager.Instance.Init ();
 
@@ -23,6 +23,8 @@ public class LoadingManager : MonoBehaviour
         CompositionManager.Instance.Init ();
 
         circuitSignals = FindObjectOfType<TrackCircuitSignals> ();
+
+        CouplerManager.Instance.Init ();
     }
 
     private void Start()
@@ -33,7 +35,9 @@ public class LoadingManager : MonoBehaviour
         
         circuitSignals.Init ();
 
+        CouplerManager.Instance.OnStart ();
 
+        IndicationManager.Instance.OnStart();
     }
     
 }

@@ -15,6 +15,7 @@ public class ExitSignal : TrafficLight
 
     protected override void Awake()
     {
+        base.Awake ();
         GetPositionX = gameObject.transform.position.x;
         RedSignal = GetComponentInChildren<TLRedLamp> ();
         WhiteSignal = GetComponentInChildren<TLWhiteLamp> ();

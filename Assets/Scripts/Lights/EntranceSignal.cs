@@ -14,6 +14,7 @@ public class EntranceSignal : TrafficLight
 
     protected override void Awake()
     {
+        base.Awake ();
         GetPositionX = gameObject.transform.position.x;
         RedSignal = GetComponentInChildren<TLRedLamp> ();
         WhiteSignal = GetComponentInChildren<TLWhiteLamp> ();
@@ -99,7 +100,6 @@ public class EntranceSignal : TrafficLight
                     EntranceTurnLightToOpenedOn ();
             }
             IsClosed = false;
-            print ("Updated");
         }
 
     }

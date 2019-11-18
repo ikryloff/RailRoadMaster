@@ -3,9 +3,8 @@
 public class RSConnection : MonoBehaviour, IManageable
 {
     public RSConnection RightCar;
-
-    public RollingStock RollingStock { get; private set; }
     public RSConnection LeftCar { get; set; }
+    public RollingStock RollingStock { get; private set; }
     private Coupler [] couplers;
     public Coupler CouplerRight { get; private set; }
     public Coupler CouplerLeft { get; private set; }
@@ -14,11 +13,12 @@ public class RSConnection : MonoBehaviour, IManageable
     public RollingStock TempCar { get; private set; }
     public bool IsConnectedRight { get; set; }
     public RSComposition RSComposition { get; set; }
-    private float rSOffset = 96.5f;
+    private float rSOffset = 80f;
     private Coupler coupler;
     public bool JustUncoupled;
     private float tempDist;
     private float checkDist;
+    private float smooth = 0.5f;
 
     public void Init()
     {
@@ -33,7 +33,7 @@ public class RSConnection : MonoBehaviour, IManageable
         {
             MakeConnection (RightCar);
         }
-            
+
     }
 
     public void MakeConnection( RSConnection otherCar )
@@ -47,7 +47,7 @@ public class RSConnection : MonoBehaviour, IManageable
         //Global Update all compositions
         CompositionManager.Instance.UpdateCompositions ();
         //stops Engine after coupling
-        EventManager.CarsCoupled();
+        EventManager.CarsCoupled ();
     }
 
     public void DestroyConnection()
@@ -55,11 +55,11 @@ public class RSConnection : MonoBehaviour, IManageable
         IsConnectedRight = false;
         JustUncoupled = true;
         TempCar = RightCar.RollingStock;
-        tempDist = TempCar.OwnRun - RollingStock.OwnRun;        
-        RightCar.LeftCar = null;        
+        tempDist = TempCar.OwnRun - RollingStock.OwnRun;
+        RightCar.LeftCar = null;
         RightCar = null;
         CouplerRight.DestroyCouplerConnection ();
-        CouplerPointRight.DestroyPointConnection();
+        CouplerPointRight.DestroyPointConnection ();
         //Global Update all compositions
         CompositionManager.Instance.UpdateCompositions ();
     }
@@ -99,13 +99,13 @@ public class RSConnection : MonoBehaviour, IManageable
 
     void ImproveRSPositionWithConnection()
     {
-        if ( RightCar && RightCar.RollingStock.OwnTrack == RollingStock.OwnTrack )
+        if ( RightCar && RightCar.RollingStock.OwnTrack.Equals (RollingStock.OwnTrack) )
         {
-            if ( RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset > 0.5 ||
-                RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset < -0.5 )
+            if ( Mathf.Abs (RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset) > 0.5 )
             {
-                //print ("Improved  " + (RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset));
-                RightCar.RollingStock.OwnPosition = RollingStock.OwnPosition + rSOffset;
+                //print ("Improved  " + (RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset));                
+                RightCar.RollingStock.OwnPosition = Mathf.Lerp(RightCar.RollingStock.OwnPosition, RollingStock.OwnPosition + rSOffset, smooth);              
+
             }
 
         }

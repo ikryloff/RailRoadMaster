@@ -23,6 +23,8 @@ public class RouteData : ScriptableObject
     private string dependsOnSignal;
     [SerializeField]
     private int routeNumber;
+    [SerializeField]
+    private int routeDirection;
 
     public string RouteName
     {
@@ -102,5 +104,13 @@ public class RouteData : ScriptableObject
             return routeNumber;
         }
 
+    }
+
+    public int RouteDirection
+    {
+        get
+        {
+            return routeDirection;
+        }               
     }
 }

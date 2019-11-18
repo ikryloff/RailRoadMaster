@@ -12,7 +12,7 @@ public class RouteDictionary : Singleton<RouteDictionary>, IManageable
     // Scriptable obj array, contains all possible routes
     [SerializeField]
     private RouteData[] routeFiles;
-    public Dictionary<int, PanelRoute> PanelRoutes { get; set; }
+    public Dictionary<int, RouteUnit> PanelRoutes { get; set; }
 
     public Dictionary<int, RouteItem> RouteDict { get; set; }
 
@@ -52,6 +52,7 @@ public class RouteDictionary : Singleton<RouteDictionary>, IManageable
             newRoute.IsStraight = routeFile.IsStraight;
             newRoute.DependsOnSignal = GetTL(routeFile.DependsOnSignal);
             newRoute.RouteNumber = routeFile.RouteNumber;
+            newRoute.RouteDirection = routeFile.RouteDirection;
             RouteDict.Add(newRoute.RouteNumber, newRoute);
         }      
 
@@ -104,9 +105,9 @@ public class RouteDictionary : Singleton<RouteDictionary>, IManageable
 
     private void InstantiatePanelRoutesDictionary()
     {
-        PanelRoutes = new Dictionary<int, PanelRoute> ();
-        PanelRoute [] pr = FindObjectsOfType<PanelRoute> ();
-        foreach ( PanelRoute item in pr )
+        PanelRoutes = new Dictionary<int, RouteUnit> ();
+        RouteUnit [] pr = FindObjectsOfType<RouteUnit> ();
+        foreach ( RouteUnit item in pr )
         {
             PanelRoutes.Add (item.Num, item);
         }

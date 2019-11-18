@@ -6,7 +6,8 @@ public abstract class MovableObject : MonoBehaviour
 {
 
     //Engine that moves Movable objects
-    public Engine OwnEngine { get; set; }   
+    public Engine OwnEngine { get; set; }
+    public RollingStock RollingStock { get; set; }
     public TrackCircuit OwnTrackCircuit { get; set; }
     public float OwnPosition { get; set; }
     public float OwnRun { get; set; }
@@ -16,47 +17,46 @@ public abstract class MovableObject : MonoBehaviour
     public bool IsMoving { get; set; }
     // Moving distance per frame
     public float Translation { get; private set; }
-    private int koeff = 25;
+    
     public static int temp = 0;
+    private float smooth = 0.5f;
+    private float step;
+    private float TOLERANCE = 0.5f;
 
-    
-    
 
-    public void MoveByPath()
+    public void MoveByPath( float step )
     {
-        
-        if (OwnTrack)
+
+        if ( OwnTrack )
         {
             // if engine attached move as engine, else 0 speed 
-            Translation = OwnEngine ? OwnEngine.Acceleration : 0; 
-            
-            // Moving
-            OwnPosition += Translation * Time.deltaTime * koeff;
+            if ( OwnEngine )
+                Translation = OwnEngine.Acceleration;
+            else
+                Translation = 0;
+            // Moving                    
+            OwnPosition += step;
             // Run of Movable Object
-            OwnRun += Translation * Time.deltaTime * koeff;
+            OwnRun += step;
             //Set presense to OwnTC
-            OwnTrackCircuit.CarPresenceOn();
-
+            OwnTrackCircuit.AddCars(this);  
             // bogeys and RS rotate in different ways
-            MoveAndRotate();
+            MoveAndRotate ();
 
-            if (Translation > 0 &&  OwnPosition > OwnTrack.PathLenght)
+            if ( Translation > 0 && OwnPosition >= OwnTrack.PathLenght - TOLERANCE )
             {
-                StepNextTrackPath();
-
+                StepNextTrackPath (step);                
                 //Set off presense from old OwnTC
-                OwnTrackCircuit.CarPresenceOff();
+                OwnTrackCircuit.RemoveCars (this);                
             }
-            if (Translation < 0 && OwnPosition < 0)
-            {
-                StepPrevTrackPath();
-
+            else if ( Translation < 0 && OwnPosition < TOLERANCE )
+            {                
+                StepPrevTrackPath (step);
                 //Set off presense from old OwnTC
-                OwnTrackCircuit.CarPresenceOff();
-            }
-
-            // Set new OWnTC
-            OwnTrackCircuit = OwnTrack.TrackCircuit;           
+                OwnTrackCircuit.RemoveCars (this);
+            }           
+            // Set new OwnTC
+            OwnTrackCircuit = OwnTrack.TrackCircuit;
         }
         else
         {
@@ -64,27 +64,28 @@ public abstract class MovableObject : MonoBehaviour
         }
     }
 
-    private void StepPrevTrackPath()
+    private void StepPrevTrackPath( float _step )
     {
-        OwnTrack = TrackPath.Instance.GetPrevTrack(OwnTrack, OwnPath);
-        if (OwnTrack)
+        OwnTrack = TrackPath.Instance.GetPrevTrack (OwnTrack, OwnPath);
+        if ( OwnTrack )
         {
-            OwnPosition = OwnTrack.PathLenght + Translation * Time.deltaTime * koeff;
+            OwnPosition = OwnTrack.PathLenght;
         }
         else
         {
             IsMoving = false;
-            OwnTrack = OwnPath.First();
+            OwnTrack = OwnPath.First ();
             OwnPosition = 0;
         }
     }
 
-    private void StepNextTrackPath()
+    private void StepNextTrackPath( float _step )
     {
-        OwnTrack = TrackPath.Instance.GetNextTrack(OwnTrack, OwnPath);
-        if (OwnTrack)
+        OwnTrack = TrackPath.Instance.GetNextTrack (OwnTrack, OwnPath);
+        
+        if ( OwnTrack )
         {
-            OwnPosition = Translation * Time.deltaTime * koeff;
+            OwnPosition = 0;
         }
         else
         {
@@ -96,12 +97,12 @@ public abstract class MovableObject : MonoBehaviour
     public virtual void MoveAndRotate()
     {
         Vector3 tangent;
-        OwnTransform.position = OwnTrack.trackMath.CalcPositionAndTangentByDistance(OwnPosition, out tangent);
-        OwnTransform.rotation = Quaternion.LookRotation(tangent);
-        OwnTransform.rotation *= Quaternion.Euler(0, -90, 0);
+        OwnTransform.position = OwnTrack.trackMath.CalcPositionAndTangentByDistance (OwnPosition, out tangent);
+        OwnTransform.rotation = Quaternion.LookRotation (tangent);
+        OwnTransform.rotation *= Quaternion.Euler (0, -90, 0);
     }
 
-    
+
 
 
 }

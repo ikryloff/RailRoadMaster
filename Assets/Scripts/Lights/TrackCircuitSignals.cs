@@ -14,53 +14,66 @@ public class TrackCircuitSignals : MonoBehaviour, IManageable
 
     public void GetTrackLightsByTrack( TrackCircuit tc )
     {
-        if ( tc.name.Equals ("Switch_20") )
+        if ( tc.name.Equals ("Track_Cross9_10") )
             SetTrackLightsToTC (tc, "Cross9_10", null);
 
-        if ( tc.name.Equals ("Track_I_CH") )
-            SetTrackLightsToTC (tc, null, "CH");
+        else if ( tc.name.Equals ("Track_I_CH") )
+            SetTrackLightsToTC (tc, null, null);
 
-        if ( tc.name.Equals ("Track_I_N") )
-            SetTrackLightsToTC (tc, "N", null);
+        else if ( tc.name.Equals ("Track_I_N") )
+            SetTrackLightsToTC (tc, null, null);
 
-        if ( tc.name.Equals ("Track_I_16_15") )
+        else if ( tc.name.Equals ("Track_I_16_15") )
             SetTrackLightsToTC (tc, "NI", "CHI");
 
-        if ( tc.name.Equals ("Track_2") )
+        else if ( tc.name.Equals ("Track_12_17_19") )
+            SetTrackLightsToTC (tc, "M5", null);
+
+        else if ( tc.name.Equals ("Track_2") )
             SetTrackLightsToTC (tc, "N2", "CH2");
 
-        if ( tc.name.Equals ("Track_3") )
+        else if ( tc.name.Equals ("Track_3") )
             SetTrackLightsToTC (tc, "N3", "CH3");
 
-        if ( tc.name.Equals ("Track_4") )
+        else if ( tc.name.Equals ("Track_4") )
             SetTrackLightsToTC (tc, "N4", "CH4");
 
-        if ( tc.name.Equals ("Track_5") )
+        else if ( tc.name.Equals ("Track_5") )
             SetTrackLightsToTC (tc, "N5", "CH5");
 
-        if ( tc.name.Equals ("Track_6") )
+        else if ( tc.name.Equals ("Track_6") )
             SetTrackLightsToTC (tc, "End6", "M2");
 
-        if ( tc.name.Equals ("Track_7") )
+        else if ( tc.name.Equals ("Track_7") )
             SetTrackLightsToTC (tc, "M1", "End7");
 
-        if ( tc.name.Equals ("Track_8") )
+        else if ( tc.name.Equals ("Track_8") )
             SetTrackLightsToTC (tc, "End8", "M4");
 
-        if ( tc.name.Equals ("Track_9") )
-            SetTrackLightsToTC (tc, "Cross9", "End10");
+        else if ( tc.name.Equals ("Track_9") )
+            SetTrackLightsToTC (tc, "Cross9", "End10");        
 
-        if ( tc.name.Equals ("Track_10") )
+        else if ( tc.name.Equals ("Track_10") )
             SetTrackLightsToTC (tc, "Cross10_11", "End10");
 
-        if ( tc.name.Equals ("Track_11") )
+        else if ( tc.name.Equals ("Track_11") )
             SetTrackLightsToTC (tc, "Cross11", "End10");
 
-        if ( tc.name.Equals ("Track_12") )
+        else if ( tc.name.Equals ("Track_12") )
             SetTrackLightsToTC (tc, "Cross12N", "Cross12CH");
 
-        if ( tc.name.Equals ("Track_13") )
+        else if ( tc.name.Equals ("Track_12A") )
+            SetTrackLightsToTC (tc, null, "End12");
+
+        else if ( tc.name.Equals ("Track_13") )
             SetTrackLightsToTC (tc, "Cross13N", "Cross13CH");
+
+        else if ( tc.name.Equals ("Track_StoreYard") )
+            SetTrackLightsToTC (tc, "M3", "CrossStoreYard");
+
+        else if ( tc.name.Equals ("Track_14") )
+            SetTrackLightsToTC (tc, "End14", "Cross14");
+
     }
 
     private void SetTrackLightsToTC( TrackCircuit tc, string signal_0, string signal_1 )

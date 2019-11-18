@@ -4,8 +4,8 @@ public class Bogey : MovableObject
 {
     [SerializeField]
     private RollingStock rollingStock;
-    
-    public float offset;
+    [SerializeField]
+    private float offset;
     private bool isRightBogey;
 
     
@@ -27,27 +27,27 @@ public class Bogey : MovableObject
         OwnPosition = rollingStock.OwnPosition + offset;
         OwnPath = rollingStock.OwnPath;
         OwnTrack = rollingStock.OwnTrack;        
-        OwnTrackCircuit = OwnTrack.TrackCircuit;      
+        OwnTrackCircuit = OwnTrack.TrackCircuit;
+        OwnTrackCircuit.AddCars (this);
     }
 
-    void Update()
+    private void Update()
     {
-        //base class method of moving
-        MoveByPath();        
-        ImproveBogeysPosition();
-
+        ImproveBogeysPosition ();
     }
+
     
-    void ImproveBogeysPosition()
+    private void ImproveBogeysPosition()
     {
-        if(rollingStock.OwnTrack == OwnTrack)
+        if(rollingStock.OwnTrack.Equals( OwnTrack ) )
         {
-            if(OwnPosition != rollingStock.OwnPosition + offset)
-                OwnPosition = rollingStock.OwnPosition + offset;            
-        }
+            if(OwnTransform.localPosition.x != offset )
+            {
+                OwnPosition = rollingStock.OwnPosition + offset;
 
-    }
-   
+            }            
+        }
+    }   
 }
 
 

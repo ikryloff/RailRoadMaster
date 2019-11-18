@@ -1,44 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class CompositionManager : Singleton<CompositionManager>, IManageable
 {
     public static int CompositionID { get; set; }
     public static Dictionary<int, Composition> CompositionsDict;
-    public RollingStock[] RollingStocks { get; set; }
+    public RollingStock [] RollingStocks { get; set; }
     public RSConnection [] RSConnections { get; set; }
     public RSComposition [] RSCompositions { get; set; }
 
     public void Init()
     {
-        RollingStocks = FindObjectsOfType<RollingStock>();
-        RSConnections = FindObjectsOfType<RSConnection>();
+        RollingStocks = FindObjectsOfType<RollingStock> ();
+        RSConnections = FindObjectsOfType<RSConnection> ();
         RSCompositions = FindObjectsOfType<RSComposition> ();
-        CompositionsDict = new Dictionary<int, Composition>();  // new Dict of compositions 
-        RollingStockInitialisation();
+        CompositionsDict = new Dictionary<int, Composition> ();  // new Dict of compositions 
+        RollingStockInitialisation ();
     }
 
     public void OnStart()
     {
-        UpdateCompositions();
-        RollingStockStarting();
+        UpdateCompositions ();
+        RollingStockStarting ();
     }
 
     private void RollingStockInitialisation()
     {
-        foreach (RollingStock rs in RollingStocks)
+        foreach ( RollingStock rs in RollingStocks )
         {
-            rs.Init();
+            rs.Init ();
         }
-        
+
     }
 
     private void RollingStockStarting()
     {
-        foreach (RollingStock rs in RollingStocks)
+        foreach ( RollingStock rs in RollingStocks )
         {
-            rs.OnStart();
+            rs.OnStart ();
         }
         foreach ( RSConnection rs in RSConnections )
         {
@@ -49,21 +47,25 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
 
     public void UpdateCompositions()
     {
-        if (CompositionsDict.Count > 0)
-            CompositionsDict.Clear();
+        if ( CompositionsDict.Count > 0 )
+            CompositionsDict.Clear ();
         CompositionID = 0;
-        EventManager.CompositionChanged();       
+        EventManager.CompositionChanged ();
     }
 
-    public static void UpdateCarComposition(RollingStock rollingStock)
+    public static void UpdateCarComposition( RollingStock rollingStock )
     {
-         // make new composition
+        // make new composition
         Composition composition = new Composition (CompositionID);
         //set main car for paths
         composition.MainCar = rollingStock;
+        print (rollingStock.name + " is MainCar");
         //find Engine in this Car
         if ( rollingStock.IsEngine )
+        {
             composition.CompEngine = rollingStock.OwnEngine;
+        }
+            
         else
             composition.CompEngine = null;
         // add composition in Dict
@@ -83,13 +85,13 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
                 else
                     composition.CompEngine = null;
             }
-            
+
             conLeft = conLeft.LeftCar;
         }
         //set quantity of cars in composition
         composition.Quantity = composition.Cars.Count;
         // set engine to all cars of composition
-        composition.SetEngineToAllCars ();
+        composition.SetEngineToAllCars ();       
         print ("ID:" + CompositionID + "  Cars: " + composition.Quantity);
         //increase composition ID
         CompositionID++;
@@ -102,4 +104,16 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         rs.CarComposition = composition;
     }
 
+    private void Update()
+    {
+        CompositionMoving ();
+    }
+
+    private void CompositionMoving()
+    {
+        foreach ( Composition comp in CompositionsDict.Values )
+        {
+            comp.Move ();
+        }
+    }
 }

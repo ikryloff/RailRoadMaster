@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class Composition {
+public class Composition
+{
 
-	public int Number { get; set; }
+    public int Number { get; set; }
 
     public int Quantity { get; set; }
 
@@ -11,10 +13,10 @@ public class Composition {
     public List<RSComposition> Cars { get; set; }
 
     public RollingStock MainCar { get; set; }
-        
-    public Composition(int number)
-    {
-        EventManager.onPathUpdated += SetPathToAllCars;
+    private float step;
+
+    public Composition( int number )
+    {       
         Cars = new List<RSComposition> ();
         Number = number;
     }
@@ -26,12 +28,18 @@ public class Composition {
         }
     }
 
-    public void SetPathToAllCars()
+    public void Move()
     {
-        foreach ( RSComposition car in Cars )
+        foreach(RSComposition car in Cars )
         {
-            car.RollingStock.OwnPath = MainCar.OwnPath;
+            if ( CompEngine )
+            {
+                step = CompEngine.EngineStep;
+                car.RollingStock.MoveByPath (step);
+                car.RollingStock.BogeyLeft.MoveByPath (step);
+                car.RollingStock.BogeyRight.MoveByPath (step);
+            }
+            
         }
-
     }
 }

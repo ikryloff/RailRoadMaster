@@ -24,6 +24,7 @@ public class UIManager : Singleton<UIManager>
     {
         routePanel.Show (false);
         communicationPanel.Show (true);
+        ModeSwitch.Instance.SwitchToConductorMode ();
     }
 
     public void RouteMode()

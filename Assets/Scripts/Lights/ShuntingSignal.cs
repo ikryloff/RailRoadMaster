@@ -26,6 +26,7 @@ public class ShuntingSignal : TrafficLight {
 
     protected override void Awake()
     {
+        base.Awake ();
         GetPositionX = gameObject.transform.position.x;
         BlueSignal = GetComponentInChildren<TLBlueLamp>();
         WhiteSignal = GetComponentInChildren<TLWhiteLamp>();

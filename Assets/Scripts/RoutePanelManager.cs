@@ -28,7 +28,7 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         }
         foreach ( int r in Route.Instance.Routes )
         {
-            RouteDictionary.Instance.PanelRoutes [r].Show (true);
+            RouteDictionary.Instance.PanelRoutes [r].DoRouteUnit (true);
         }
 
     }

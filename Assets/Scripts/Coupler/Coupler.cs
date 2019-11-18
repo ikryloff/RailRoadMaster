@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Coupler : MonoBehaviour
+public class Coupler : MonoBehaviour, IHideable
 {
     public CouplerObject CouplerObject { get; set; }
     public CouplerPoint CouplerPoint { get; set; }
     public CouplerLever CouplerLever { get; private set; }
-    public GameObject CouplerLeverObject { get; private set; }
+    public GameObject CouplerLeverObject { get; set; }
     public bool IsInConnection { get; set; }
 
-    private void Awake()
+    public void SetCouplers()
     {
         CouplerObject = GetComponentInChildren<CouplerObject> ();
         CouplerPoint = GetComponentInChildren<CouplerPoint> ();
@@ -19,7 +19,7 @@ public class Coupler : MonoBehaviour
         if(CouplerLever)
             CouplerLeverObject = CouplerLever.gameObject;
     }
-    private void Start()
+    public void SetLevers()
     {
         if ( !IsInConnection && CouplerLever )
             SetLeverUnactive ();
@@ -36,7 +36,7 @@ public class Coupler : MonoBehaviour
 
     public void SetLeverActive()
     {
-        if ( CouplerLever )
+        if ( CouplerLever && IsInConnection)
             CouplerLeverObject.SetActive (true);
     }
 
@@ -50,5 +50,10 @@ public class Coupler : MonoBehaviour
     {
         IsInConnection = false;
         SetLeverUnactive ();
+    }
+
+    public void Show( bool isVisible )
+    {
+        CouplerLeverObject.SetActive (isVisible);
     }
 }

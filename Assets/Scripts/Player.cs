@@ -15,16 +15,16 @@ public class Player : MonoBehaviour {
 
     public void MoveForward()
     {
-        engine.InstructionsHandler++;
+        engine.HandlerForward ();
     }
 
     public void MoveBack()
     {
-        engine.InstructionsHandler--;
+        engine.HandlerBack ();
     }
 
     public void Stop()
     {
-        engine.InstructionsHandler = 0;
+        engine.HandlerZero ();
     }
 }

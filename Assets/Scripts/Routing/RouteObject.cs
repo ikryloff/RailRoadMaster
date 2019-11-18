@@ -13,7 +13,7 @@ public class RouteObject : MonoBehaviour
     private Switch[] switchesStr;
     private Switch[] switchesTurn;
     private TrackCircuit[] trackCircuits;
-    public int routeDirection;
+    private int routeDirection;
 
     public string RouteName
     {
@@ -105,5 +105,17 @@ public class RouteObject : MonoBehaviour
             trackCircuits = value;
         }
     }
-    
+
+    public int RouteDirection
+    {
+        get
+        {
+            return routeDirection;
+        }
+
+        set
+        {
+            routeDirection = value;
+        }
+    }
 }

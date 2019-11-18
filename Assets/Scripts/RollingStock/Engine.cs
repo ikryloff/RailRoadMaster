@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 
 public class Engine : MonoBehaviour
@@ -16,25 +14,32 @@ public class Engine : MonoBehaviour
     public float ForPauseTempAcceleration { get; private set; }
     public int SpeedReal { get; private set; }
     public float Acceleration { get; set; }
-    const float accForce= 0.015f;
+    //common var to set step of moving
+    public float EngineStep { get; set; }
+    private int koeff = 25;
+
+    const float accForce = 0.015f;
     public EngineInertia Inertia { get; private set; }
 
 
     private bool isPaused;
+    private EngineLightning engineLightning;
 
     private void Awake()
     {
         EventManager.onPause += PauseMovingOn;
         EventManager.offPause += PauseMovingOff;
-        
+
         Inertia = GetComponent<EngineInertia> ();
         EngineRS = GetComponent<RollingStock> ();
+        engineLightning = GetComponent<EngineLightning> ();
         Brakes = true;
     }
 
     void Start()
     {
-        Acceleration = 0;        
+        Acceleration = 0;
+        EngineStep = 0;
     }
 
     void Update()
@@ -43,21 +48,34 @@ public class Engine : MonoBehaviour
         {
             CalcRealSpeed ();
             CalcMaxSpeed ();
-            MoveEngine ();            
-            Inertia.AddFriction ();
+            MoveEngine ();
         }
     }
 
-   
+    public void HandlerZero()
+    {
+        InstructionsHandler = 0;
+        engineLightning.NoLight ();
+    }
+    public void HandlerForward()
+    {
+        InstructionsHandler++;
+        engineLightning.TurnAnyLight (InstructionsHandler);
+    }
+    public void HandlerBack()
+    {
+        InstructionsHandler--;
+        engineLightning.TurnAnyLight (InstructionsHandler);
+    }
 
     public void MoveEngine()
     {
         if ( Brakes && SpeedReal == 0 )
         {
-            Acceleration = 0;          
+            Acceleration = 0;
         }
-        
-        if ( SpeedReal != 0 && Math.Abs (SpeedReal) == MaxSpeed  )
+
+        if ( SpeedReal != 0 && Math.Abs (SpeedReal) == MaxSpeed )
         {
             Brakes = false;
             Acceleration += 0;
@@ -67,17 +85,16 @@ public class Engine : MonoBehaviour
             if ( Math.Abs (SpeedReal) < MaxSpeed )
             {
                 Brakes = false;
-                Acceleration += (accForce - Inertia.InertiaValue * accForce) * Direction;
-            }                
+                Acceleration += accForce  * Direction;
+            }
             else if ( Math.Abs (SpeedReal) > MaxSpeed )
             {
                 Brakes = true;
-                Acceleration -= Inertia.GetBreakeForce () * GetOpositeDirection ();
+                Acceleration -= Inertia.GetBreakeForce() * GetOpositeDirection();
             }
-                
-        }
-       
 
+        }
+        EngineStep = Acceleration * Time.deltaTime * koeff;
     }
 
     public int GetOpositeDirection()
@@ -92,7 +109,7 @@ public class Engine : MonoBehaviour
 
         if ( InstructionsHandler == 0 )
         {
-            MaxSpeed = 0;            
+            MaxSpeed = 0;
             Brakes = true;
             Direction = 0;
         }
@@ -111,18 +128,18 @@ public class Engine : MonoBehaviour
     {
         if ( InstructionsHandler > 6 ) InstructionsHandler = 6;
         if ( InstructionsHandler < -6 ) InstructionsHandler = -6;
-    }  
+    }
 
     public void PauseMovingOn()
     {
-        ForPauseTempAcceleration = Acceleration;
-        Acceleration = 0;
+        ForPauseTempAcceleration = EngineStep;
+        EngineStep = 0;
         isPaused = true;
     }
 
     public void PauseMovingOff()
     {
-        Acceleration = ForPauseTempAcceleration;
+        EngineStep = ForPauseTempAcceleration;
         isPaused = false;
     }
 
@@ -131,6 +148,8 @@ public class Engine : MonoBehaviour
         SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 5);
     }
 
-   
+    
+
+
 
 }

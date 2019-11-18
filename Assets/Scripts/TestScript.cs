@@ -17,8 +17,8 @@ public class TestScript : MonoBehaviour
 
     public void Make1Route()
     {
-        routePanel.SetRouteByNumber (611);
-        routePanel.SetRouteByNumber (160);
+        routePanel.SetRouteByNumber (612);
+        //routePanel.SetRouteByNumber (360);
     }
 
     public void MoveBackSupper()

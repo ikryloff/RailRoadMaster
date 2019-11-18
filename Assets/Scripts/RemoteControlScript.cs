@@ -12,7 +12,7 @@ public class RemoteControlScript : Singleton<RemoteControlScript> {
     [SerializeField]
     private GameObject remoteControlPanel;
     [SerializeField]
-    private CameraController cc;
+    private ConductorCameraController cc;
     private bool isRemoteControllerOn;    
     private GameObject[] switches;
     private TrackCircuit tc;

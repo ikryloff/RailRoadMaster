@@ -8,15 +8,18 @@ public class TrafficLight : MonoBehaviour
     private string trafficLightName;
   
 
-    //Set objects in Editor
-    public Lamp BlueSignal;
-    public Lamp WhiteSignal;
-    public Lamp RedSignal;
-    public Lamp TopYellowSignal;
-    public Lamp BottomYellowSignal;
-    public Lamp GreenSignal;
+    public Lamp BlueSignal { get; set; }
+    public Lamp WhiteSignal { get; set; }
+    public Lamp RedSignal { get; set; }
+    public Lamp TopYellowSignal { get; set; }
+    public Lamp BottomYellowSignal { get; set; }
+    public Lamp GreenSignal { get; set; }
 
-    public bool IsClosed { get; set; }
+    public bool IsClosed { get; set; }    
+    public BoxCollider Trigger { get; set; }
+    public TrackCircuit PrevTC { get; set; }
+
+
     //where signal is looking at. 1 - to left, -1 to right
     [SerializeField]
     private int signalDirection;
@@ -55,7 +58,7 @@ public class TrafficLight : MonoBehaviour
 
     protected virtual void Awake()
     {
-        
+        Trigger = GetComponent<BoxCollider> ();
     }
 
    
