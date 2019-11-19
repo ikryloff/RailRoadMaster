@@ -11,8 +11,9 @@ public class ShuntingSignal : TrafficLight {
     {
         LampSwitchOff (blue, BlueSignal);
         LampSwitchOn (white, WhiteSignal);
-
-        IsClosed = false;       
+        IsClosed = false;
+        if ( TLRepeater )
+            TLRepeater.RepeaterOnShunting ();
     }
 
     public override void LightOff()
@@ -21,7 +22,8 @@ public class ShuntingSignal : TrafficLight {
         LampSwitchOff (white, WhiteSignal);
 
         IsClosed = true;
-        
+        if ( TLRepeater )
+            TLRepeater.RepeaterOffShunting ();
     }
 
     protected override void Awake()
@@ -38,9 +40,10 @@ public class ShuntingSignal : TrafficLight {
     private void Start()
     {
         IsClosed = true;
-        LightOff ();
-           
+        LightOff ();           
     }
 
-   
+    
+
+
 }

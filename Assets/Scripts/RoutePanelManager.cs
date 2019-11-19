@@ -38,7 +38,6 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         routePanel.SetActive (isVisible);
         if ( isVisible )
         {
-            GameManager.Instance.PauseOn ();
             Invoke ("UpdateButtonsStates", 0.1f);
             ResetInput ();
 

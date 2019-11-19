@@ -38,14 +38,7 @@ public class YardCameraController : MonoBehaviour
 
         mapMovingSpeed = 200;
         desiredPosition = transform.position;
-        if ( Input.GetKey (KeyCode.W) )
-        {
-            desiredPosition.z += mapMovingSpeed;
-        }
-        if ( Input.GetKey (KeyCode.S) )
-        {
-            desiredPosition.z -= mapMovingSpeed;
-        }
+        
         if ( Input.GetKey (KeyCode.A) )
         {
             desiredPosition.x -= mapMovingSpeed;
@@ -58,7 +51,7 @@ public class YardCameraController : MonoBehaviour
         if ( Input.touchCount == 1 && Input.GetTouch (0).phase == TouchPhase.Moved )
         {
             Vector2 touchDeltaPosition = Input.GetTouch (0).deltaPosition;
-            transform.Translate (-touchDeltaPosition.x * mapMovingSpeed / 250, -touchDeltaPosition.y * mapMovingSpeed / 250, 0);
+            transform.Translate (-touchDeltaPosition.x * mapMovingSpeed / 250, 0, 0);
             desiredPosition = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
         }
         smoothedPosition = Vector3.Lerp (transform.localPosition, desiredPosition, smoothSpeed * dt);

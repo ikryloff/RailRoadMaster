@@ -18,7 +18,7 @@ public class TrafficLight : MonoBehaviour
     public bool IsClosed { get; set; }    
     public BoxCollider Trigger { get; set; }
     public TrackCircuit PrevTC { get; set; }
-
+    public TrafficLightRepeater TLRepeater { get; set; }
 
     //where signal is looking at. 1 - to left, -1 to right
     [SerializeField]
@@ -59,6 +59,7 @@ public class TrafficLight : MonoBehaviour
     protected virtual void Awake()
     {
         Trigger = GetComponent<BoxCollider> ();
+        TLRepeater = GetComponentInChildren<TrafficLightRepeater> ();
     }
 
    

@@ -66,6 +66,8 @@ public class EntranceSignal : TrafficLight
         else
             print ("no depend signal");
         EventManager.OnTrainSignalChanged ();
+        if ( TLRepeater )
+            TLRepeater.RepeaterOnTrain ();
     }
 
     public override void LightOff()
@@ -79,6 +81,9 @@ public class EntranceSignal : TrafficLight
         IsClosed = true;
 
         EventManager.OnTrainSignalChanged ();
+
+        if ( TLRepeater )
+            TLRepeater.RepeaterOffTrain ();
     }
 
     protected void UpdateSignals()
