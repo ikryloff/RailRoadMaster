@@ -21,6 +21,7 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
     {
         UpdateCompositions ();
         RollingStockStarting ();
+        CompositionInstantiate ();
     }
 
     private void RollingStockInitialisation()
@@ -114,6 +115,14 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         foreach ( Composition comp in CompositionsDict.Values )
         {
             comp.Move ();
+        }
+    }
+
+    private void CompositionInstantiate()
+    {
+        foreach ( Composition comp in CompositionsDict.Values )
+        {
+            comp.Instantiate ();
         }
     }
 }

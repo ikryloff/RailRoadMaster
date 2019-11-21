@@ -42,4 +42,16 @@ public class Composition
             
         }
     }
+
+    public void Instantiate()
+    {
+        foreach ( RSComposition car in Cars )
+        {
+            step = 0;
+            car.RollingStock.MoveByPath (step);
+            car.RollingStock.BogeyLeft.MoveByPath (step);
+            car.RollingStock.BogeyRight.MoveByPath (step);
+
+        }
+    }
 }

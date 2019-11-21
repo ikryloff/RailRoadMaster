@@ -82,6 +82,8 @@ public class ExitSignal : TrafficLight
         LampSwitchOff (topYellow, TopYellowSignal);
         LampSwitchOff (botYellow, BottomYellowSignal);
         EventManager.OnTrainSignalChanged ();
+        if ( TLRepeater )
+            TLRepeater.RepeaterOffTrain ();
 
     }
 
@@ -112,6 +114,9 @@ public class ExitSignal : TrafficLight
         LampSwitchOff (red, RedSignal);      
         IsClosed = false;
 
+        if ( TLRepeater )
+            TLRepeater.RepeaterOnShunting ();
+
     }
 
     private void ExitStraightLightOn()
@@ -122,6 +127,8 @@ public class ExitSignal : TrafficLight
 
         LampSwitchOff (red, RedSignal);
         IsClosed = false;
+        if ( TLRepeater )
+            TLRepeater.RepeaterOnTrain ();
     }
 
     private void ExitTurnLightOn()
@@ -132,6 +139,8 @@ public class ExitSignal : TrafficLight
         LampSwitchOff (white, WhiteSignal);
         LampSwitchOff (green, GreenSignal);
         IsClosed = false;
+        if ( TLRepeater )
+            TLRepeater.RepeaterOnTrain ();
     }
 
     
