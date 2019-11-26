@@ -12,6 +12,7 @@
     public static EventDelegate offPause;
     public static EventDelegate onGameOver;
     public static EventDelegate onIndicationStateChanged;
+    public static EventDelegate onTrackCircuitsStateChanged;
 
 
 
@@ -26,16 +27,16 @@
             onGameOver ();
     }
 
-    public static void IndicationStateChanged()
-    {
-        if ( onIndicationStateChanged != null )
-            onIndicationStateChanged ();
-    }
-
     public static void PathChanged()
     {
         if ( onPathChanged != null )
             onPathChanged ();
+    }
+
+    public static void TrackCircuitsStateChanged()
+    {
+        if ( onTrackCircuitsStateChanged != null )
+            onTrackCircuitsStateChanged ();
     }
 
     public static void PathUpdated()

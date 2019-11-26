@@ -28,12 +28,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
     private List<TrafficLightBtnScript> listOfScriptedTLButtons;
     [SerializeField]
     private Button cancelButton;
-    [SerializeField]
-    private Switch switch19, switch21, switch18, switch20, switch22, switch10, switch12, switch14;
-    [SerializeField]
-    private TrafficLight end14_22SW, end22_14SW, end9_18, end10_20, end11_20, end12CH, end12N, end13CH, end13N, m3, endM3, end10_18;
-    Switch[] switches;
-    public TrafficLight[] ends;
+   
 
     public Dictionary<string, TrafficLight> TLDict { get; set; }
 
@@ -113,30 +108,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
 
         }
 
-        switches = FindObjectsOfType<Switch>();
-        // Cashing hand switches
-
-        switch18 = GetSwitchByName("Switch_18");
-        switch19 = GetSwitchByName("Switch_19");
-        switch20 = GetSwitchByName("Switch_20");
-        switch21 = GetSwitchByName("Switch_21");
-        switch22 = GetSwitchByName("Switch_22");
-        switch10 = GetSwitchByName("Switch_10");
-        switch12 = GetSwitchByName("Switch_12");
-        switch14 = GetSwitchByName("Switch_14");
-
-        end14_22SW = GetEndByName("End14_22SW");
-        end22_14SW = GetEndByName("End22_14SW");
-        end9_18 = GetEndByName("End9_18");
-        end10_20 = GetEndByName("End10_20");
-        end11_20 = GetEndByName("End11_20");
-        end12CH = GetEndByName("End12CH");
-        end12N = GetEndByName("End12N");
-        end13CH = GetEndByName("End13CH");
-        end13N = GetEndByName("End13N");
-        m3 = GetEndByName("M3");
-        endM3 = GetEndByName("EndM3");
-        end10_18 = GetEndByName("End10_18");
+        
 
     }
 
@@ -271,23 +243,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
         }
     }
 
-    public void CheckHandSwitches()
-    {
-
-        
-
-    }
-
-
-    public Switch GetSwitchByName(string _switchName)
-    {
-        foreach (var sw in switches)
-        {
-            if (sw.name == _switchName)
-                return sw;
-        }
-        return null;
-    }
+    
 
     public TrafficLight GetEndByName(string _endName)
     {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RoutePanelManager : MonoBehaviour, IHideable
@@ -9,8 +10,12 @@ public class RoutePanelManager : MonoBehaviour, IHideable
     public static int Count;
     public int [] Input { get; set; }
     private int routeNumber;
+    private int routesCount;
+    private int routeStringName;
+    private List<int> routeList;
     RouteButton [] buttons;
     List<RouteButton> routeButtons;
+    public RouteCancelButton [] routeCancelButtons;
 
 
     private void Awake()
@@ -18,6 +23,36 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         Input = new int [2];
         buttons = routePanel.GetComponentsInChildren<RouteButton> ();
         SetRouteButtonsInArray ();
+        routeList = new List<int>();
+        EventManager.onTrackCircuitsStateChanged += UpdateButtonsStatesWithCarsCount;
+        EventManager.onPathChanged += UpdateRouteCancelButtons;
+    }
+
+    private void UpdateRouteCancelButtons()
+    {
+        if ( routePanel.activeSelf )
+        {
+            routesCount = Route.Instance.Routes.Count;
+            routeList = Route.Instance.Routes;            
+            for ( int i = 0; i < routeCancelButtons.Length; i++ )
+            {
+                if ( routesCount > i )
+                {
+                    routeCancelButtons [i].gameObject.SetActive (true);
+                    routeCancelButtons [i].RouteExistNumber = routeList [i];
+                    routeCancelButtons [i].SetTextRouteNumber(RouteDictionary.Instance.PanelRoutes[routeList[i]].RouteStringName);
+                }                    
+                else
+                    routeCancelButtons [i].gameObject.SetActive (false);
+            }
+        }
+    }
+    private void UpdateButtonsStatesWithCarsCount()
+    {
+        foreach ( RouteButton but in buttons )
+        {
+            but.UpdateButtonState ();            
+        }
     }
 
     public void UpdateButtonsStates()
@@ -25,26 +60,19 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         foreach ( RouteButton but in buttons )
         {
             but.UpdateButtonState ();
-        }
-        foreach ( int r in Route.Instance.Routes )
-        {
-            RouteDictionary.Instance.PanelRoutes [r].DoRouteUnit (true);
-        }
-
+            but.RButton.interactable = true;
+        }        
     }
 
     public void Show( bool isVisible )
     {
         routePanel.SetActive (isVisible);
         if ( isVisible )
-        {
-            Invoke ("UpdateButtonsStates", 0.1f);
+        {           
             ResetInput ();
-
-        }
-        else
-            GameManager.Instance.PauseOff ();
-
+            UpdateRouteCancelButtons ();
+        }   
+       
     }
 
     public void GetInput( int input )
@@ -62,34 +90,27 @@ public class RoutePanelManager : MonoBehaviour, IHideable
     public void ResetInput()
     {
         Count = 0;
-        ResetButtonInput (Input [0]);
-        ResetButtonInput (Input [1]);
         Input [0] = -1;
         Input [1] = -1;
         UpdateButtonsStates ();
     }
 
-    public void SetRouteByNumber( int number, int but = -1 )
+    public void SetRouteByNumber( int number )
     {
         if ( Route.Instance.CheckRoute (number) )
         {
-            Route.Instance.MakeRoute (number, but);
-            if ( but != -1 )
-                GetRouteButtonByNumber (but).SetInRouteShuntingFirst ();
+            Route.Instance.MakeRoute (number);
         }
         else
             print ("Wrong shit!");
         ResetInput ();
         
     }
-    public void CallOffRouteByNumber( int number, int but = -1 )
+    public void CallOffRouteByNumber( int number )
     {
         if ( RouteDictionary.Instance.PanelRoutes [number].IsExist )
         {
             Route.Instance.DestroyRoute (number);
-            if ( but != -1 )
-                GetRouteButtonByNumber (but).SetRouteOff ();
-            ResetInput ();
         }           
     }
 
@@ -97,11 +118,10 @@ public class RoutePanelManager : MonoBehaviour, IHideable
     {
         if ( ValidateInput () )
         {
-            routeNumber = Input [0] * 10 + Input [1];
+            routeNumber = Input [0] * 100 + Input [1];
             if ( Route.Instance.CheckRoute (routeNumber) )
             {
-                Route.Instance.MakeRoute (routeNumber, Input [0]);
-                GetRouteButtonByNumber (Input [0]).SetInRouteShuntingFirst ();
+                Route.Instance.MakeRoute (routeNumber);               
             }
             else
                 print ("Wrong shit!");
@@ -111,48 +131,14 @@ public class RoutePanelManager : MonoBehaviour, IHideable
             print ("Fuck your Input, Asshole");
     }
 
-    public void CallOffRoute()
-    {
-        if ( ValidateInput () )
-        {
-            routeNumber = Input [0] * 10 + Input [1];
-            if ( Route.Instance.Validate (routeNumber) )
-            {
-                if ( RouteDictionary.Instance.PanelRoutes [routeNumber].IsExist )
-                {
-                    DestroyRouteWithInputs (routeNumber);
-                } 
-            }
-            else
-                print ("Wrong shit!");
-            ResetInput ();
-        }
-        else
-            print ("Fuck your Input, Asshole");
-    }
-
-
+    
     private void DestroyRouteWithInputs( int route )
     {
         Route.Instance.DestroyRoute (route);
         GetRouteButtonByNumber (Input [0]).SetRouteOff ();       
     }
 
-    private void ResetButtonInput( int input )
-    {
-        if ( input >= 0 && input < 10 )
-        {
-            if ( !GetRouteButtonByNumber (input).IsStartsRoute )
-            {
-                GetRouteButtonByNumber (input).SetRouteOff ();
-            }
-            else
-                GetRouteButtonByNumber (input).SetInRouteImage ();
-        }
-    }
-
-
-
+   
     private bool ValidateInput()
     {
         return Input [0] != -1 && Input [1] != -1;
@@ -174,7 +160,7 @@ public class RoutePanelManager : MonoBehaviour, IHideable
 
         for ( int i = 0; i < buttons.Length; i++ )
         {
-            routeButtons.Add (GetRouteButtonByNumber (i));
+            routeButtons.Add (GetRouteButtonByNumber (buttons[i].Number));
         }
     }
 }

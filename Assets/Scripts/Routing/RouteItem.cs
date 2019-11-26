@@ -14,16 +14,14 @@ public class RouteItem : MonoBehaviour
     public bool IsStraight { get; set; }
     public int RouteNumber { get; set; }
     public TrackCircuit TargetTrack { get; set; }
-    public int RouteButton { get; set; }
     public int RouteDirection { get; set; }
 
 
 
 
-    public void InstantiateRoute( int routeButton )
+    public void InstantiateRoute( )
     {
         TargetTrack = TrackCircuits.Last ();
-        RouteButton = routeButton;
         SetAllSwitchesStraight ();
         SetAllSwitchesTurn ();
         AllTCInRouteOn ();
@@ -160,9 +158,7 @@ public class RouteItem : MonoBehaviour
     {
         print ("Destroyed");
         TrafficLightOff ();
-        AllTCInRouteOff ();
-        if ( RouteButton != -1 )
-            FindObjectOfType<RoutePanelManager> ().GetRouteButtonByNumber (RouteButton).SetRouteOff ();
+        AllTCInRouteOff ();        
     }
 
 }

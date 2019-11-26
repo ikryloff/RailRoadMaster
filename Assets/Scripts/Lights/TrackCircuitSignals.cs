@@ -18,10 +18,10 @@ public class TrackCircuitSignals : MonoBehaviour, IManageable
             SetTrackLightsToTC (tc, "Cross9_10", null);
 
         else if ( tc.name.Equals ("Track_I_CH") )
-            SetTrackLightsToTC (tc, null, null);
+            SetTrackLightsToTC (tc, null, "CH");
 
         else if ( tc.name.Equals ("Track_I_N") )
-            SetTrackLightsToTC (tc, null, null);
+            SetTrackLightsToTC (tc, "N", null);
 
         else if ( tc.name.Equals ("Track_I_16_15") )
             SetTrackLightsToTC (tc, "NI", "CHI");

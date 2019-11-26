@@ -23,10 +23,10 @@ public class Route : Singleton<Route> {
 
        
 
-    public void MakeRoute( int routeNum , int routeButton = -1)
+    public void MakeRoute( int routeNum )
     {
         RouteItem routeItem = RouteDictionary.Instance.RouteDict [routeNum];
-        routeItem.InstantiateRoute (routeButton);
+        routeItem.InstantiateRoute ();
         Routes.Add (routeNum);
         RouteDictionary.Instance.PanelRoutes [routeNum].DoRouteUnit (true);
         EventManager.PathChanged ();
@@ -38,7 +38,7 @@ public class Route : Singleton<Route> {
         routeItem.DestroyRoute ();
         Routes.Remove (routeNum);
         RouteDictionary.Instance.PanelRoutes [routeNum].DoRouteUnit (false);
-
+        EventManager.PathChanged ();
     }
 
     public bool CheckRoute( int routeNum )

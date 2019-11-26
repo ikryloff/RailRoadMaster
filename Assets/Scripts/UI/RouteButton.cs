@@ -14,7 +14,7 @@ public class RouteButton : MonoBehaviour
     Color32 colorOpened;
     Color32 colorHasPresence;
     Color32 colorDefault;
-    private Button button;
+    public Button RButton { get; set; }
 
 
     public int Number
@@ -26,19 +26,19 @@ public class RouteButton : MonoBehaviour
 
     }
 
-    public bool IsStartsRoute { get; set; }
     void Awake()
     {
         panelManager = FindObjectOfType<RoutePanelManager> ();
         GetComponent<Button> ().onClick.AddListener (SendNumber);
         buttonImage = GetComponent<Image> ();
-        button = GetComponent<Button> ();
+        RButton = GetComponent<Button> ();
 
         colorPressed = new Color32 (80, 90, 150, 255);
         colorOpened = new Color32 (218, 223, 230, 255);
         colorHasPresence = new Color32 (207, 72, 72, 255);
-        colorDefault = new Color32 (90, 85, 85, 255);
+        colorDefault = new Color32 (90, 85, 85, 255);        
     }
+
    
 
     private void SendNumber()
@@ -49,43 +49,27 @@ public class RouteButton : MonoBehaviour
 
     public void SetPressedColor()
     {
-        buttonImage.color = colorPressed;
-        button.interactable = false;
-    }
-
-    public void SetInRouteShuntingFirst()
-    {
-        SetInRouteImage ();
-        IsStartsRoute = true;
-    }
+        RButton.interactable = false;
+    }   
 
     public void UpdateButtonState()
     {
-        button.interactable = true;
-        if ( IsStartsRoute )
-            return;
-        foreach ( TrackCircuit item in tracks )
+        for ( int i = 0; i < tracks.Length; i++ )
         {
-            if ( item.HasCarPresence )
+            TrackCircuit tc = tracks [i];
+            if ( tc.HasCarPresence )
             {
                 buttonImage.color = colorHasPresence;
                 break;
             }
             else
-                buttonImage.color = colorDefault;
+                buttonImage.color = colorDefault;            
         }
     }
 
 
-    public void SetInRouteImage()
-    {
-        buttonImage.color = colorOpened;
-    }
-
     public void SetRouteOff()
     {
-        IsStartsRoute = false;
         buttonImage.color = colorDefault;
-        button.interactable = true;
     }
 }

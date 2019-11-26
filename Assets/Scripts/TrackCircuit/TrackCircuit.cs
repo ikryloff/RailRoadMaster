@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TrackCircuit : MonoBehaviour, IManageable
@@ -19,6 +20,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
     private Material colorDefault;
     private Material colorRoute;
 
+    public static event Action TrackCircuitsStateChanged = delegate { };
 
     public void Init()
     {
@@ -130,6 +132,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
         }
 
         GameEventManager.SendEvent ("StateTrack", this);
+        EventManager.TrackCircuitsStateChanged();
     }
 
     public void IndicationTrackInPath( List<TrackPathUnit> paths )
