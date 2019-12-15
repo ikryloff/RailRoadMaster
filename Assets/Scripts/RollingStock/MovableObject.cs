@@ -7,7 +7,6 @@ public abstract class MovableObject : MonoBehaviour
 
     //Engine that moves Movable objects
     public Engine OwnEngine { get; set; }
-    public RollingStock RollingStock { get; set; }
     public TrackCircuit OwnTrackCircuit { get; set; }
     public float OwnPosition { get; set; }
     public float OwnRun { get; set; }
@@ -39,7 +38,7 @@ public abstract class MovableObject : MonoBehaviour
             // Run of Movable Object
             OwnRun += step;
             //Set presense to OwnTC
-            OwnTrackCircuit.AddCars(this);  
+            OwnTrackCircuit.AddCars(this);
             // bogeys and RS rotate in different ways
             MoveAndRotate ();
 
@@ -47,7 +46,7 @@ public abstract class MovableObject : MonoBehaviour
             {
                 StepNextTrackPath (step);                
                 //Set off presense from old OwnTC
-                OwnTrackCircuit.RemoveCars (this);                
+                OwnTrackCircuit.RemoveCars (this);
             }
             else if ( Translation < 0 && OwnPosition < TOLERANCE )
             {                

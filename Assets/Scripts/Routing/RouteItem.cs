@@ -15,9 +15,13 @@ public class RouteItem : MonoBehaviour
     public int RouteNumber { get; set; }
     public TrackCircuit TargetTrack { get; set; }
     public int RouteDirection { get; set; }
+    public RouteUnit Unit { get; set; }
 
 
-
+    private void Start()
+    {
+        Unit = RouteDictionary.Instance.PanelRoutes [RouteNumber];
+    }
 
     public void InstantiateRoute( )
     {
@@ -45,6 +49,8 @@ public class RouteItem : MonoBehaviour
         }
         // enter route
         AllTCInUseOn();
+        Unit.IsInUse = true;
+        EventManager.PathChanged ();
         StartCoroutine (CheckPassingRoute ());
     }
 
@@ -59,6 +65,7 @@ public class RouteItem : MonoBehaviour
         
         if ( !IsShunting )
             RouteLights [0].Trigger.enabled = true;        
+        Unit.IsInUse = false;
         Route.Instance.DestroyRoute (RouteNumber);
 
     }

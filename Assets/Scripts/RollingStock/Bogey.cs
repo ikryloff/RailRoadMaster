@@ -2,7 +2,6 @@
 
 public class Bogey : MovableObject
 {
-    [SerializeField]
     private RollingStock rollingStock;
     [SerializeField]
     private float offset;
@@ -23,10 +22,15 @@ public class Bogey : MovableObject
     }
 
     private void Start()
-    {       
+    {
+        ResetBogey ();
+    }
+
+    public void ResetBogey()
+    {
         OwnPosition = rollingStock.OwnPosition + offset;
+        OwnTrack = rollingStock.OwnTrack;
         OwnPath = rollingStock.OwnPath;
-        OwnTrack = rollingStock.OwnTrack;        
         OwnTrackCircuit = OwnTrack.TrackCircuit;
         OwnTrackCircuit.AddCars (this);
     }

@@ -6,6 +6,7 @@ public class RouteUnit : MonoBehaviour
     [SerializeField]
     private int num;
     public string RouteStringName;
+    public bool IsInUse;
 
     public int Num
     {
@@ -21,6 +22,7 @@ public class RouteUnit : MonoBehaviour
     {
         IsExist = false;
         DoRouteUnit (false);
+        IsInUse = false;
     }
 
     public void DoRouteUnit( bool isOn  )

@@ -119,7 +119,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
             SwitchTrack.IsLockedByRS = false;
     }
 
-    private void UpdateCarPresence()
+    public void UpdateCarPresence()
     {
         if ( Cars.Count == 0 && HasCarPresence )
         {

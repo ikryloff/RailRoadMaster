@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using BansheeGz.BGSpline.Components;
-using System.Linq;
-using System;
 
 public class RollingStock : MovableObject, IManageable
 {
@@ -10,22 +7,23 @@ public class RollingStock : MovableObject, IManageable
 
     [SerializeField]
     private TrackPathUnit thisRSTrack;
-    public string Number { get; set; }
+    public int Number;
     public bool Brakes { get; set; }
 
     [SerializeField]
     public float breakeForce;
+
+    //Components
     public RSConnection RSConnection { get; set; }
     public RSComposition RSComposition { get; set; }
 
     [SerializeField]
     private float rsPosition;
     public bool IsEngine { get; set; }
-    public bool isDirectionChanged;    
-
+    public bool isDirectionChanged;
     public float movingSpeed;
     public float pathLength;
-    private Bogey[] bogeys;
+    private Bogey [] bogeys;
     public Bogey BogeyLeft { get; set; }
     public Bogey BogeyRight { get; set; }
     private Transform bogeyLeftTransform;
@@ -33,13 +31,14 @@ public class RollingStock : MovableObject, IManageable
 
     Vector3 dir;
     float angle;
-    
+
     public void Init()
-    {        
-        EventManager.onPathChanged += UpdatePath;       
+    {
+        EventManager.onPathChanged += UpdatePath;
         OwnTransform = gameObject.GetComponent<Transform> ();
         OwnTrack = thisRSTrack;
-        OwnEngine = GetComponent<Engine>();
+        thisRSTrack = null;
+        OwnEngine = GetComponent<Engine> ();
         if ( OwnEngine ) IsEngine = true;
         OwnPosition = rsPosition;
         OwnRun = 0;
@@ -57,18 +56,18 @@ public class RollingStock : MovableObject, IManageable
     {
         Brakes = true;
         IsMoving = true;
-        UpdatePath ();    
-        
+        UpdatePath ();
+
     }
-         
+
     public void UpdatePath()
     {
-        TrackPath.Instance.GetTrackPath(this);        
+        TrackPath.Instance.GetTrackPath (this);
     }
-   
+
 
     public float GetPositionInPath()
-    {        
+    {
         if ( OwnPath != null )
         {
             float tempPosition = 0;
@@ -88,27 +87,33 @@ public class RollingStock : MovableObject, IManageable
 
     private void SetBogeys()
     {
-        bogeys = GetComponentsInChildren<Bogey>();
-        BogeyLeft = bogeys[0].transform.position.x < bogeys[1].transform.position.x ? bogeys[0] : bogeys[1];
-        BogeyRight = BogeyLeft == bogeys[0] ? bogeys[1] : bogeys[0];
-        bogeyLeftTransform = BogeyLeft.GetComponent<Transform>();
-        bogeyRightTransform = BogeyRight.GetComponent<Transform>();
+        bogeys = GetComponentsInChildren<Bogey> ();
+        BogeyLeft = bogeys [0].transform.position.x < bogeys [1].transform.position.x ? bogeys [0] : bogeys [1];
+        BogeyRight = BogeyLeft == bogeys [0] ? bogeys [1] : bogeys [0];
+        bogeyLeftTransform = BogeyLeft.GetComponent<Transform> ();
+        bogeyRightTransform = BogeyRight.GetComponent<Transform> ();        
     }
-    
+
     public override void MoveAndRotate()
     {
         OwnTransform.position = OwnTrack.trackMath.CalcPositionByDistance (OwnPosition);
         dir = bogeyRightTransform.position - bogeyLeftTransform.position;
-        angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-        OwnTransform.rotation = Quaternion.Euler(0, angle, 0);
-        OwnTransform.rotation *= Quaternion.Euler(0, -90, 0);
+        angle = Mathf.Atan2 (dir.x, dir.z) * Mathf.Rad2Deg;
+        OwnTransform.rotation = Quaternion.Euler (0, angle, 0);
+        OwnTransform.rotation *= Quaternion.Euler (0, -90, 0);
     }
-    
-    public void SetPathToRS(List<TrackPathUnit> path)
+
+    public void SetPathToRS( List<TrackPathUnit> path )
     {
         OwnPath = path;
         BogeyLeft.OwnPath = path;
         BogeyRight.OwnPath = path;
+    }
+
+    public void ResetBogeys()
+    {
+        BogeyLeft.ResetBogey ();
+        BogeyRight.ResetBogey ();
     }
 
     public void SetEngineToRS( Engine engine )

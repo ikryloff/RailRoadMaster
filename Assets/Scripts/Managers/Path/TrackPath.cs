@@ -78,6 +78,16 @@ public class TrackPath : Singleton<TrackPath>, IManageable
         }
     }
 
+    public TrackPathUnit GetTrackPathUnitByName(string trName)
+    {
+        for ( int i = 0; i < TrackList.Length; i++ )
+        {
+            if ( TrackList [i].name.Equals (trName) )
+                return TrackList [i];
+        }
+        return null;
+    }
+
 
     public TrackPathUnit GetNextTrack( TrackPathUnit _current, List<TrackPathUnit> _path )
     {

@@ -6,7 +6,7 @@ public class Engine : MonoBehaviour
 {
     public int InstructionsHandler { get; set; }
     public RollingStock EngineRS { get; private set; }
-    public bool Brakes { get; private set; }
+    public bool Brakes { get; set; }
 
     public int Direction { get; private set; }
     public float MaxSpeed { get; private set; }
@@ -30,8 +30,8 @@ public class Engine : MonoBehaviour
         EventManager.onPause += PauseMovingOn;
         EventManager.offPause += PauseMovingOff;
 
-        Inertia = GetComponent<EngineInertia> ();
         EngineRS = GetComponent<RollingStock> ();
+        Inertia = GetComponent<EngineInertia> ();
         engineLightning = GetComponent<EngineLightning> ();
         Brakes = true;
     }

@@ -6,14 +6,14 @@ public class RouteCancelButton : MonoBehaviour
 {
     public int RouteExistNumber { get; set; }
     private TextMeshProUGUI routeCancelNumber;
-    Button cancelRouteButton;
+    public Button CancelRouteButton;
     private RoutePanelManager panelManager;
 
     private void Awake()
     {
         panelManager = FindObjectOfType<RoutePanelManager> ();
-        cancelRouteButton = GetComponent<Button> ();
-        cancelRouteButton.onClick.AddListener (CancelRoute);
+        CancelRouteButton = GetComponent<Button> ();
+        CancelRouteButton.onClick.AddListener (CancelRoute);
         routeCancelNumber = GetComponentInChildren<TextMeshProUGUI> ();
     }
 

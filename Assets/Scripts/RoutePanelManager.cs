@@ -14,6 +14,7 @@ public class RoutePanelManager : MonoBehaviour, IHideable
     private int routeStringName;
     private List<int> routeList;
     RouteButton [] buttons;
+    RouteUnit unit;
     List<RouteButton> routeButtons;
     public RouteCancelButton [] routeCancelButtons;
 
@@ -38,15 +39,26 @@ public class RoutePanelManager : MonoBehaviour, IHideable
             {
                 if ( routesCount > i )
                 {
+                    unit = RouteDictionary.Instance.PanelRoutes [routeList [i]];
                     routeCancelButtons [i].gameObject.SetActive (true);
                     routeCancelButtons [i].RouteExistNumber = routeList [i];
-                    routeCancelButtons [i].SetTextRouteNumber(RouteDictionary.Instance.PanelRoutes[routeList[i]].RouteStringName);
-                }                    
+                    routeCancelButtons [i].SetTextRouteNumber (unit.RouteStringName);
+                    CancelButtonInteraction (unit, i);
+                }
                 else
                     routeCancelButtons [i].gameObject.SetActive (false);
             }
         }
     }
+
+    private void CancelButtonInteraction( RouteUnit _unit, int count )
+    {
+        if ( _unit.IsInUse )
+            routeCancelButtons [count].CancelRouteButton.interactable = false;
+        else
+            routeCancelButtons [count].CancelRouteButton.interactable = true;
+    }
+
     private void UpdateButtonsStatesWithCarsCount()
     {
         foreach ( RouteButton but in buttons )
@@ -82,8 +94,12 @@ public class RoutePanelManager : MonoBehaviour, IHideable
             Input [Count] = input;
             Count++;
         }
-        else
-            GetRouteButtonByNumber (input).SetRouteOff ();
+        if (Count == 2)
+        {
+            routeNumber = Input [0] * 100 + Input [1];
+            SetRouteByNumber (routeNumber);
+        }
+            
 
     }
 
@@ -114,24 +130,7 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         }           
     }
 
-    private void SetRoute()
-    {
-        if ( ValidateInput () )
-        {
-            routeNumber = Input [0] * 100 + Input [1];
-            if ( Route.Instance.CheckRoute (routeNumber) )
-            {
-                Route.Instance.MakeRoute (routeNumber);               
-            }
-            else
-                print ("Wrong shit!");
-            ResetInput ();
-        }
-        else
-            print ("Fuck your Input, Asshole");
-    }
-
-    
+        
     private void DestroyRouteWithInputs( int route )
     {
         Route.Instance.DestroyRoute (route);

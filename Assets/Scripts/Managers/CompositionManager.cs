@@ -15,11 +15,11 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         RSCompositions = FindObjectsOfType<RSComposition> ();
         CompositionsDict = new Dictionary<int, Composition> ();  // new Dict of compositions 
         RollingStockInitialisation ();
+        UpdateCompositions ();
     }
 
     public void OnStart()
     {
-        UpdateCompositions ();
         RollingStockStarting ();
         CompositionInstantiate ();
     }
@@ -45,13 +45,13 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         }
     }
 
-
+    // after coupling and uncoupling
     public void UpdateCompositions()
     {
         if ( CompositionsDict.Count > 0 )
             CompositionsDict.Clear ();
         CompositionID = 0;
-        EventManager.CompositionChanged ();
+        EventManager.CompositionChanged (); // send to RSComposition
     }
 
     public static void UpdateCarComposition( RollingStock rollingStock )
@@ -60,13 +60,12 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         Composition composition = new Composition (CompositionID);
         //set main car for paths
         composition.MainCar = rollingStock;
-        print (rollingStock.name + " is MainCar");
         //find Engine in this Car
         if ( rollingStock.IsEngine )
         {
             composition.CompEngine = rollingStock.OwnEngine;
         }
-            
+
         else
             composition.CompEngine = null;
         // add composition in Dict
@@ -92,7 +91,7 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         //set quantity of cars in composition
         composition.Quantity = composition.Cars.Count;
         // set engine to all cars of composition
-        composition.SetEngineToAllCars ();       
+        composition.SetEngineToAllCars ();
         print ("ID:" + CompositionID + "  Cars: " + composition.Quantity);
         //increase composition ID
         CompositionID++;

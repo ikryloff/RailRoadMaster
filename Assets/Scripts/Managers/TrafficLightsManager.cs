@@ -112,10 +112,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
 
     }
 
-    private void Start()
-    {
-        Invoke("CheckHandSwitches", 0.5f);        
-    }
+    
        
 
     // Check possible Routes By Lights
