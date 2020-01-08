@@ -3,10 +3,18 @@ public class LoadingManager : MonoBehaviour
 {
 
     TrackCircuitSignals circuitSignals;
+    TestScript testScript;
+    CarsHolder carsHolder;
 
     void Awake()
     {
+        circuitSignals = FindObjectOfType<TrackCircuitSignals> ();
+        testScript = FindObjectOfType<TestScript> ();
+        carsHolder = FindObjectOfType<CarsHolder> ();
+
+        QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
+        
 
         IndicationManager.Instance.Init ();
 
@@ -22,9 +30,10 @@ public class LoadingManager : MonoBehaviour
 
         CompositionManager.Instance.Init ();
 
-        circuitSignals = FindObjectOfType<TrackCircuitSignals> ();
-
         CouplerManager.Instance.Init ();
+
+        testScript.Init ();
+
     }
 
     private void Start()
@@ -32,12 +41,18 @@ public class LoadingManager : MonoBehaviour
         TrackPath.Instance.OnStart ();
 
         CompositionManager.Instance.OnStart ();
-        
+
         circuitSignals.Init ();
 
         CouplerManager.Instance.OnStart ();
 
-        IndicationManager.Instance.OnStart();
+        IndicationManager.Instance.OnStart ();
+
+        carsHolder.OnStart ();
+
+        testScript.OnStart ();
+
     }
-    
+
+  
 }

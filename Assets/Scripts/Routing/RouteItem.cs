@@ -47,6 +47,9 @@ public class RouteItem : MonoBehaviour
             //for all trains passing through
             RouteLights [0].Trigger.enabled = false;
         }
+        else
+            //if shunting comp goes behind closed signal and go back
+            RouteLights [1].Trigger.enabled = false;
         // enter route
         AllTCInUseOn();
         Unit.IsInUse = true;
@@ -64,7 +67,10 @@ public class RouteItem : MonoBehaviour
         }
         
         if ( !IsShunting )
-            RouteLights [0].Trigger.enabled = true;        
+            RouteLights [0].Trigger.enabled = true;  
+        else
+            RouteLights [1].Trigger.enabled = true;
+
         Unit.IsInUse = false;
         Route.Instance.DestroyRoute (RouteNumber);
 

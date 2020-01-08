@@ -65,7 +65,6 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         {
             composition.CompEngine = rollingStock.OwnEngine;
         }
-
         else
             composition.CompEngine = null;
         // add composition in Dict

@@ -16,7 +16,11 @@ public class TLTrigger : MonoBehaviour
         rs = collider.GetComponent<RollingStock> ();        
         direction = rs.Translation > 0 ? 1 : -1;
         if(CheckViolation (direction))
+        {
+            print (rs.name + " falt signal " + signal.name);
             GameManager.Instance.GameOver ();
+        }
+            
 
     }
 

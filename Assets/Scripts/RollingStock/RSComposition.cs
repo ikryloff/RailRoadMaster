@@ -5,7 +5,7 @@ public class RSComposition : MonoBehaviour, IManageable
     public int CompositionNumber { get; set; }
     public RSConnection RSConnection { get; set; }
     public RollingStock RollingStock { get; private set; }
-    public bool IsMainCar { get; private set; }
+    public bool IsMainCar { get; set; }
     public Composition CarComposition { get; set; }
 
     public void Init()

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TestScript : MonoBehaviour
+public class TestScript : MonoBehaviour,IManageable
 {
 
     private RoutePanelManager routePanel;
@@ -13,36 +13,13 @@ public class TestScript : MonoBehaviour
     public EngineInertia PassTrainFrontInertia;
     public TrafficWatcher TWFront;
 
-    private void Awake()
-    {
-        TWFront = PassTrainFrontAI.GetComponent<TrafficWatcher> ();
-        PassTrainFrontEngine = PassTrainFrontAI.GetComponent<Engine> ();
-        PassTrainBackEngine = PassTrainBackAI.GetComponent<Engine> ();
-        PassTrainFrontRS = PassTrainFrontAI.GetComponent<RollingStock> ();
-        PassTrainFrontInertia = PassTrainFrontAI.GetComponent<EngineInertia> ();        
-        PassTrainFrontInertia.enabled = false;
-        TWFront.enabled = false;        
-        PassTrainFrontEngine.Brakes = false; 
-        PassTrainFrontEngine.enabled = false;
-        PassTrainFrontAI.enabled = false;
-        PassTrainFrontRS.IsEngine = false;
-        PassTrainFrontRS.Brakes = false;        
-    }
-
-    void Start()
-    {
-        
-        routePanel = FindObjectOfType<RoutePanelManager> ();   
-        Invoke ("Make1Route", 1f);
-        Invoke ("MovePassBackSupper", 1f);
-        //Invoke ("MoveCargoForwardSupper", 1f);
-    }
+    
 
 
     public void Make1Route()
     {
         routePanel.SetRouteByNumber (5112);
-        //routePanel.SetRouteByNumber (5214);
+        routePanel.SetRouteByNumber (1252);
     }
 
     public void MovePassBackSupper()
@@ -55,4 +32,27 @@ public class TestScript : MonoBehaviour
         CargoTrainAI.MoveForwardSupper ();
     }
 
+    public void Init()
+    {
+        TWFront = PassTrainFrontAI.GetComponent<TrafficWatcher> ();
+        PassTrainFrontEngine = PassTrainFrontAI.GetComponent<Engine> ();
+        PassTrainBackEngine = PassTrainBackAI.GetComponent<Engine> ();
+        PassTrainFrontRS = PassTrainFrontAI.GetComponent<RollingStock> ();
+        PassTrainFrontInertia = PassTrainFrontAI.GetComponent<EngineInertia> ();
+        PassTrainFrontInertia.enabled = false;
+        PassTrainFrontEngine.Brakes = false;
+        PassTrainFrontEngine.enabled = false;
+        PassTrainFrontAI.enabled = false;
+        PassTrainFrontRS.IsEngine = false;
+        PassTrainFrontRS.Brakes = false;
+        TWFront.enabled = false;
+    }
+
+    public void OnStart()
+    {
+        routePanel = FindObjectOfType<RoutePanelManager> ();
+        Invoke ("Make1Route", 1f);
+        Invoke ("MovePassBackSupper", 2f);
+        //Invoke ("MoveCargoForwardSupper", 1f);
+    }
 }

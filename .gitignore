@@ -689,3 +689,7 @@ Assets/Editor/Instant Screenshot/ScreenshotTaker.cs
 Assets/Assets/Scenes/Game/ReflectionProbe-0.exr
 *.log
 *.json
+Assets/_TerrainAutoUpgrade/layer_BGTestGrass(3.000,3.000)(0.000,0.000)(0.000,0.000,0.000),0.000,0.000.terrainlayer
+Assets/_TerrainAutoUpgrade/layer_BGGrassRockyAlbedo(10.000,10.000)(0.000,0.000)(0.000,0.000,0.000),0.000,0.000.terrainlayer
+Assets/_TerrainAutoUpgrade/layer_BGTestGrass(3.000,3.000)(0.000,0.000)(0.000,0.000,0.000),0.000,0.000.terrainlayer
+Assets/_TerrainAutoUpgrade/layer_BGGrassRockyAlbedo(10.000,10.000)(0.000,0.000)(0.000,0.000,0.000),0.000,0.000.terrainlayer

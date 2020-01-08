@@ -30,6 +30,7 @@ public class EngineAI : MonoBehaviour {
     {
         engine.HandlerBack ();
         engine.InstructionsHandler = -6;
+        
     }
 
     public void MoveForwardSupper()

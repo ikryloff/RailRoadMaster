@@ -7,14 +7,12 @@ public class YardCameraController : MonoBehaviour
     private float mapMovingSpeed;
     private Vector3 desiredPosition;
     Vector3 smoothedPosition;
-    private Transform connectedCamera;
     private float smoothSpeed = 2f;
     public bool IsActive { get; set; }
     public float XPath { get; set; }
 
     private void Awake()
     {
-        connectedCamera = FindObjectOfType<ConductorCameraController> ().transform;
     }
 
     void LateUpdate()

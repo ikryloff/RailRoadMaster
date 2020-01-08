@@ -12,8 +12,7 @@ public class CouplerLever : MonoBehaviour
 
     public void Uncouple()
     {
-        RSConnection.DestroyConnection ();
-
+        RSConnection.DestroyConnection ();        
     }
 
     

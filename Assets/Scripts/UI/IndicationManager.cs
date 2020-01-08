@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class IndicationManager : Singleton<IndicationManager>, IManageable {
+public class IndicationManager : Singleton<IndicationManager>, IManageable
+{
     Engine engine;
     [SerializeField]
     public bool IsPathIndicate { get; set; }
@@ -19,7 +19,7 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable {
         EventManager.onCarsCoupled += UpdateCouplerIndication;
         EventManager.onPathUpdated += UpdatePathIndication;
         EventManager.onPathUpdated += UpdateYardPathIndication;
-        engine = GameObject.Find("Engine").GetComponent<Engine>();
+        engine = GameObject.Find ("Engine").GetComponent<Engine> ();
         PathIndicators = FindObjectsOfType<IndicatorPath> ();
         CouplerIndicators = FindObjectsOfType<Coupler> ();
         SwitchParts = FindObjectsOfType<SwitchParts> ();
@@ -48,38 +48,43 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable {
         TurnCouplerIndicatorsOff ();
         UpdateCouplerIndication ();
     }
-   
+
 
     private void Update()
     {
         PrintHandler ();
-              
+
     }
 
     public void PrintHandler()
     {
-       //TODO
+        //TODO
     }
 
     public void TogglePathIndication()
     {
-        if ( IsPathIndicate )
-        {
-            TurnPathIndicationOff ();
-        }
-        else
-        {
-            TurnPathIndicationOn ();
+        if ( !IsPathIndicate )
+            StartCoroutine (TurnPathCoroutin ());
+    }
 
-        }
+    public IEnumerator TurnPathCoroutin()
+    {
+        TurnPathIndicationOn ();
+        yield return new WaitForSecondsRealtime (4f);
+        TurnPathIndicationOff ();
+    }
+
+    public IEnumerator TurnCouplersCoroutin()
+    {
+        TurnCouplerIndicatorsOn ();
+        yield return new WaitForSecondsRealtime (4f);
+        TurnCouplerIndicatorsOff ();
     }
 
     public void ToggleCouplerIndication()
     {
-        if ( IsCouplerIndicate )
-            TurnCouplerIndicatorsOff ();
-        else
-            TurnCouplerIndicatorsOn ();
+        if ( !IsCouplerIndicate )
+            StartCoroutine (TurnCouplersCoroutin ());
     }
 
     public void UpdateCouplerIndication()
@@ -129,7 +134,7 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable {
     }
 
     public void TurnCouplerIndicatorsOff()
-    {        
+    {
         foreach ( Coupler item in CouplerIndicators )
         {
             item.SetLeverUnactive ();
@@ -138,7 +143,7 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable {
     }
 
     public void TurnCouplerIndicatorsOn()
-    {        
+    {
         foreach ( Coupler item in CouplerIndicators )
         {
             item.SetLeverActive ();
@@ -151,8 +156,8 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable {
         foreach ( IndicatorPath ind in PathIndicators )
         {
             ind.Show (true);
-        }        
+        }
     }
 
-    
+
 }

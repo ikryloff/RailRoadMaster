@@ -16,7 +16,6 @@ public class Switch : MonoBehaviour, IManageable {
     public TrackCircuit TrackCircuit { get; set; }
     [SerializeField]
     private Animator animator;
-    private string animMethod;
 
     
     public bool IsSwitchStraight { get; set; }

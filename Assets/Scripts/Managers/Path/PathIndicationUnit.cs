@@ -26,7 +26,7 @@ public class PathIndicationUnit : MonoBehaviour
    
     private void TrackColor( TrackCircuit track )
     {
-        if ( track.Equals(TrackCircuit) )
+        if ( TrackCircuit && track.Equals(TrackCircuit) )
         {
             if ( gameObject.activeSelf )
             {
