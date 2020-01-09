@@ -5,6 +5,8 @@ public class OilTubeLamp : MonoBehaviour
     MeshRenderer lampColorRend;
     Material redColor;
     Material greenColor;
+    Material noColor;
+    Material yellowColor;
 
     private void Awake()
     {
@@ -15,6 +17,8 @@ public class OilTubeLamp : MonoBehaviour
     {
         redColor = ResourceHolder.Instance.Light_Red_Signal_Mat;
         greenColor = ResourceHolder.Instance.Light_Green_Signal_Mat;
+        yellowColor = ResourceHolder.Instance.Light_Yellow_Signal_Mat;
+        noColor = ResourceHolder.Instance.Light_No_Signal_Mat;
         lampColorRend.material = redColor;
     }
 
@@ -28,5 +32,14 @@ public class OilTubeLamp : MonoBehaviour
         lampColorRend.material = greenColor;
     }
 
+    public void TurnYellowColor()
+    {
+        lampColorRend.material = yellowColor;
+    }
+
+    public void TurnNoColor()
+    {
+        lampColorRend.material = noColor;
+    }
 
 }

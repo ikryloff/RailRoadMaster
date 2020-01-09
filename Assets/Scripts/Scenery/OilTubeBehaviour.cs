@@ -41,6 +41,22 @@ public class OilTubeBehaviour : MonoBehaviour
         }
     }
 
+    public void MakeOilDelivering()
+    {
+        StartCoroutine (DeliveringProcess());
+    }
+
+    public IEnumerator DeliveringProcess ()
+    {
+        yield return new WaitForSecondsRealtime (1);
+        while ( IsInWork )
+        {
+            lamp.TurnYellowColor ();
+            yield return new WaitForSecondsRealtime (0.3f);
+            lamp.TurnNoColor ();
+            yield return new WaitForSecondsRealtime (0.3f);
+        }
+    }
 
     public void SwitchTube()
     {
@@ -48,6 +64,7 @@ public class OilTubeBehaviour : MonoBehaviour
         {
             Animator.SetBool ("SwitchOn", IsReady);
             IsInWork = true;
+            MakeOilDelivering ();
         }
     }
 }
