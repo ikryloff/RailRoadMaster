@@ -13,7 +13,7 @@ public class TLTrigger : MonoBehaviour
 
     private void OnTriggerEnter( Collider collider )
     {
-        rs = collider.GetComponent<RollingStock> ();        
+        rs = collider.GetComponent<RollingStock> ();
         direction = rs.Translation > 0 ? 1 : -1;
         if(CheckViolation (direction))
         {

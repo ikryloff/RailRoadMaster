@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Engine : MonoBehaviour
 {
-    public int InstructionsHandler { get; set; }
+    public int InstructionsHandler;
+    
     public RollingStock EngineRS { get; private set; }
-    public bool Brakes { get; set; }
+    public bool Brakes;
+    public bool IsActive;
+    public bool IsPlayer;
 
     public int Direction { get; private set; }
     public float MaxSpeed { get; private set; }
@@ -17,6 +20,8 @@ public class Engine : MonoBehaviour
     //common var to set step of moving
     public float EngineStep { get; set; }
     private int koeff = 25;
+
+    private int absHandler;
 
     const float accForce = 0.015f;
     public EngineInertia Inertia { get; private set; }
@@ -44,12 +49,12 @@ public class Engine : MonoBehaviour
 
     void Update()
     {
-        if ( !isPaused )
+        if ( !isPaused && IsActive)
         {
             CalcRealSpeed ();
             CalcMaxSpeed ();
             MoveEngine ();            
-        }
+        }        
         
     }
 
@@ -108,7 +113,7 @@ public class Engine : MonoBehaviour
         HandlerValidation ();
         Direction = InstructionsHandler > 0 ? 1 : -1;
 
-        if ( InstructionsHandler == 0 )
+        if ( InstructionsHandler == 0  )
         {
             MaxSpeed = 0;
             Brakes = true;
@@ -116,14 +121,20 @@ public class Engine : MonoBehaviour
         }
         else Brakes = false;
 
-        int absHandler = Mathf.Abs (InstructionsHandler);
+        absHandler = Mathf.Abs (InstructionsHandler);
         if ( absHandler == 1 ) MaxSpeed = 3;
         if ( absHandler == 2 ) MaxSpeed = 5;
         if ( absHandler == 3 ) MaxSpeed = 10;
         if ( absHandler == 4 ) MaxSpeed = 15;
         if ( absHandler == 5 ) MaxSpeed = 25;
         if ( absHandler == 6 ) MaxSpeed = 40;
+
+
     }
+
+   
+
+   
 
     private void HandlerValidation()
     {
@@ -146,7 +157,7 @@ public class Engine : MonoBehaviour
 
     private void CalcRealSpeed()
     {
-        SpeedReal = (int)Mathf.Ceil (EngineRS.Translation * 5);
+        SpeedReal = (int)Mathf.Ceil (EngineStep * 10);
     }
 
     

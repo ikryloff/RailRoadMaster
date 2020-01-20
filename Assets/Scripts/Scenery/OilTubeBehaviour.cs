@@ -8,7 +8,6 @@ public class OilTubeBehaviour : MonoBehaviour
     bool IsInWork;
     OilTubeLamp lamp;
     public Animator Animator;
-    // Start is called before the first frame update
 
     private void Awake()
     {
@@ -32,18 +31,24 @@ public class OilTubeBehaviour : MonoBehaviour
 
     private void OnTriggerExit( Collider other )
     {
-        lamp.TurnRedColor ();
         IsReady = false;
         if ( IsInWork && Animator )
         {
             Animator.SetBool ("SwitchOn", false);
             IsInWork = false;
+            StopOilDelivering ();
         }
+        lamp.TurnRedColor ();
     }
 
     public void MakeOilDelivering()
     {
         StartCoroutine (DeliveringProcess());
+    }
+
+    public void StopOilDelivering()
+    {
+        StopCoroutine (DeliveringProcess ());
     }
 
     public IEnumerator DeliveringProcess ()
@@ -56,15 +61,21 @@ public class OilTubeBehaviour : MonoBehaviour
             lamp.TurnNoColor ();
             yield return new WaitForSecondsRealtime (0.3f);
         }
+        lamp.TurnRedColor ();
     }
 
-    public void SwitchTube()
+    public void SwitchTube(bool isOn)
     {
         if ( Animator && IsReady )
         {
-            Animator.SetBool ("SwitchOn", IsReady);
-            IsInWork = true;
-            MakeOilDelivering ();
+            Animator.SetBool ("SwitchOn", isOn);
+            IsInWork = isOn;
+            if(isOn)
+                MakeOilDelivering ();
+            else
+            {
+                StopOilDelivering ();
+            }
         }
     }
 }

@@ -41,7 +41,7 @@ public class CarWatcher : MonoBehaviour
 
     private void WatchCars()
     {
-        if ( engineRS.Translation != 0 )
+        if ( engine.EngineStep != 0 )
         {
             if(!rSConnection.LeftCar)
                 WatchLeftCar ();

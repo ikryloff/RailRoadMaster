@@ -22,6 +22,7 @@ public class RSComposition : MonoBehaviour, IManageable
     // Get this car position in path   
     public void UpdateCarComposition()
     {
+        
         // if car not connected from right
         if ( !RSConnection.IsConnectedRight )
         {
@@ -30,7 +31,5 @@ public class RSComposition : MonoBehaviour, IManageable
             CompositionManager.UpdateCarComposition (RollingStock);
         }
         else IsMainCar = false;
-    }
-
-    
+    } 
 }

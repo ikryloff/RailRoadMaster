@@ -29,7 +29,6 @@ public class CouplerPoint : MonoBehaviour
         if ( IsAbleToConnect )
         {
             OtherPoint = other.GetComponent<CouplerPoint> ();
-            print (other.name);
             OtherRSConnection = OtherPoint.RSConnection;
             RSConnection.MakeConnection (OtherRSConnection);
         }

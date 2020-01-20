@@ -8,10 +8,7 @@ public class RollingStock : MovableObject, IManageable
     [SerializeField]
     private TrackPathUnit thisRSTrack;
     public int Number;
-    public bool Brakes { get; set; }
-
-    [SerializeField]
-    public float breakeForce;
+    public Engine Engine { get; set; }
 
     //Components
     public RSConnection RSConnection { get; set; }
@@ -38,8 +35,13 @@ public class RollingStock : MovableObject, IManageable
         OwnTransform = gameObject.GetComponent<Transform> ();
         OwnTrack = thisRSTrack;
         thisRSTrack = null;
-        OwnEngine = GetComponent<Engine> ();
-        if ( OwnEngine ) IsEngine = true;
+        Engine = GetComponent<Engine> ();        
+        if ( Engine )
+        {
+            OwnEngine = Engine;
+            IsEngine = true;
+        }
+        
         OwnPosition = rsPosition;
         OwnRun = 0;
         RSConnection = gameObject.GetComponent<RSConnection> ();
@@ -54,7 +56,6 @@ public class RollingStock : MovableObject, IManageable
 
     public void OnStart()
     {
-        Brakes = true;
         IsMoving = true;
         UpdatePath ();
 

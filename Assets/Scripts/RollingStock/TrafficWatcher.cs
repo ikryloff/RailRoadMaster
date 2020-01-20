@@ -38,7 +38,7 @@ public class TrafficWatcher : MonoBehaviour
 
     private void WatchSignals()
     {
-        if ( car.Translation != 0 )
+        if ( engine.EngineStep != 0 )
         {
             WatchLeftTL ();
             WatchRightTL ();

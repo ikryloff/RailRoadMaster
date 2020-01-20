@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using UnityEngine.UI;
-
-public class UIManager : Singleton<UIManager>
+﻿public class UIManager : Singleton<UIManager>
 {
 
     private CommunicationPanelManager communicationPanel;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class IndicationManager : Singleton<IndicationManager>, IManageable
 {
-    Engine engine;
+    public Engine engine;
     [SerializeField]
     public bool IsPathIndicate { get; set; }
     public bool IsCouplerIndicate { get; set; }
@@ -19,7 +19,6 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable
         EventManager.onCarsCoupled += UpdateCouplerIndication;
         EventManager.onPathUpdated += UpdatePathIndication;
         EventManager.onPathUpdated += UpdateYardPathIndication;
-        engine = GameObject.Find ("Engine").GetComponent<Engine> ();
         PathIndicators = FindObjectsOfType<IndicatorPath> ();
         CouplerIndicators = FindObjectsOfType<Coupler> ();
         SwitchParts = FindObjectsOfType<SwitchParts> ();
@@ -30,8 +29,7 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable
     {
         // if we turn swithces in indication mode
         if ( IsPathIndicate )
-            TurnPathIndicationOn ();
-        //TurnPathsOn ();
+            TurnPathIndicationOn ();        
     }
 
     public void UpdateYardPathIndication()
@@ -46,7 +44,7 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable
     {
         TurnPathIndicationOff ();
         TurnCouplerIndicatorsOff ();
-        UpdateCouplerIndication ();
+        UpdateCouplerIndication ();        
     }
 
 
@@ -71,7 +69,8 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable
     {
         TurnPathIndicationOn ();
         yield return new WaitForSecondsRealtime (4f);
-        TurnPathIndicationOff ();
+        if( !ModeSwitch.Instance.GameMode.Equals( ModeSwitch.Mode.Yard ))
+            TurnPathIndicationOff ();
     }
 
     public IEnumerator TurnCouplersCoroutin()

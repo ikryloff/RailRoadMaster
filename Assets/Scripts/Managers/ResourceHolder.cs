@@ -25,5 +25,9 @@ public class ResourceHolder : Singleton<ResourceHolder> {
     public Material Path_Route_Mat;
     public Material Path_Switch_Locked_Mat;
 
+    public Sprite FullArrow;
+    public Sprite EmptyArrow;
+    public Sprite Stop;
+
 
 }

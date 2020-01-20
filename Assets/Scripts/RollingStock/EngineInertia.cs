@@ -9,7 +9,7 @@ public class EngineInertia : MonoBehaviour
     private Engine engine;
     private RSComposition composition;
     private int compCarsQuantity;
-    const float engineBreakeForce = 0.02f;
+    const float engineBreakeForce = 0.06f;
     const float RSBreakeForce = 0.012f;
     private int tempCompQuantity;
 

@@ -10,6 +10,8 @@ public class YardCameraController : MonoBehaviour
     private float smoothSpeed = 2f;
     public bool IsActive { get; set; }
     public float XPath { get; set; }
+    private float BORDER_X_RIGHT = 1400;
+    private float BORDER_X_LEFT = -450;
 
     private void Awake()
     {
@@ -35,26 +37,38 @@ public class YardCameraController : MonoBehaviour
     private void MoveCamera( float dt )
     {
 
-        mapMovingSpeed = 200;
+        mapMovingSpeed = 300;
         desiredPosition = transform.position;
-        
+
         if ( Input.GetKey (KeyCode.A) )
         {
-            desiredPosition.x -= mapMovingSpeed;
+            if(transform.position.x >= BORDER_X_LEFT)
+                desiredPosition.x -= mapMovingSpeed;
         }
         if ( Input.GetKey (KeyCode.D) )
         {
-            desiredPosition.x += mapMovingSpeed;
+            if ( transform.position.x <= BORDER_X_RIGHT )
+                desiredPosition.x += mapMovingSpeed;
         }
+
 
         if ( Input.touchCount == 1 && Input.GetTouch (0).phase == TouchPhase.Moved )
         {
             Vector2 touchDeltaPosition = Input.GetTouch (0).deltaPosition;
             transform.Translate (-touchDeltaPosition.x * mapMovingSpeed / 250, 0, 0);
+            CameraBorder ();
             desiredPosition = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
         }
-        smoothedPosition = Vector3.Lerp (transform.localPosition, desiredPosition, smoothSpeed * dt);
-        transform.localPosition = smoothedPosition;
+        smoothedPosition = Vector3.Lerp (transform.position, desiredPosition, smoothSpeed * dt);
+        transform.position = smoothedPosition;
         XPath = transform.position.x;
+    }
+
+    private void CameraBorder()
+    {
+        if ( transform.position.x > BORDER_X_RIGHT )
+            transform.position = new Vector3 (BORDER_X_RIGHT, transform.position.y, transform.position.z);
+        if ( transform.position.x < BORDER_X_LEFT )
+            transform.position = new Vector3 (BORDER_X_LEFT, transform.position.y, transform.position.z);
     }
 }

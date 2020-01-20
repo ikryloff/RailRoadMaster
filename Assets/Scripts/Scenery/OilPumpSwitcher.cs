@@ -1,46 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
 
 public class OilPumpSwitcher : MonoBehaviour
 {
     OilTubeBehaviour [] oilTubes;
+    public bool IsActivated;
+
     private void Start()
     {
         oilTubes = FindObjectsOfType<OilTubeBehaviour> ();
     }
 
-    void Update()
+    public void ActivateOT( bool isInUse )
     {
-        TurnPumpListener ();
-
-    }
-
-    private void TurnPumpListener()
-    {
-        if ( !EventSystem.current.IsPointerOverGameObject () )
+        for ( int i = 0; i < oilTubes.Length; i++ )
         {
-            Vector3 click = Vector3.one;
-
-            if ( Input.GetMouseButtonDown (0) )
-            {
-                Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-                RaycastHit hit;
-                if ( Physics.Raycast (ray, out hit) )
-                {
-                    click = hit.point;
-                }
-
-                //print("hit " + hit.collider.name);
-                if ( hit.collider != null && hit.collider.CompareTag ("OilPump") )
-                {
-                    foreach ( OilTubeBehaviour item in oilTubes )
-                    {
-                        item.SwitchTube ();
-                    }
-                }
-            }
+            oilTubes [i].SwitchTube (isInUse);
         }
+        IsActivated = isInUse;
     }
+
 }

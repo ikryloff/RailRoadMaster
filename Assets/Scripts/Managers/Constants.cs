@@ -1,7 +1,8 @@
 ﻿
 using System.Collections.Generic;
 
-public class Constants {
+public class Constants
+{
 
     public static string HIDE_INDICATION_LAYER = "HideIndication";
     public static string INDICATION_LAYER = "Indication";
@@ -27,7 +28,7 @@ public class Constants {
     public static string ANIM_TURN = "TurnSwitch";
     public static string ANIM_TURN_OPP = "TurnSwitchOpposite";
 
-    public static string [][] POSSIBLE_LIGHTS = new []
+    public static string [] [] POSSIBLE_LIGHTS = new []
     {
        //Even part
         new string[] {"NI", "M2", "CH"},
@@ -50,9 +51,9 @@ public class Constants {
         new string[]{"N", "N2", "NI", "N3", "N4","N5"},
 
     };
-    public static List <string[]> CONDUCTOR_ROUTE_ASK = new List<string[]>()
+    public static List<string []> CONDUCTOR_ROUTE_ASK = new List<string []> ()
     {
-    
+
         new string[] {"6I", "M2", "NI"},
         new string[] {"62", "M2", "N2"},
         new string[] {"63", "M2", "N3"},
@@ -95,7 +96,16 @@ public class Constants {
         new string[] {"5T", "CH5", "M5"},
     };
 
-    
+    public static readonly string [] NUMBERS =
+    {
+        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"
+    };
+
 
 
 }

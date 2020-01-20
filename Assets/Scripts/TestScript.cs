@@ -44,15 +44,14 @@ public class TestScript : MonoBehaviour,IManageable
         PassTrainFrontEngine.enabled = false;
         PassTrainFrontAI.enabled = false;
         PassTrainFrontRS.IsEngine = false;
-        PassTrainFrontRS.Brakes = false;
         TWFront.enabled = false;
     }
 
     public void OnStart()
     {
         routePanel = FindObjectOfType<RoutePanelManager> ();
-        Invoke ("Make1Route", 1f);
-        Invoke ("MovePassBackSupper", 2f);
+        //Invoke ("Make1Route", 1f);
+        //Invoke ("MovePassBackSupper", 2f);
         //Invoke ("MoveCargoForwardSupper", 1f);
     }
 }

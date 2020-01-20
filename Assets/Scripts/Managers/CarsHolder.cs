@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class CarsHolder : MonoBehaviour, IManageable
 {
@@ -6,14 +7,24 @@ public class CarsHolder : MonoBehaviour, IManageable
     private TrackCircuit tempTC;
 
 
+
     public void OnStart()
     {
+
         cars = FindObjectsOfType<RollingStock> ();
-        SetCarsPosition (8701, "PathTr10", 60, new int [] { 6135 });
+        SetCarsPosition (8701, "PathTr10", 60 );
+        SetCarsPosition (8888, "PathTr10", 200);
         SetCarsPosition (2140, "PathTr9", 200);
-        SetCarsPosition (8888, "PathTr3", 60, new int [] { 7522, 7508, 7143, 7445, 7267, 6548 });
+        SetCarsPosition (6135, "PathTr3", 60, new int [] { 7522, 7508, 7143, 7445, 7267, 6548 });        
     }
 
+    private void GetTrackPathForAllRS()
+    {
+        foreach ( RollingStock item in cars )
+        {
+            TrackPath.Instance.GetTrackPath (item);
+        }
+    }
 
     public RollingStock GetCar( int num )
     {
@@ -40,6 +51,7 @@ public class CarsHolder : MonoBehaviour, IManageable
         //set bogeys the same trackpathunit        
         rs.OwnPosition = position;
         rs.ResetBogeys ();
+        
 
         for ( int i = 0; i < rightCarsNum.Length; i++ )
         {
@@ -58,7 +70,7 @@ public class CarsHolder : MonoBehaviour, IManageable
 
             rs.RSConnection.MakeConnection (rightCar.RSConnection);
             rightCar.ResetBogeys ();
-        }
+        }        
         CompositionManager.Instance.UpdateCompositions ();
     }
     //for one car

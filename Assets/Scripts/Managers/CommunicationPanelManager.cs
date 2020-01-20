@@ -13,7 +13,10 @@ public class CommunicationPanelManager : MonoBehaviour, IHideable
     private GameObject engineerList;
     [SerializeField]
     private GameObject zoomPanel;
-
+    [SerializeField]
+    private GameObject helpPanel;
+    [SerializeField]
+    private GameObject RSpanel;
 
 
 
@@ -23,6 +26,8 @@ public class CommunicationPanelManager : MonoBehaviour, IHideable
         actionList.SetActive (isVisible);
         engineerList.SetActive (isVisible);
         zoomPanel.SetActive (isVisible);
+        helpPanel.SetActive (isVisible);
+        RSpanel.SetActive (isVisible);
     }
     
 

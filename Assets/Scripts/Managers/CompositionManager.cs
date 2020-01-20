@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 public class CompositionManager : Singleton<CompositionManager>, IManageable
 {
@@ -61,9 +62,9 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         //set main car for paths
         composition.MainCar = rollingStock;
         //find Engine in this Car
-        if ( rollingStock.IsEngine )
+        if ( rollingStock.IsEngine && rollingStock.Engine.IsActive )
         {
-            composition.CompEngine = rollingStock.OwnEngine;
+            composition.CompEngine = rollingStock.Engine;
         }
         else
             composition.CompEngine = null;
@@ -79,8 +80,8 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
             AddRSInComposition (conLeft.RSComposition, composition, CompositionID);
             if ( !composition.CompEngine )
             {
-                if ( conLeft.RollingStock.IsEngine )
-                    composition.CompEngine = conLeft.RollingStock.OwnEngine;
+                if ( conLeft.RollingStock.IsEngine && conLeft.RollingStock.Engine.IsActive )
+                    composition.CompEngine = conLeft.RollingStock.Engine;
                 else
                     composition.CompEngine = null;
             }
@@ -89,6 +90,9 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         }
         //set quantity of cars in composition
         composition.Quantity = composition.Cars.Count;
+        //define Left and Right Cars
+        composition.LeftCar = composition.Cars.First ().RollingStock;
+        composition.RightCar = composition.Cars.Last ().RollingStock;
         // set engine to all cars of composition
         composition.SetEngineToAllCars ();
         print ("ID:" + CompositionID + "  Cars: " + composition.Quantity);

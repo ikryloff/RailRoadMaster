@@ -19,7 +19,6 @@ public abstract class MovableObject : MonoBehaviour
     
     public static int temp = 0;
     private float smooth = 0.5f;
-    private float step;
     private float TOLERANCE = 0.5f;
 
 
@@ -28,70 +27,52 @@ public abstract class MovableObject : MonoBehaviour
 
         if ( OwnTrack )
         {
-            // if engine attached move as engine, else 0 speed 
-            if ( OwnEngine )
-                Translation = OwnEngine.Acceleration;
-            else
-                Translation = 0;
-            // Moving                    
-            OwnPosition += step;
-            // Run of Movable Object
-            OwnRun += step;
+            Translation = step;           
             //Set presense to OwnTC
-            OwnTrackCircuit.AddCars(this);
-            // bogeys and RS rotate in different ways
-            MoveAndRotate ();
-
-            if ( Translation > 0 && OwnPosition >= OwnTrack.PathLenght - TOLERANCE )
+            OwnTrackCircuit.AddCars(this);           
+            if ( step > 0 && OwnPosition > OwnTrack.PathLenght - step )
             {
                 StepNextTrackPath (step);                
                 //Set off presense from old OwnTC
                 OwnTrackCircuit.RemoveCars (this);
             }
-            else if ( Translation < 0 && OwnPosition < TOLERANCE )
+            else if ( step < 0 && OwnPosition < -step )
             {                
                 StepPrevTrackPath (step);
                 //Set off presense from old OwnTC
                 OwnTrackCircuit.RemoveCars (this);
-            }           
+            }
+            else
+            {
+                // Moving                    
+                OwnPosition += step;                
+            }
+            // Run of Movable Object
+            OwnRun += step;
             // Set new OwnTC
             OwnTrackCircuit = OwnTrack.TrackCircuit;
+            // bogeys and RS rotate in different ways
+            MoveAndRotate ();
+
         }
         else
         {
             IsMoving = false;
         }
+    }
+
+    private void StepNextTrackPath(float _step)
+    {
+        OwnTrack = TrackPath.Instance.GetNextTrack (OwnTrack, OwnPath);
+        OwnPosition = _step/2;
     }
 
     private void StepPrevTrackPath( float _step )
     {
         OwnTrack = TrackPath.Instance.GetPrevTrack (OwnTrack, OwnPath);
-        if ( OwnTrack )
-        {
-            OwnPosition = OwnTrack.PathLenght;
-        }
-        else
-        {
-            IsMoving = false;
-            OwnTrack = OwnPath.First ();
-            OwnPosition = 0;
-        }
+        OwnPosition = OwnTrack.PathLenght + _step / 2;
     }
 
-    private void StepNextTrackPath( float _step )
-    {
-        OwnTrack = TrackPath.Instance.GetNextTrack (OwnTrack, OwnPath);
-        
-        if ( OwnTrack )
-        {
-            OwnPosition = 0;
-        }
-        else
-        {
-            IsMoving = false;
-            OwnPosition = OwnTrack.PathLenght;
-        }
-    }
 
     public virtual void MoveAndRotate()
     {

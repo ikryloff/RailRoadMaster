@@ -52,7 +52,13 @@ public class LoadingManager : MonoBehaviour
 
         testScript.OnStart ();
 
+        Invoke ("UpdatePath", 1f);
+
     }
 
+    private void UpdatePath()
+    {
+        EventManager.PathChanged ();
+    }
   
 }
