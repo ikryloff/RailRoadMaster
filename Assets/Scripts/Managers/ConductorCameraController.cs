@@ -184,7 +184,7 @@ public class ConductorCameraController : MonoBehaviour
         if ( Input.touchCount == 1 && Input.GetTouch (0).phase == TouchPhase.Moved )
         {
             touchDeltaPosition = Input.GetTouch (0).deltaPosition;
-            GroupCamera.Translate (-touchDeltaPosition.x * speed * ZoomLevel, 0, -touchDeltaPosition.y * speed * ZoomLevel);            
+            GroupCamera.Translate (-touchDeltaPosition.x * speed * ZoomLevel, -touchDeltaPosition.y * speed * ZoomLevel, -touchDeltaPosition.y * speed * ZoomLevel);            
         }
         desiredPosition = new Vector3 (GroupCamera.position.x, GroupCamera.position.y, GroupCamera.position.z);
         desiredPosition.x = Mathf.Clamp (desiredPosition.x, BORDER_X_LEFT + ZoomLevel * 100, BORDER_X_RIGHT - ZoomLevel * 200);
