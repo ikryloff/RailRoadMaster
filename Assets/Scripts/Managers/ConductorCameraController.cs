@@ -30,7 +30,7 @@ public class ConductorCameraController : MonoBehaviour
     public float OffsetZ;
     private float OFFSET_X = 0;
     private float OFFSET_Y = 250;
-    private float OFFSET_Z = -250;
+    private float OFFSET_Z = -200;
     private float BORDER_X_RIGHT = 2400;
     private float BORDER_X_LEFT = -1500;
     private float BORDER_Z_TOP = 130;
@@ -128,7 +128,7 @@ public class ConductorCameraController : MonoBehaviour
         ZoomLevel = 2;
         OffsetX = 0;
         OffsetY = 0;
-        targetTransform = post.transform;
+        targetTransform = post.transform;        
         IsPostView = true;
     }
 
