@@ -4,12 +4,15 @@ using UnityEngine.UI;
 public class OTWorkSwitcher : MonoBehaviour
 {
     OilPumpSwitcher pumpSwitcher;
+    PostOrderButton orderButton;
     public Gates [] gates;
     private void Awake()
     {
+        orderButton = FindObjectOfType<PostOrderButton> (); 
         pumpSwitcher = FindObjectOfType<OilPumpSwitcher> ();
         gates = pumpSwitcher.GetComponentsInChildren<Gates> ();
         GetComponent<Button> ().onClick.AddListener (ButtonAction);
+
     }
 
 
@@ -26,7 +29,7 @@ public class OTWorkSwitcher : MonoBehaviour
             pumpSwitcher.ActivateOT (false);
             OpenGates (true);
         }
-            
+        orderButton.CloseOtherPostButtons ();
     }
 
     private void OpenGates(bool isOpen)

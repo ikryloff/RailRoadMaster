@@ -34,18 +34,15 @@ public class ThrottleUnit : MonoBehaviour
 
     public void SetFullImage( )
     {
-        if(gameObject.activeSelf)
             img.sprite = FullInd;
     }
     public void SetEmptyImage()
     {
-        if ( gameObject.activeSelf )
             img.sprite = EmptyInd;
     }
 
     public void SetStopImage()
     {
-        if ( gameObject.activeSelf )
             img.sprite = Stop;
     }
 }

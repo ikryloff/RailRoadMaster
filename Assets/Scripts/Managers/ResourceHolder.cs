@@ -28,6 +28,9 @@ public class ResourceHolder : Singleton<ResourceHolder> {
     public Sprite FullArrow;
     public Sprite EmptyArrow;
     public Sprite Stop;
+    public Sprite Engine_icon;
+    public Sprite Gondola_icon;
+    public Sprite BoxCar_icon;
 
 
 }

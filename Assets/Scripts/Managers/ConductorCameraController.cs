@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class ConductorCameraController : MonoBehaviour
@@ -9,7 +10,7 @@ public class ConductorCameraController : MonoBehaviour
     private Vector3 desiredPosition;
     Vector3 smoothedPosition;
     private float smoothSpeed = 3f;
-    private float speed = 0.1f;
+    private float speed = 0.3f;
     float scrollSpeed = 10;
     float d = 0;
     public RollingStock Target;
@@ -85,15 +86,11 @@ public class ConductorCameraController : MonoBehaviour
 
     private void UpdateCamera()
     {
-        if ( Input.anyKey || Input.touchCount > 0 )
-            IsPostView = false;
-        if ( !IsFreeCamera && !IsPostView && engine.InstructionsHandler != 0 )
+        if ( !IsFreeCamera && engine.InstructionsHandler != 0 )
         {
             SetCameraPosition ();
             FollowTarget (Time.deltaTime);
-        }
-        else if ( IsPostView )
-            FollowTarget (Time.deltaTime);
+        }        
         else
             MoveCamera (Time.deltaTime);
         XPath = GroupCamera.position.x;
@@ -123,13 +120,24 @@ public class ConductorCameraController : MonoBehaviour
         }
     }
 
+    IEnumerator FollowProcess(Transform _targ)
+    {
+        while( Vector3.Distance(GroupCamera.position, targetTransform.position + GetViewPosition(ZoomLevel)) > 30 )
+        {
+            FollowTarget (Time.deltaTime);
+            yield return null;
+        }
+        
+        
+    }
+
     public void SetCameraPositionOnPost( Transform post )
     {
         ZoomLevel = 2;
         OffsetX = 0;
-        OffsetY = 0;
-        targetTransform = post.transform;        
-        IsPostView = true;
+        OffsetY = 0;        
+        targetTransform = post.transform;
+        StartCoroutine (FollowProcess(post));
     }
 
 

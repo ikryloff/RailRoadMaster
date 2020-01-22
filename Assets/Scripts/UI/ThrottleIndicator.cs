@@ -35,6 +35,11 @@ public class ThrottleIndicator : MonoBehaviour
         {
             if ( throttleUnits [i].Value == 0 )
                 throttleUnits [i].go.SetActive (true);
+            else if ( throttleUnits [i].Value == 6 || throttleUnits [i].Value == -6 )
+            {
+                throttleUnits [i].go.SetActive (true);
+                throttleUnits [i].SetFullImage ();
+            }
             else
                 throttleUnits [i].go.SetActive (false);
         }

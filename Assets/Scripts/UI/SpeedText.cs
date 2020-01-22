@@ -43,5 +43,6 @@ public class SpeedText : MonoBehaviour
         timer += Time.deltaTime;
         
     }
+
         
 }

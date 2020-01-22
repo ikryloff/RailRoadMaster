@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        TempEngine = null;
         Viewer = FindObjectOfType<RSViewer> ();
         ccc = FindObjectOfType<ConductorCameraController> ();
         if(rollingStock.Engine)
@@ -74,6 +75,12 @@ public class Player : MonoBehaviour
                         }                        
 
                     }
+
+                    else if( hit.collider.CompareTag ("RollingStock") )
+                    {
+                        rollingStock = hit.collider.GetComponent<RollingStock> ();
+                        SetViewer (rollingStock);
+                    }
                 }
             }
         }
@@ -84,10 +91,11 @@ public class Player : MonoBehaviour
         Viewer.SetText (rs.Number.ToString ());
         if ( rs.IsEngine )
         {
-            Viewer.ThrottleIndicator.Engine = rs.Engine;
-            Viewer.SpeedText.Engine = rs.Engine;
+            Viewer.SetEngine(rs.Engine);
+            Viewer.SetEngineForSpeed(rs.Engine);            
         }
-            
+        Viewer.SetIcon (rs);
+
     }
 
     public void MoveForward()

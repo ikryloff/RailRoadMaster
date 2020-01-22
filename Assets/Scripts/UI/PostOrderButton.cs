@@ -32,7 +32,7 @@ public class PostOrderButton : MonoBehaviour
         CameraFreeButton.isOn = true;
     }
 
-    private void CloseOtherPostButtons()
+    public void CloseOtherPostButtons()
     {
         for ( int i = 0; i < postButts.Length; i++ )
         {
