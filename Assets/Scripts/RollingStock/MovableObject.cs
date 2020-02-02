@@ -15,7 +15,7 @@ public abstract class MovableObject : MonoBehaviour
     public Transform OwnTransform { get; set; }
     public bool IsMoving { get; set; }
     // Moving distance per frame
-    public float Translation { get; private set; }
+    public float Translation { get; set; }
     
     public static int temp = 0;
     private float smooth = 0.5f;

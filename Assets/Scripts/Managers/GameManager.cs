@@ -21,7 +21,7 @@ public class GameManager : Singleton<GameManager> {
     }
 
     private void Update()
-    {
+    {        
         if ( Input.GetKeyDown (KeyCode.P) )
         {
             Pause ();
@@ -60,12 +60,14 @@ public class GameManager : Singleton<GameManager> {
         if ( !isPaused )
         {
             EventManager.PauseOn ();
-            isPaused = true;            
+            isPaused = true;
+            Time.timeScale = 0f;
         }
         else
         {
             EventManager.PauseOff ();
             isPaused = false;
+            Time.timeScale = 1f;
         }
     }
 

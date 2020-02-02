@@ -10,9 +10,44 @@ public class CouplerManager : Singleton<CouplerManager>, IManageable
     public GameObject[] couplerPictures;
     public Coupler [] couplers;
     private Camera mainCamera;
+    private CouplerObject[] couplerObjects;
 
   
+    public void Init()
+    {
+        cm = FindObjectOfType<CompositionManager> ();
+        couplers = FindObjectsOfType<Coupler> ();
+        couplerObjects = FindObjectsOfType<CouplerObject> ();
+        foreach ( Coupler item in couplers )
+        {
+            item.SetCouplers ();
+        }
+    }
 
+    public void OnStart()
+    {
+        mainCamera = FindObjectOfType<ConductorCameraController> ().GetComponent<Camera>();
+        foreach ( Coupler item in couplers )
+        {
+            item.SetLevers ();
+        }
+    }
+
+    public void OnUpdate()
+    {
+        UncoupleListener ();
+        CouplerObjectRotation ();
+    }
+
+
+
+    private void CouplerObjectRotation()
+    {
+        for ( int i = 0; i < couplerObjects.Length; i++ )
+        {
+            couplerObjects [i].OnUpdate ();
+        }
+    }
     private void UncoupleListener()
     {
         if ( !EventSystem.current.IsPointerOverGameObject () )
@@ -35,29 +70,5 @@ public class CouplerManager : Singleton<CouplerManager>, IManageable
                 }
             }
         }       
-    }
-
-    private void Update()
-    {
-        UncoupleListener ();
-    }
-
-    public void Init()
-    {
-        cm = FindObjectOfType<CompositionManager> ();
-        couplers = FindObjectsOfType<Coupler> ();
-        foreach ( Coupler item in couplers )
-        {
-            item.SetCouplers ();
-        }
-    }
-
-    public void OnStart()
-    {
-        mainCamera = FindObjectOfType<ConductorCameraController> ().GetComponent<Camera>();
-        foreach ( Coupler item in couplers )
-        {
-            item.SetLevers ();
-        }
     }
 }

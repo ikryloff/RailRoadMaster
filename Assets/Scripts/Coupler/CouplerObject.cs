@@ -7,7 +7,6 @@ public class CouplerObject : MonoBehaviour
     private Transform couplerTransform;
     private Quaternion defaultRotation;
 
-    //values for internal use
     private Quaternion lookRotation;
     private Vector3 direction;
     private void Awake()
@@ -16,7 +15,7 @@ public class CouplerObject : MonoBehaviour
         defaultRotation = couplerTransform.localRotation;
     }
 
-    private void Update()
+    public void OnUpdate()
     {
         if ( OtherCouplerPoint )
         {

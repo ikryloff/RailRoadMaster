@@ -15,13 +15,13 @@ public class TimeManager : Singleton<TimeManager>
     private int minutes;
     private int hours;
 
-    void Start()
+    public void OnStart()
     {
         timeText.text = "00 : 00";
         TimeValue = new int [2];
     }
 
-    void Update()
+    public void OnUpdate()
     {
         elapsed += Time.deltaTime;
         if(elapsed >= timerSpeed )
@@ -43,6 +43,6 @@ public class TimeManager : Singleton<TimeManager>
         }
         TimeValue [0] = hours;
         TimeValue [1] = minutes;
-        timeText.text = TimeValue [0].ToString ("D2") + " : " + TimeValue [1].ToString ("D2"); 
+        timeText.text = Constants.NUMBERS[ TimeValue [0]]+ " : " + Constants.NUMBERS[TimeValue [1]]; 
     }
 }

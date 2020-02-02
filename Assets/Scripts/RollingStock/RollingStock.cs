@@ -13,6 +13,7 @@ public class RollingStock : MovableObject, IManageable
     //Components
     public RSConnection RSConnection { get; set; }
     public RSComposition RSComposition { get; set; }
+    public CarProperties CarProperties { get; set; }
 
     [SerializeField]
     private float rsPosition;
@@ -25,6 +26,8 @@ public class RollingStock : MovableObject, IManageable
     public Bogey BogeyRight { get; set; }
     private Transform bogeyLeftTransform;
     private Transform bogeyRightTransform;
+
+    public RSModel Model;
 
     Vector3 dir;
     float angle;
@@ -44,14 +47,16 @@ public class RollingStock : MovableObject, IManageable
         
         OwnPosition = rsPosition;
         OwnRun = 0;
-        RSConnection = gameObject.GetComponent<RSConnection> ();
+        RSConnection = GetComponent<RSConnection> ();
         RSConnection.Init ();
-        RSComposition = gameObject.GetComponent<RSComposition> ();
+        RSComposition = GetComponent<RSComposition> ();
         RSComposition.Init ();
+        CarProperties = GetComponent<CarProperties> ();
         // set bogeys to RS
         SetBogeys ();
         OwnTrackCircuit = OwnTrack.TrackCircuit;
         OwnTrackCircuit.AddCars (this);
+        Model = GetComponentInChildren<RSModel> ();
     }
 
     public void OnStart()

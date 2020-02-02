@@ -10,6 +10,8 @@ public class RSIcon : MonoBehaviour
     public Sprite Gondola;
     public Sprite Loco;
     public Sprite BoxCar;
+    public Sprite OilCar;
+    public Sprite PassCar;
     public int firstNum;
 
     private void Awake()
@@ -18,6 +20,8 @@ public class RSIcon : MonoBehaviour
         Gondola = ResourceHolder.Instance.Gondola_icon;
         Loco = ResourceHolder.Instance.Engine_icon;
         BoxCar = ResourceHolder.Instance.BoxCar_icon;
+        OilCar = ResourceHolder.Instance.Oilcar_icon;
+        PassCar = ResourceHolder.Instance.PassCar_icon;
     }
 
     public void CalcAndSetIcon( int number )
@@ -36,7 +40,13 @@ public class RSIcon : MonoBehaviour
         {
             img.sprite = BoxCar;
         }
-        else
-            img.sprite = null;
+        else if ( firstNum == 7 )
+        {
+            img.sprite = OilCar;
+        }
+        else if ( firstNum == 0 )
+        {
+            img.sprite = PassCar;
+        }
     }
 }

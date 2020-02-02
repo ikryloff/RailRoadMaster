@@ -2,20 +2,21 @@
 public class LoadingManager : MonoBehaviour
 {
 
-    TrackCircuitSignals circuitSignals;
-    TestScript testScript;
-    CarsHolder carsHolder;
+    private TrackCircuitSignals circuitSignals;
+    private CarsHolder carsHolder;
+    private Scenario scenario;
+    private CompositionManager cm;
+    
 
     void Awake()
     {
         circuitSignals = FindObjectOfType<TrackCircuitSignals> ();
-        testScript = FindObjectOfType<TestScript> ();
         carsHolder = FindObjectOfType<CarsHolder> ();
+        scenario = FindObjectOfType<Scenario> ();
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
         
-
         IndicationManager.Instance.Init ();
 
         TrackPath.Instance.Init ();
@@ -32,17 +33,21 @@ public class LoadingManager : MonoBehaviour
 
         CouplerManager.Instance.Init ();
 
-        testScript.Init ();
+        carsHolder.Init ();
+
+        scenario.OnAwake ();
 
     }
 
     private void Start()
     {
+        TimeManager.Instance.OnStart ();
+
         TrackPath.Instance.OnStart ();
 
         CompositionManager.Instance.OnStart ();
 
-        circuitSignals.Init ();
+        circuitSignals.OnStart ();
 
         CouplerManager.Instance.OnStart ();
 
@@ -50,15 +55,19 @@ public class LoadingManager : MonoBehaviour
 
         carsHolder.OnStart ();
 
-        testScript.OnStart ();
-
-        Invoke ("UpdatePath", 1f);
+        scenario.OnStart ();
 
     }
 
-    private void UpdatePath()
+    private void Update()
     {
-        EventManager.PathChanged ();
+        CompositionManager.Instance.OnUpdate ();
+        CouplerManager.Instance.OnUpdate ();
+        carsHolder.UpdateConnections ();
+        TimeManager.Instance.OnUpdate ();
+        scenario.OnUpdate ();
+        carsHolder.OnUpdate ();
     }
+
   
 }

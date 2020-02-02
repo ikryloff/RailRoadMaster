@@ -7,9 +7,7 @@ public class RouteButton : MonoBehaviour
     private RoutePanelManager panelManager;
     [SerializeField]
     private int number;
-    public Image buttonImage { get; set; }
-    [SerializeField]
-    private TrackCircuit [] tracks;
+    public Image buttonImage { get; set; }    
     Color32 colorPressed;
     Color32 colorOpened;
     Color32 colorHasPresence;
@@ -50,22 +48,7 @@ public class RouteButton : MonoBehaviour
     public void SetPressedColor()
     {
         RButton.interactable = false;
-    }   
-
-    public void UpdateButtonState()
-    {
-        for ( int i = 0; i < tracks.Length; i++ )
-        {
-            TrackCircuit tc = tracks [i];
-            if ( tc.HasCarPresence )
-            {
-                buttonImage.color = colorHasPresence;
-                break;
-            }
-            else
-                buttonImage.color = colorDefault;            
-        }
-    }
+    }  
 
 
     public void SetRouteOff()

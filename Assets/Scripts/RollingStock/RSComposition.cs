@@ -24,7 +24,7 @@ public class RSComposition : MonoBehaviour, IManageable
     {
         
         // if car not connected from right
-        if ( !RSConnection.IsConnectedRight )
+        if (gameObject.activeSelf && !RSConnection.IsConnectedRight )
         {
             IsMainCar = true;
             print ("UpdateCarComposition " + RollingStock.name);

@@ -87,12 +87,11 @@ public class TrackCircuitSignals : MonoBehaviour, IManageable
     }
 
     public void Init()
-    {
-        SetSignals ();
+    {       
     }
 
     public void OnStart()
     {
-        throw new System.NotImplementedException ();
+        SetSignals ();
     }
 }

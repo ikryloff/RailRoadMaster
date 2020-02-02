@@ -4,17 +4,18 @@ using System.Linq;
 public class CompositionManager : Singleton<CompositionManager>, IManageable
 {
     public static int CompositionID { get; set; }
-    public static Dictionary<int, Composition> CompositionsDict;
+    public static Composition [] Compositions;    
     public RollingStock [] RollingStocks { get; set; }
     public RSConnection [] RSConnections { get; set; }
     public RSComposition [] RSCompositions { get; set; }
+    private Composition [] tmp;
 
     public void Init()
     {
         RollingStocks = FindObjectsOfType<RollingStock> ();
         RSConnections = FindObjectsOfType<RSConnection> ();
         RSCompositions = FindObjectsOfType<RSComposition> ();
-        CompositionsDict = new Dictionary<int, Composition> ();  // new Dict of compositions 
+        Compositions = new Composition [50];
         RollingStockInitialisation ();
         UpdateCompositions ();
     }
@@ -49,8 +50,10 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
     // after coupling and uncoupling
     public void UpdateCompositions()
     {
-        if ( CompositionsDict.Count > 0 )
-            CompositionsDict.Clear ();
+        for ( int i = 0; i < CompositionID; i++ )
+        {
+            Compositions [i] = null;
+        }
         CompositionID = 0;
         EventManager.CompositionChanged (); // send to RSComposition
     }
@@ -68,8 +71,8 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         }
         else
             composition.CompEngine = null;
-        // add composition in Dict
-        CompositionsDict.Add (CompositionID, composition);
+        // add composition in Array
+        Compositions [composition.Number] = composition;
         // add rs in composition 
         AddRSInComposition (rollingStock.RSComposition, composition, CompositionID);
         // temp car from left
@@ -107,24 +110,31 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         rs.CarComposition = composition;
     }
 
-    private void Update()
+    public void OnUpdate()
     {
         CompositionMoving ();
     }
 
     private void CompositionMoving()
     {
-        foreach ( Composition comp in CompositionsDict.Values )
+                      
+        for ( int i = 0; i < CompositionID; i++ )
         {
-            comp.Move ();
+            if(Compositions[i] != null )
+            {
+                Compositions [i].Move ();
+            }
         }
     }
 
     private void CompositionInstantiate()
     {
-        foreach ( Composition comp in CompositionsDict.Values )
+        for ( int i = 0; i < CompositionID; i++ )
         {
-            comp.Instantiate ();
+            if ( Compositions [i] != null )
+            {
+                Compositions [i].Instantiate ();
+            }
         }
     }
 }

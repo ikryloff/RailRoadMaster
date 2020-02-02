@@ -25,7 +25,6 @@ public class RoutePanelManager : MonoBehaviour, IHideable
         buttons = routePanel.GetComponentsInChildren<RouteButton> ();
         SetRouteButtonsInArray ();
         routeList = new List<int>();
-        EventManager.onTrackCircuitsStateChanged += UpdateButtonsStatesWithCarsCount;
         EventManager.onPathChanged += UpdateRouteCancelButtons;
     }
 
@@ -59,19 +58,12 @@ public class RoutePanelManager : MonoBehaviour, IHideable
             routeCancelButtons [count].CancelRouteButton.interactable = true;
     }
 
-    private void UpdateButtonsStatesWithCarsCount()
-    {
-        foreach ( RouteButton but in buttons )
-        {
-            but.UpdateButtonState ();            
-        }
-    }
+   
 
     public void UpdateButtonsStates()
     {
         foreach ( RouteButton but in buttons )
         {
-            but.UpdateButtonState ();
             but.RButton.interactable = true;
         }        
     }

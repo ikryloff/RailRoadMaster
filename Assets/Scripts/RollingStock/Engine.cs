@@ -7,8 +7,12 @@ public class Engine : MonoBehaviour
     public int InstructionsHandler;
     
     public RollingStock EngineRS { get; private set; }
+    public TrafficWatcher TWatcher { get; private set; }
+    public EngineInertia Inertia { get; private set; }
     public bool Brakes;
+    //it can move itself
     public bool IsActive;
+    // it is rulled by player
     public bool IsPlayer;
 
     public int Direction { get; private set; }
@@ -24,7 +28,6 @@ public class Engine : MonoBehaviour
     private int absHandler;
 
     const float accForce = 0.015f;
-    public EngineInertia Inertia { get; private set; }
 
 
     private bool isPaused;
@@ -38,6 +41,7 @@ public class Engine : MonoBehaviour
         EngineRS = GetComponent<RollingStock> ();
         Inertia = GetComponent<EngineInertia> ();
         engineLightning = GetComponent<EngineLightning> ();
+        TWatcher = GetComponent<TrafficWatcher> ();
         Brakes = true;
     }
 
@@ -47,17 +51,18 @@ public class Engine : MonoBehaviour
         EngineStep = 0;
     }
 
-    void Update()
+    public void RunEngineAction()
     {
         if ( !isPaused && IsActive)
         {
             CalcRealSpeed ();
             CalcMaxSpeed ();
             MoveEngine ();            
-        }        
+        }
+        if ( Inertia.enabled )
+            Inertia.OnUpdate ();
         
     }
-
     public void HandlerZero()
     {
         InstructionsHandler = 0;
@@ -130,11 +135,7 @@ public class Engine : MonoBehaviour
         if ( absHandler == 6 ) MaxSpeed = 40;
 
 
-    }
-
-   
-
-   
+    }  
 
     private void HandlerValidation()
     {

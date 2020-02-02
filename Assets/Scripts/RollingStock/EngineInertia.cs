@@ -26,7 +26,7 @@ public class EngineInertia : MonoBehaviour
         tempCompQuantity = composition.CarComposition.Quantity;
     }
 
-    private void Update()
+    public void OnUpdate()
     {
         StopEngineAfterCoupling ();
     }

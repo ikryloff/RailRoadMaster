@@ -1,6 +1,4 @@
-﻿using System;
-using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
@@ -8,21 +6,30 @@ public class Player : MonoBehaviour
 
     public Engine PlayerEngine;
     public Engine TempEngine;
+    public Engine HitEngine;
     public RollingStock rollingStock;
     private ConductorCameraController ccc;
     public RSViewer Viewer;
-    
+    public Camera cameraMain;
+
+
 
     private void Awake()
     {
-        TempEngine = null;
-        Viewer = FindObjectOfType<RSViewer> ();
         ccc = FindObjectOfType<ConductorCameraController> ();
-        if(rollingStock.Engine)
-            PlayerEngine = rollingStock.GetComponent<Engine> ();
-        ccc.Target = rollingStock;
-        IndicationManager.Instance.engine = PlayerEngine;
-        PlayerEngine.IsActive = true;        
+        cameraMain = ccc.GetComponent<Camera> ();
+        TempEngine = ResourceHolder.Instance.TempEngine;
+        PlayerEngine = ResourceHolder.Instance.StationEngine;
+        Viewer = FindObjectOfType<RSViewer> ();   
+        IndicationManager.Instance.engine = PlayerEngine;       
+        PlayerEngine.IsActive = true;
+        PlayerEngine.IsPlayer = true;
+    }
+    private void Start()
+    {
+        ccc.Target = PlayerEngine.EngineRS;
+        SetViewer (PlayerEngine.EngineRS);
+        EventManager.onCompositionChanged += SetPlayerEngineInCompositionAfterCoupling;
     }
 
     private void Update()
@@ -30,10 +37,6 @@ public class Player : MonoBehaviour
         RollingStockChosenListener ();
     }
 
-    private void Start()
-    {
-        SetViewer(rollingStock);
-    }
 
     private void RollingStockChosenListener()
     {
@@ -43,7 +46,7 @@ public class Player : MonoBehaviour
 
             if ( Input.GetMouseButtonDown (0) )
             {
-                Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+                Ray ray = cameraMain.ScreenPointToRay (Input.mousePosition);
                 RaycastHit hit;
                 if ( Physics.Raycast (ray, out hit) )
                 {
@@ -53,30 +56,26 @@ public class Player : MonoBehaviour
                 //print("hit " + hit.collider.name);
                 if ( hit.collider != null )
                 {
-                    if( hit.collider.CompareTag ("Engine") )
+                    if ( hit.collider.CompareTag ("Engine") )
                     {
-                        TempEngine = PlayerEngine;   
-                        PlayerEngine = hit.collider.GetComponent<Engine> ();
-                        if( !PlayerEngine.Equals (TempEngine) )
+                        HitEngine = hit.collider.GetComponent<Engine> ();
+                        if ( !HitEngine.IsPlayer )
                         {
+                            TempEngine = PlayerEngine;
+                            TempEngine.IsPlayer = false;
+                            PlayerEngine = HitEngine;
                             PlayerEngine.IsActive = true;
+                            PlayerEngine.IsPlayer = true;
                             ccc.Target = PlayerEngine.EngineRS;
                             ccc.UpdateCameraTarget ();
-                            SetViewer (PlayerEngine.EngineRS);
                             IndicationManager.Instance.engine = PlayerEngine;
-                            if ( PlayerEngine.EngineRS.RSComposition.CarComposition.Equals (TempEngine.EngineRS.RSComposition.CarComposition) )
-                            {
-                                PlayerEngine.Acceleration = TempEngine.Acceleration;
-                                TempEngine.InstructionsHandler = 0;
-                                TempEngine.Acceleration = 0;
-                                TempEngine.IsActive = false;
-                            }                            
-                            CompositionManager.Instance.UpdateCompositions ();
-                        }                        
-
+                            SetPlayerEngineInComposition ();
+                            CompositionManager.Instance.UpdateCompositions ();                       
+                        }
+                            SetViewer (PlayerEngine.EngineRS);
+                            PlayerEngine.EngineRS.Model.Blink ();                            
                     }
-
-                    else if( hit.collider.CompareTag ("RollingStock") )
+                    else if ( hit.collider.CompareTag ("RollingStock") )
                     {
                         rollingStock = hit.collider.GetComponent<RollingStock> ();
                         SetViewer (rollingStock);
@@ -86,15 +85,43 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SetViewer(RollingStock rs)
+    public void SetPlayerEngineInComposition()
+    {
+        if ( PlayerEngine.EngineRS.RSComposition.CarComposition.Equals (TempEngine.EngineRS.RSComposition.CarComposition) )
+        {
+            PlayerEngine.Acceleration = TempEngine.Acceleration;
+            PlayerEngine.InstructionsHandler = TempEngine.InstructionsHandler;
+            TempEngine.IsActive = false;            
+            PlayerEngine.EngineRS.RSComposition.CarComposition.CompEngine = PlayerEngine;
+            PlayerEngine.EngineRS.RSComposition.CarComposition.SetEngineToAllCars ();
+        }
+    }
+
+    public void SetPlayerEngineInCompositionAfterCoupling()
+    {
+        if ( PlayerEngine.EngineRS.RSComposition.CarComposition.Equals (TempEngine.EngineRS.RSComposition.CarComposition) )
+        {
+            TempEngine.IsActive = false;
+            PlayerEngine.EngineRS.RSComposition.CarComposition.CompEngine = PlayerEngine;
+            PlayerEngine.EngineRS.RSComposition.CarComposition.SetEngineToAllCars ();
+        }
+    }
+
+    private void SetViewer( RollingStock rs )
     {
         Viewer.SetText (rs.Number.ToString ());
         if ( rs.IsEngine )
         {
-            Viewer.SetEngine(rs.Engine);
-            Viewer.SetEngineForSpeed(rs.Engine);            
+            Viewer.SetLocoUI ();
+            Viewer.SetEngine (rs.Engine);
+            Viewer.SetEngineForSpeed (rs.Engine);
+        }
+        else
+        {
+            Viewer.SetCarUI (rs);            
         }
         Viewer.SetIcon (rs);
+        rs.Model.Blink ();
 
     }
 
@@ -113,6 +140,6 @@ public class Player : MonoBehaviour
         PlayerEngine.HandlerZero ();
     }
 
-    
+
 
 }

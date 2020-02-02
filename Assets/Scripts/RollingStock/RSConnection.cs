@@ -35,6 +35,11 @@ public class RSConnection : MonoBehaviour, IManageable
         }
 
     }
+    public void OnUpdate()
+    {
+        ImproveRSPositionWithConnection ();
+        CheckUncouplingListener ();
+    }
 
     public void MakeConnection( RSConnection otherCar )
     {
@@ -64,11 +69,6 @@ public class RSConnection : MonoBehaviour, IManageable
         CompositionManager.Instance.UpdateCompositions ();
     }
 
-    private void Update()
-    {
-        ImproveRSPositionWithConnection ();
-        CheckUncouplingListener ();
-    }
 
     private void CheckUncouplingListener()
     {

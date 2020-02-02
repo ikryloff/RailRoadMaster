@@ -23,9 +23,9 @@ public class Composition
     }
     public void SetEngineToAllCars()
     {
-        foreach ( RSComposition car in Cars )
+        for ( int i = 0; i < Cars.Count; i++ )
         {
-            car.RollingStock.SetEngineToRS (CompEngine);
+            Cars [i].RollingStock.SetEngineToRS (CompEngine);
         }
     }
 
@@ -34,11 +34,10 @@ public class Composition
         for ( int i = 0; i < Cars.Count; i++ )
         {
             if ( CompEngine )
-            {
-                step = CompEngine.EngineStep;                
-            }
+                step = CompEngine.EngineStep;
             else
                 step = 0;
+
             Cars [i].RollingStock.MoveByPath (step);
             Cars [i].RollingStock.BogeyLeft.MoveByPath (step);
             Cars [i].RollingStock.BogeyRight.MoveByPath (step);

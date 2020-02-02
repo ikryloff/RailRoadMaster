@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CarWatcher : MonoBehaviour
@@ -8,7 +9,8 @@ public class CarWatcher : MonoBehaviour
     private Transform engineT;
     private RSConnection rSConnection;
     private RollingStock [] listRS;
-    private List<RollingStock> ownListRS;
+    private RollingStock [] ownListRS;
+    private RollingStock tempRS;
     private RollingStock engineRS;
     private RollingStock leftCar;
     private RollingStock rightCar;
@@ -16,6 +18,7 @@ public class CarWatcher : MonoBehaviour
     private float tempDistRight;
     private float distRight;
     private float distLeft;
+    private int count;
 
 
     private void Awake()
@@ -24,13 +27,14 @@ public class CarWatcher : MonoBehaviour
         rSConnection = GetComponent<RSConnection> ();
         engineT = GetComponent<Transform> ();
         engineRS = GetComponent<RollingStock> ();
-        ownListRS = new List<RollingStock> ();
+        
 
     }
 
     private void Start()
     {
         listRS = CompositionManager.Instance.RollingStocks;
+        ownListRS = new RollingStock [listRS.Length];
         InvokeRepeating ("GetOwnListRS", 2, 2);
     }
 
@@ -52,42 +56,60 @@ public class CarWatcher : MonoBehaviour
 
     public void GetOwnListRS()
     {
-        ownListRS.Clear ();
+        ClearOwnListRS ();
         leftCar = null;
         rightCar = null;
-        foreach ( RollingStock car in listRS )
+        count = 0;
+        for ( int i = 0; i < listRS.Length; i++ )
         {
-            if ( engineRS.OwnPath.Contains(car.OwnTrack) && !car.Equals(engineRS))
+            tempRS = listRS [i];
+            if (tempRS.gameObject.activeSelf && engineRS.OwnPath.Contains(tempRS.OwnTrack) && !tempRS.Equals(engineRS))
             {               
-                ownListRS.Add (car);
+                ownListRS[count] =  tempRS;
+                count++;
             }
         }
 
-        tempDistLeft = 1000000;
-        tempDistRight = 1000000;
+        tempDistLeft = 100000;
+        tempDistRight = 100000;
 
-        foreach ( RollingStock car in ownListRS )
+        tempRS = null;
+
+        for ( int i = 0; i < ownListRS.Length; i++ )
         {
-            if ( !engineRS.GetCoupledLeft() && engineT.position.x > car.GetPositionX() )
+            tempRS = ownListRS [i];
+            if ( tempRS == null )
+                return;
+            if ( !engineRS.GetCoupledLeft() && engineT.position.x > tempRS.GetPositionX() )
             {
-                if ( GetDistanceToCar (car) < tempDistLeft )
+                if ( GetDistanceToCar (tempRS) < tempDistLeft )
                 {
-                    tempDistLeft = GetDistanceToCar (car);
-                    leftCar = car;
+                    tempDistLeft = GetDistanceToCar (tempRS);
+                    leftCar = tempRS;
                 }
 
             }
-            else if ( !engineRS.GetCoupledRight () && engineT.position.x < car.GetPositionX () )
+            else if ( !engineRS.GetCoupledRight () && engineT.position.x < tempRS.GetPositionX () )
             {
-                if ( GetDistanceToCar (car) < tempDistRight )
+                if ( GetDistanceToCar (tempRS) < tempDistRight )
                 {
-                    tempDistRight = GetDistanceToCar (car);
-                    rightCar = car;
+                    tempDistRight = GetDistanceToCar (tempRS);
+                    rightCar = tempRS;
                 }
             }
         }
     }
 
+    private void ClearOwnListRS()
+    {
+        for ( int i = 0; i < ownListRS.Length; i++ )
+        {
+            if ( ownListRS [i] == null )
+                return;
+            else
+                ownListRS [i] = null;
+        }
+    }
 
     private float GetDistanceToCar( RollingStock car )
     {
