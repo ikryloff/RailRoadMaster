@@ -61,7 +61,6 @@ public class RollingStock : MovableObject, IManageable
 
     public void OnStart()
     {
-        IsMoving = true;
         UpdatePath ();
 
     }

@@ -20,9 +20,9 @@ public class CarsHolder : MonoBehaviour, IManageable
     public void OnStart()
     {
         SetCarsPosition (8701, "PathTr10", 60);
-        SetCarsPosition (8888, "PathTr10", 200);
+        SetCarsPosition (8888, "PathTr10", 200, new int [] { 6548 });
         SetCarsPosition (2140, "PathTr9", 200);
-        SetCarsPosition (6135, "PathTr3", 60, new int [] { 7522, 7508, 7143, 7445, 7267, 6548 });
+        SetCarsPosition (6135, "PathTr3", 60, new int [] { 7522, 7508, 7143, 7445, 7267 });
         SetCarsPosition (114, "PathTrI_N", 200, new int [] { 115, 116 });
     }
 

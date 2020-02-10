@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager> {
 
-    public GameObject gameOver;
     private bool isGameOn = true;
     private bool isPaused = false;
     private RoutePanelManager routePanel;
@@ -14,7 +13,6 @@ public class GameManager : Singleton<GameManager> {
     private void Awake()
     {
         Application.targetFrameRate = 60;
-        gameOver.SetActive (false);
         EventManager.onGameOver += GameOver;
         routePanel = FindObjectOfType<RoutePanelManager> ();        
         
@@ -88,12 +86,12 @@ public class GameManager : Singleton<GameManager> {
     {
         isGameOn = false;
         PauseOn ();
-        gameOver.SetActive (true);
+        
     }
     public void GameContinue()
     {
-        gameOver.SetActive (false);
         isGameOn = true;
+        PauseOff ();
     }
 
     public void QuitGame()
@@ -101,6 +99,10 @@ public class GameManager : Singleton<GameManager> {
         Application.Quit ();
     }
 
+    public void Reload()
+    {
+        Application.Quit ();
+    }
 
 
 }

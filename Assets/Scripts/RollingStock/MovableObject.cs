@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class MovableObject : MonoBehaviour
@@ -12,12 +11,11 @@ public abstract class MovableObject : MonoBehaviour
     public float OwnRun { get; set; }
     public List<TrackPathUnit> OwnPath { get; set; }
     public TrackPathUnit OwnTrack { get; set; }
+    public TrackPathUnit tmpTrack { get; set; }
     public Transform OwnTransform { get; set; }
-    public bool IsMoving { get; set; }
     // Moving distance per frame
     public float Translation { get; set; }
     
-    public static int temp = 0;
     private float smooth = 0.5f;
     private float TOLERANCE = 0.5f;
 
@@ -53,24 +51,35 @@ public abstract class MovableObject : MonoBehaviour
             OwnTrackCircuit = OwnTrack.TrackCircuit;
             // bogeys and RS rotate in different ways
             MoveAndRotate ();
-
-        }
-        else
-        {
-            IsMoving = false;
-        }
+        }        
     }
 
     private void StepNextTrackPath(float _step)
     {
+        tmpTrack = OwnTrack;
         OwnTrack = TrackPath.Instance.GetNextTrack (OwnTrack, OwnPath);
-        OwnPosition = _step/2;
+        if(OwnTrack)
+            OwnPosition = _step/2;
+        else
+        {
+            OwnTrack = tmpTrack;
+            OwnPosition = tmpTrack.PathLenght;
+            OwnEngine.EngineStep = 0;
+        }
     }
 
     private void StepPrevTrackPath( float _step )
     {
+        tmpTrack = OwnTrack;
         OwnTrack = TrackPath.Instance.GetPrevTrack (OwnTrack, OwnPath);
-        OwnPosition = OwnTrack.PathLenght + _step / 2;
+        if ( OwnTrack )
+            OwnPosition = OwnTrack.PathLenght + _step / 2;
+        else
+        {
+            OwnTrack = tmpTrack;
+            OwnPosition = 0;
+            OwnEngine.EngineStep = 0;
+        }
     }
 
 
