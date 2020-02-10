@@ -8,6 +8,7 @@
     public static EventDelegate onCompositionChanged;
     public static EventDelegate onCarsCoupled;
     public static EventDelegate onTrainSignalChanged;
+    public static EventDelegate onSignalChanged;
     public static EventDelegate onPause;
     public static EventDelegate offPause;
     public static EventDelegate onGameOver;
@@ -61,6 +62,12 @@
     {
         if ( onTrainSignalChanged != null )
             onTrainSignalChanged ();
+    }
+
+    public static void OnSignalChanged()
+    {
+        if ( onSignalChanged != null )
+            onSignalChanged ();
     }
 
     public static void PauseOn()

@@ -7,9 +7,12 @@ public class Cross : TrafficLight
     [SerializeField]
     private Switch dependSwitchTurn;
 
+    BoxCollider crossTrigger;
+
     protected override void Awake()
     {
         base.Awake ();
+        crossTrigger = GetComponent<BoxCollider> ();
         IsClosed = true;
     }
     void Start()
@@ -30,6 +33,14 @@ public class Cross : TrafficLight
             IsClosed = false;
         else if ( dependSwitchTurn && dependSwitchTurn.IsSwitchStraight )
             IsClosed = true;
+
+        ReloadTrigger ();
+    }
+
+    private void ReloadTrigger()
+    {
+        crossTrigger.enabled = false;
+        crossTrigger.enabled = true;
     }
 
 }

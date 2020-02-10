@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ExitSignal : TrafficLight
 {
@@ -11,7 +10,7 @@ public class ExitSignal : TrafficLight
     private MeshRenderer botYellow;
     private TrafficLight depSignal;
     private bool isStraight;
-    
+
 
     protected override void Awake()
     {
@@ -36,7 +35,7 @@ public class ExitSignal : TrafficLight
     {
         LightOff ();
         EventManager.onTrainSignalChanged += UpdateSignals;
-        
+
     }
 
     public override void LightOn( RouteItem route )
@@ -58,13 +57,13 @@ public class ExitSignal : TrafficLight
                     if ( route.IsStraight )
                         ExitStraightLightOn ();
                     else
-                        ExitTurnLightOn ();                    
+                        ExitTurnLightOn ();
                 }
                 else
                 {
                     LightOff ();
                 }
-                
+
             }
             else
                 print ("no depend signal");
@@ -74,7 +73,7 @@ public class ExitSignal : TrafficLight
 
     public override void LightOff()
     {
-        IsClosed = true;        
+        IsClosed = true;
         StopSignalFlashing (yellowSignalFlashing);
         LampSwitchOn (red, RedSignal);
         LampSwitchOff (white, WhiteSignal);
@@ -84,14 +83,13 @@ public class ExitSignal : TrafficLight
         EventManager.OnTrainSignalChanged ();
         if ( TLRepeater )
             TLRepeater.RepeaterOffTrain ();
-
     }
 
     protected void UpdateSignals()
     {
         if ( !IsClosed && depSignal )
         {
-            if (!depSignal.IsClosed )
+            if ( !depSignal.IsClosed )
             {
                 if ( isStraight )
                     ExitStraightLightOn ();
@@ -103,7 +101,7 @@ public class ExitSignal : TrafficLight
                 LightOff ();
             }
         }
-
+        EventManager.OnSignalChanged ();
     }
 
 
@@ -111,7 +109,7 @@ public class ExitSignal : TrafficLight
     {
         LightOff ();
         LampSwitchOn (white, WhiteSignal);
-        LampSwitchOff (red, RedSignal);      
+        LampSwitchOff (red, RedSignal);
         IsClosed = false;
 
         if ( TLRepeater )
@@ -134,7 +132,7 @@ public class ExitSignal : TrafficLight
     private void ExitTurnLightOn()
     {
         StartSignalFlashing (yellowSignalFlashing);
-        LampSwitchOn (botYellow, BottomYellowSignal);       
+        LampSwitchOn (botYellow, BottomYellowSignal);
         LampSwitchOff (red, RedSignal);
         LampSwitchOff (white, WhiteSignal);
         LampSwitchOff (green, GreenSignal);
@@ -143,6 +141,6 @@ public class ExitSignal : TrafficLight
             TLRepeater.RepeaterOnTrain ();
     }
 
-    
+
 
 }

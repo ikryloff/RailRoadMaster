@@ -15,7 +15,11 @@ public class TrafficWatcher : MonoBehaviour
     private float tempDistRight;
     private float distRight;
     private float distLeft;
+    private float offset;
     private TrackCircuit tempTrack;
+    TrackPathUnit tpu;
+    List<TrackPathUnit> listTPU;
+    TrafficLight tl;
 
     private void Awake()
     {
@@ -25,13 +29,13 @@ public class TrafficWatcher : MonoBehaviour
         car = GetComponent<RollingStock> ();
         //make list of signals in path
         listTLs = new List<TrafficLight> ();
-    }
-    private void Start()
-    {
-        InvokeRepeating ("GetAllTLs", 2, 2);
+        listTPU = new List<TrackPathUnit> ();
+        EventManager.onPathUpdated += GetAllTLs;
+        EventManager.onSignalChanged += GetAllTLs;
     }
 
-    private void Update()
+
+    public void OnUpdate()
     {
         WatchSignals ();
     }
@@ -80,7 +84,10 @@ public class TrafficWatcher : MonoBehaviour
             else if ( distLeft <= 60 )
             {
                 if ( engine.InstructionsHandler < 0 )
+                {
+                    print (engine.name + " Triggered by signal dist " + distLeft);
                     engine.HandlerZero ();
+                }
             }
         }
     }
@@ -126,20 +133,25 @@ public class TrafficWatcher : MonoBehaviour
 
     public void GetAllTLs()
     {
+       
         //clear list 
         listTLs.Clear ();
-        
 
-        //gettting list of signals in path
-        foreach ( TrackPathUnit tpu in car.OwnPath )
+
+        if ( car.OwnPath != null )
         {
-            //just for temp operations
-            leftTL = tpu.TrackCircuit.TrackLights [0];
-            rightTL = tpu.TrackCircuit.TrackLights [1];
-            if ( leftTL != null && !listTLs.Contains (leftTL) )
-                listTLs.Add (leftTL);
-            if ( rightTL != null && !listTLs.Contains (rightTL))
-                listTLs.Add (rightTL);
+            //geting list of signals in path
+            for ( int i = 0; i < car.OwnPath.Count; i++ )
+            {
+                tpu = car.OwnPath [i];
+                //just for temp operations
+                leftTL = tpu.TrackCircuit.TrackLights [0];
+                rightTL = tpu.TrackCircuit.TrackLights [1];
+                if ( leftTL != null && !listTLs.Contains (leftTL) )
+                    listTLs.Add (leftTL);
+                if ( rightTL != null && !listTLs.Contains (rightTL) )
+                    listTLs.Add (rightTL);
+            }
         }
         //finding nearest
         tempDistLeft = 1000000;
@@ -147,11 +159,18 @@ public class TrafficWatcher : MonoBehaviour
         //clear tls 
         leftTL = null;
         rightTL = null;
-        foreach ( TrafficLight tl in listTLs )
+        for ( int i = 0; i < listTLs.Count; i++ )
         {
+            tl = listTLs [i];
             if ( tl.IsClosed )
             {
-                if ( tl.SignalDirection < 0 && engineT.position.x > tl.GetPositionX )
+                //when train pass througth signalhe can take red signal
+                if ( tl.IsClosedByTrain )
+                    offset = 40f;
+                else
+                    offset = 0f;
+
+                if ( tl.SignalDirection < 0 && engineT.position.x - offset > tl.GetPositionX )
                 {
                     if ( GetDistanceToSignal (tl) < tempDistLeft )
                     {
@@ -160,7 +179,7 @@ public class TrafficWatcher : MonoBehaviour
                     }
 
                 }
-                else if ( tl.SignalDirection > 0 && engineT.position.x < tl.GetPositionX )
+                else if ( tl.SignalDirection > 0 && engineT.position.x + offset < tl.GetPositionX )
                 {
                     if ( GetDistanceToSignal (tl) < tempDistRight )
                     {
@@ -168,9 +187,9 @@ public class TrafficWatcher : MonoBehaviour
                         rightTL = tl;
                     }
                 }
-            }            
-          
-        }
+            }
+
+        }        
     }
 
     private float GetDistanceToSignal( TrafficLight tl )

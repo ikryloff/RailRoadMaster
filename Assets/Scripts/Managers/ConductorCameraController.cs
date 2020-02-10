@@ -1,6 +1,6 @@
 ﻿using System.Collections;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ConductorCameraController : MonoBehaviour
 {
@@ -17,14 +17,18 @@ public class ConductorCameraController : MonoBehaviour
     private RSComposition composition;
     private Engine engine;
     public Transform targetTransform;
+    public Transform tempTarget;
     public Transform StoreFocusPoint;
     public Transform OTFocusPoint;
     public Transform LocoPostFocusPoint;
     public bool IsFreeCamera { get; set; }
     public bool IsActive { get; set; }
     public bool IsPostView { get; set; }
+    public int CameraPositionOffset { get; set; }  // -1 - left 0 - zero 1 - right
     public int ZoomLevel;
     public float XPath { get; set; }
+
+
     public float center;
     public float OffsetX;
     public float OffsetY;
@@ -60,7 +64,7 @@ public class ConductorCameraController : MonoBehaviour
     }
 
     private Vector3 GetViewPosition( int level )
-    {        
+    {
         return new Vector3 (OffsetX * level, OFFSET_Y * level, OFFSET_Z * level);
     }
 
@@ -86,14 +90,17 @@ public class ConductorCameraController : MonoBehaviour
 
     private void UpdateCamera()
     {
-        if ( !IsFreeCamera && engine.InstructionsHandler != 0 )
-        {
-            SetCameraPosition ();
-            FollowTarget (Time.deltaTime);
-        }        
-        else
-            MoveCamera (Time.deltaTime);
         XPath = GroupCamera.position.x;
+
+        if ( IsFreeCamera || engine.InstructionsHandler == 0 )
+        {
+            MoveCamera (Time.deltaTime);
+            return;
+        }       
+        
+        SetCameraPosition ();
+        FollowTarget (Time.deltaTime);
+
     }
 
     //for connection with yardcamera 
@@ -104,40 +111,47 @@ public class ConductorCameraController : MonoBehaviour
 
     private void SetCameraPosition()
     {
-        if ( engine.InstructionsHandler > 0 )
+        if ( engine.InstructionsHandler == 0 && CameraPositionOffset != 0 )
         {
-            OffsetX = 120;
+            OffsetX = 0;
+            CameraPositionOffset = 0;
+        }
+        else if ( engine.InstructionsHandler > 0 && CameraPositionOffset != 1 )
+        {
+            OffsetX = 100;
             Target = composition.CarComposition.RightCar;
             targetTransform = Target.transform;
+            CameraPositionOffset = 1;
         }
 
-        else if ( engine.InstructionsHandler < 0 )
+        else if ( engine.InstructionsHandler < 0 && CameraPositionOffset != -1 )
         {
-            OffsetX = -120;
+            OffsetX = -100;
             Target = composition.CarComposition.LeftCar;
             targetTransform = Target.transform;
-
+            CameraPositionOffset = -1;
         }
+
     }
 
-    IEnumerator FollowProcess(Transform _targ)
+    IEnumerator FollowProcess( Transform _targ )
     {
-        while( Vector3.Distance(GroupCamera.position, targetTransform.position + GetViewPosition(ZoomLevel)) > 30 )
+        while ( Vector3.Distance (GroupCamera.position, targetTransform.position + GetViewPosition (ZoomLevel)) > 30 )
         {
             FollowTarget (Time.deltaTime);
             yield return null;
         }
-        
-        
+        targetTransform = tempTarget;
     }
 
     public void SetCameraPositionOnPost( Transform post )
     {
         ZoomLevel = 2;
         OffsetX = 0;
-        OffsetY = 0;        
-        targetTransform = post.transform;
-        StartCoroutine (FollowProcess(post));
+        OffsetY = 0;
+        tempTarget = targetTransform;
+        targetTransform = post.transform;        
+        StartCoroutine (FollowProcess (post));
     }
 
 
@@ -189,17 +203,20 @@ public class ConductorCameraController : MonoBehaviour
 
         }
 
-        if ( Input.touchCount == 1 && Input.GetTouch (0).phase == TouchPhase.Moved )
+
+
+        if ( Input.touchCount == 1 && !EventSystem.current.IsPointerOverGameObject (Input.GetTouch (0).fingerId) && Input.GetTouch (0).phase == TouchPhase.Moved )
         {
             touchDeltaPosition = Input.GetTouch (0).deltaPosition;
-            GroupCamera.Translate (-touchDeltaPosition.x * speed * ZoomLevel, -touchDeltaPosition.y * speed * ZoomLevel, -touchDeltaPosition.y * speed * ZoomLevel);            
+            GroupCamera.Translate (-touchDeltaPosition.x * speed * ZoomLevel, -touchDeltaPosition.y * speed * ZoomLevel, -touchDeltaPosition.y * speed * ZoomLevel);
         }
         desiredPosition = new Vector3 (GroupCamera.position.x, GroupCamera.position.y, GroupCamera.position.z);
         desiredPosition.x = Mathf.Clamp (desiredPosition.x, BORDER_X_LEFT + ZoomLevel * 100, BORDER_X_RIGHT - ZoomLevel * 200);
         desiredPosition.z = Mathf.Clamp (desiredPosition.z, BORDER_Z_BOTTOM - ZoomLevel * 105, BORDER_Z_TOP - ZoomLevel * 300);
+        desiredPosition.y = Mathf.Clamp (desiredPosition.y, OFFSET_Y * ZoomLevel, OFFSET_Y * ZoomLevel);
         smoothedPosition = Vector3.Lerp (GroupCamera.position, desiredPosition, smoothSpeed * dt);
         GroupCamera.position = smoothedPosition;
     }
 
-   
+
 }

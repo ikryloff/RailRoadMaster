@@ -61,6 +61,8 @@ public class Engine : MonoBehaviour
         }
         if ( Inertia.enabled )
             Inertia.OnUpdate ();
+        if ( TWatcher.enabled )
+            TWatcher.OnUpdate ();
         
     }
     public void HandlerZero()

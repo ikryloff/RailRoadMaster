@@ -16,6 +16,7 @@ public class TrafficLight : MonoBehaviour
     public Lamp GreenSignal { get; set; }
 
     public bool IsClosed { get; set; }    
+    public bool IsClosedByTrain { get; set; }    
     public BoxCollider Trigger { get; set; }
     public TrackCircuit PrevTC { get; set; }
     public TrafficLightRepeater TLRepeater { get; set; }

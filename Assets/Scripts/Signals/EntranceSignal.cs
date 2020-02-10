@@ -81,9 +81,8 @@ public class EntranceSignal : TrafficLight
         IsClosed = true;
 
         EventManager.OnTrainSignalChanged ();
-
         if ( TLRepeater )
-            TLRepeater.RepeaterOffTrain ();
+            TLRepeater.RepeaterOffTrain ();        
     }
 
     protected void UpdateSignals()
@@ -106,7 +105,7 @@ public class EntranceSignal : TrafficLight
             }
             IsClosed = false;
         }
-
+        EventManager.OnSignalChanged ();
     }
 
     private void EntranceStraightLightToClosedOn()

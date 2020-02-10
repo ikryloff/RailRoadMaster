@@ -20,8 +20,8 @@ public class Player : MonoBehaviour
         cameraMain = ccc.GetComponent<Camera> ();
         TempEngine = ResourceHolder.Instance.TempEngine;
         PlayerEngine = ResourceHolder.Instance.StationEngine;
-        Viewer = FindObjectOfType<RSViewer> ();   
-        IndicationManager.Instance.engine = PlayerEngine;       
+        Viewer = FindObjectOfType<RSViewer> ();
+        IndicationManager.Instance.engine = PlayerEngine;
         PlayerEngine.IsActive = true;
         PlayerEngine.IsPlayer = true;
     }
@@ -40,6 +40,9 @@ public class Player : MonoBehaviour
 
     private void RollingStockChosenListener()
     {
+        if ( Input.touchCount == 1 && EventSystem.current.IsPointerOverGameObject (Input.GetTouch (0).fingerId) )
+            return;
+
         if ( !EventSystem.current.IsPointerOverGameObject () )
         {
             Vector3 click = Vector3.one;
@@ -70,10 +73,10 @@ public class Player : MonoBehaviour
                             ccc.UpdateCameraTarget ();
                             IndicationManager.Instance.engine = PlayerEngine;
                             SetPlayerEngineInComposition ();
-                            CompositionManager.Instance.UpdateCompositions ();                       
+                            CompositionManager.Instance.UpdateCompositions ();
                         }
-                            SetViewer (PlayerEngine.EngineRS);
-                            PlayerEngine.EngineRS.Model.Blink ();                            
+                        SetViewer (PlayerEngine.EngineRS);
+                        PlayerEngine.EngineRS.Model.Blink ();
                     }
                     else if ( hit.collider.CompareTag ("RollingStock") )
                     {
@@ -91,7 +94,7 @@ public class Player : MonoBehaviour
         {
             PlayerEngine.Acceleration = TempEngine.Acceleration;
             PlayerEngine.InstructionsHandler = TempEngine.InstructionsHandler;
-            TempEngine.IsActive = false;            
+            TempEngine.IsActive = false;
             PlayerEngine.EngineRS.RSComposition.CarComposition.CompEngine = PlayerEngine;
             PlayerEngine.EngineRS.RSComposition.CarComposition.SetEngineToAllCars ();
         }
@@ -118,7 +121,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            Viewer.SetCarUI (rs);            
+            Viewer.SetCarUI (rs);
         }
         Viewer.SetIcon (rs);
         rs.Model.Blink ();
