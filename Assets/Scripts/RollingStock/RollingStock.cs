@@ -26,6 +26,7 @@ public class RollingStock : MovableObject, IManageable
     public Bogey BogeyRight { get; set; }
     private Transform bogeyLeftTransform;
     private Transform bogeyRightTransform;
+    public Transform RSTransform { get; set; }
 
     public RSModel Model;
 
@@ -57,6 +58,7 @@ public class RollingStock : MovableObject, IManageable
         OwnTrackCircuit = OwnTrack.TrackCircuit;
         OwnTrackCircuit.AddCars (this);
         Model = GetComponentInChildren<RSModel> ();
+        RSTransform = GetComponent<Transform>();
     }
 
     public void OnStart()

@@ -9,6 +9,7 @@ public class Engine : MonoBehaviour
     public RollingStock EngineRS { get; private set; }
     public TrafficWatcher TWatcher { get; private set; }
     public EngineInertia Inertia { get; private set; }
+    public EngineAI AI { get; private set; }
     public bool Brakes;
     //it can move itself
     public bool IsActive;
@@ -39,6 +40,7 @@ public class Engine : MonoBehaviour
         EventManager.offPause += PauseMovingOff;
 
         EngineRS = GetComponent<RollingStock> ();
+        AI = GetComponent<EngineAI> ();
         Inertia = GetComponent<EngineInertia> ();
         engineLightning = GetComponent<EngineLightning> ();
         TWatcher = GetComponent<TrafficWatcher> ();

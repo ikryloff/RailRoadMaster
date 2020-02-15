@@ -1,48 +1,44 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class EngineAI : MonoBehaviour {
+public class EngineAI : MonoBehaviour
+{
 
     private Engine engine;
-    private RSConnection  connection;
+    private RSConnection connection;
     private bool Enable;
 
     private void Awake()
     {
         engine = GetComponent<Engine> ();
-        connection = engine.GetComponent<RollingStock>().GetComponent<RSConnection>();
+        connection = engine.GetComponent<RollingStock> ().GetComponent<RSConnection> ();
         Enable = true;
-    }       
+    }
 
-    private void Update()
+
+
+    public void MoveForward( int throttle )
     {
-       
-        if ( Input.GetKeyDown (KeyCode.DownArrow) )
+        engine.IsActive = true;
+        for ( int i = 0; i < throttle; i++ )
         {
-            Stop ();
+            engine.HandlerForward ();
         }
-              
-
     }
 
-    public void MoveBackSupper()
+    public void MoveBack( int throttle )
     {
-        engine.HandlerBack ();
-        engine.InstructionsHandler = -6;
-        
-    }
-
-    public void MoveForwardSupper()
-    {
-        engine.HandlerForward();
-        engine.InstructionsHandler = 6;
+        engine.IsActive = true;
+        for ( int i = 0; i < throttle; i++ )
+        {
+            engine.HandlerBack ();
+        }
     }
 
     public void Stop()
     {
+        engine.IsActive = true;
         engine.HandlerZero ();
     }
 
-   
+
 }

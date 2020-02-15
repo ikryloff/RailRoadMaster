@@ -62,13 +62,13 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable
     public void TogglePathIndication()
     {
         if ( !IsPathIndicate )
-            StartCoroutine (TurnPathCoroutin ());
+            StartCoroutine (TurnPathCoroutin ());       
     }
 
     public IEnumerator TurnPathCoroutin()
     {
         TurnPathIndicationOn ();
-        yield return new WaitForSecondsRealtime (4f);
+        yield return new WaitForSecondsRealtime (3f);
         if( !ModeSwitch.Instance.GameMode.Equals( ModeSwitch.Mode.Yard ))
             TurnPathIndicationOff ();
     }
@@ -76,7 +76,7 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable
     public IEnumerator TurnCouplersCoroutin()
     {
         TurnCouplerIndicatorsOn ();
-        yield return new WaitForSecondsRealtime (4f);
+        yield return new WaitForSecondsRealtime (5f);
         TurnCouplerIndicatorsOff ();
     }
 

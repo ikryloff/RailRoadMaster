@@ -51,13 +51,13 @@ public class TrackCircuitSignals : MonoBehaviour, IManageable
             SetTrackLightsToTC (tc, "End8", "M4");
 
         else if ( tc.name.Equals ("Track_9") )
-            SetTrackLightsToTC (tc, "Cross9", "End10");        
+            SetTrackLightsToTC (tc, "Cross9", "End9");        
 
         else if ( tc.name.Equals ("Track_10") )
             SetTrackLightsToTC (tc, "Cross10_11", "End10");
 
         else if ( tc.name.Equals ("Track_11") )
-            SetTrackLightsToTC (tc, "Cross11", "End10");
+            SetTrackLightsToTC (tc, "Cross11", "End11");
 
         else if ( tc.name.Equals ("Track_12") )
             SetTrackLightsToTC (tc, "Cross12N", "Cross12CH");

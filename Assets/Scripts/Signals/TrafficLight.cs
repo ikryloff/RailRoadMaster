@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class TrafficLight : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class TrafficLight : MonoBehaviour
     public Lamp TopYellowSignal { get; set; }
     public Lamp BottomYellowSignal { get; set; }
     public Lamp GreenSignal { get; set; }
+    public GameObject Attention { get; set; }
+    public bool IsAttention { get; set; }
 
     public bool IsClosed { get; set; }    
     public bool IsClosedByTrain { get; set; }    
@@ -61,9 +64,19 @@ public class TrafficLight : MonoBehaviour
     {
         Trigger = GetComponent<BoxCollider> ();
         TLRepeater = GetComponentInChildren<TrafficLightRepeater> ();
+        Attention = GetComponentInChildren<AttentionSign> ().gameObject;
+        SetActiveAttention (false);
     }
 
-   
+    public void SetActiveAttention( bool v )
+    {
+        if ( Attention )
+        {
+            Attention.SetActive (v);
+            IsAttention = v;
+        }
+    }
+
     public string Name
     {
         get

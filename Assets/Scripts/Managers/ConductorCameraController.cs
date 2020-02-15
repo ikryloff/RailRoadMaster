@@ -24,7 +24,6 @@ public class ConductorCameraController : MonoBehaviour
     public bool IsFreeCamera { get; set; }
     public bool IsActive { get; set; }
     public bool IsPostView { get; set; }
-    public int CameraPositionOffset { get; set; }  // -1 - left 0 - zero 1 - right
     public int ZoomLevel;
     public float XPath { get; set; }
 
@@ -48,6 +47,7 @@ public class ConductorCameraController : MonoBehaviour
         condCamera = GetComponent<Camera> ();
         GroupCamera = transform.parent.GetComponent<Transform> ();
         tempOffset = new float [3];
+        EventManager.onPlayerUsedThrottle += SetCameraPosition;
     }
 
     private void Start()
@@ -96,9 +96,7 @@ public class ConductorCameraController : MonoBehaviour
         {
             MoveCamera (Time.deltaTime);
             return;
-        }       
-        
-        SetCameraPosition ();
+        }               
         FollowTarget (Time.deltaTime);
 
     }
@@ -111,25 +109,22 @@ public class ConductorCameraController : MonoBehaviour
 
     private void SetCameraPosition()
     {
-        if ( engine.InstructionsHandler == 0 && CameraPositionOffset != 0 )
+        if ( engine.InstructionsHandler == 0 )
         {
             OffsetX = 0;
-            CameraPositionOffset = 0;
         }
-        else if ( engine.InstructionsHandler > 0 && CameraPositionOffset != 1 )
+        else if ( engine.InstructionsHandler > 0  )
         {
             OffsetX = 100;
             Target = composition.CarComposition.RightCar;
             targetTransform = Target.transform;
-            CameraPositionOffset = 1;
         }
 
-        else if ( engine.InstructionsHandler < 0 && CameraPositionOffset != -1 )
+        else if ( engine.InstructionsHandler < 0 )
         {
             OffsetX = -100;
             Target = composition.CarComposition.LeftCar;
             targetTransform = Target.transform;
-            CameraPositionOffset = -1;
         }
 
     }

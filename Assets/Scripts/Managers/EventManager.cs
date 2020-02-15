@@ -14,6 +14,7 @@
     public static EventDelegate onGameOver;
     public static EventDelegate onIndicationStateChanged;
     public static EventDelegate onTrackCircuitsStateChanged;
+    public static EventDelegate onPlayerUsedThrottle;
 
 
 
@@ -32,6 +33,12 @@
     {
         if ( onPathChanged != null )
             onPathChanged ();
+    }
+
+    public static void ThrottleChanged()
+    {
+        if ( onPlayerUsedThrottle != null )
+            onPlayerUsedThrottle ();
     }
 
     public static void TrackCircuitsStateChanged()

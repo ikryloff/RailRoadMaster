@@ -31,6 +31,7 @@ public class Scenario : MonoBehaviour
     {
         if ( hour == 0 && minute == 2 )
         {
+            EventManager.PathUpdated ();
             routePanel.SetRouteByNumber (5112);
             routePanel.SetRouteByNumber (1252);
         }
@@ -50,13 +51,21 @@ public class Scenario : MonoBehaviour
             carsHolder.GetCar (114).Engine.InstructionsHandler = -6;
         }
 
-        if ( hour == 0 && minute == 5 )
+        if ( hour == 0 && minute == 18 )
         {
-            carsHolder.SetActiveRS(8701);
-            carsHolder.SetCarsPosition (8701, "PathTr11", 150);
+            routePanel.SetRouteByNumber (5114);
         }
 
-        if ( hour == 0 && minute == 25 )
+        if ( hour == 0 && minute == 19 )
+        {
+            carsHolder.SetActiveRS(8701);
+            carsHolder.SetCarsPosition (8701, "PathTrI_N", 150);
+            carsHolder.GetCar (8701).Engine.AI.MoveBack (6);
+            
+        }
+       
+
+        if ( hour == 0 && minute == 30 )
         {
             carsHolder.GetCar (114).Engine.InstructionsHandler = 0;
         }

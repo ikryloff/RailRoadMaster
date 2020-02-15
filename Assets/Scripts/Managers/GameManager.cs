@@ -99,10 +99,7 @@ public class GameManager : Singleton<GameManager> {
         Application.Quit ();
     }
 
-    public void Reload()
-    {
-        Application.Quit ();
-    }
+    
 
 
 }

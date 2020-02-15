@@ -7,6 +7,8 @@ public class CarsHolder : MonoBehaviour, IManageable
     public Engine [] Engines { get; set; }
     public RSConnection [] Connections { get; set; }
     private TrackCircuit tempTC;
+    GameObject rsGO;
+    RollingStock rs;
 
     public void Init()
     {
@@ -24,6 +26,7 @@ public class CarsHolder : MonoBehaviour, IManageable
         SetCarsPosition (2140, "PathTr9", 200);
         SetCarsPosition (6135, "PathTr3", 60, new int [] { 7522, 7508, 7143, 7445, 7267 });
         SetCarsPosition (114, "PathTrI_N", 200, new int [] { 115, 116 });
+        
     }
 
     public void OnUpdate()
@@ -113,6 +116,7 @@ public class CarsHolder : MonoBehaviour, IManageable
         rs.RSComposition.CarComposition.Instantiate ();
 
         CompositionManager.Instance.UpdateCompositions ();
+        EventManager.PathChanged ();
     }
 
     private void ReleaseStartTracks( RollingStock _rs, TrackCircuit _tc )
@@ -142,16 +146,23 @@ public class CarsHolder : MonoBehaviour, IManageable
 
     public void SetUnactiveRS(int rsNum )
     {
-        GameObject rs = GetCar (rsNum).gameObject;
-        rs.SetActive(false);
+        rsGO = GetCar (rsNum).gameObject;
+        rsGO.SetActive(false);
+        
         CompositionManager.Instance.UpdateCompositions ();
 
     }
 
     public void SetActiveRS( int rsNum )
     {
-        GameObject rs = GetCar (rsNum).gameObject;
-        rs.SetActive (true);
+        rsGO = GetCar (rsNum).gameObject;
+        rs = GetCar (rsNum);
+        rsGO.SetActive (true);
+        if ( rs.IsEngine )
+        {
+            rs.OwnEngine = rs.Engine;
+            rs.Engine.IsActive = true;
+        }
         CompositionManager.Instance.UpdateCompositions ();
 
     }

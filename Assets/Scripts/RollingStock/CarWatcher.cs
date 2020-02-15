@@ -27,15 +27,14 @@ public class CarWatcher : MonoBehaviour
         rSConnection = GetComponent<RSConnection> ();
         engineT = GetComponent<Transform> ();
         engineRS = GetComponent<RollingStock> ();
-        
-
     }
 
     private void Start()
     {
         listRS = CompositionManager.Instance.RollingStocks;
         ownListRS = new RollingStock [listRS.Length];
-        InvokeRepeating ("GetOwnListRS", 2, 2);
+        EventManager.onPathUpdated += GetOwnListRS;
+        EventManager.onPlayerUsedThrottle += GetOwnListRS;
     }
 
     private void Update()
@@ -63,7 +62,7 @@ public class CarWatcher : MonoBehaviour
         for ( int i = 0; i < listRS.Length; i++ )
         {
             tempRS = listRS [i];
-            if (tempRS.gameObject.activeSelf && engineRS.OwnPath.Contains(tempRS.OwnTrack) && !tempRS.Equals(engineRS))
+            if (tempRS.gameObject.activeSelf && engineRS.OwnPath != null && engineRS.OwnPath.Contains(tempRS.OwnTrack) && !tempRS.Equals(engineRS))
             {               
                 ownListRS[count] =  tempRS;
                 count++;
@@ -137,19 +136,22 @@ public class CarWatcher : MonoBehaviour
             {
                 if ( engine.InstructionsHandler < -3 )
                     engine.InstructionsHandler = -3;
-                
+
             }
             else if ( distLeft <= 300 && distLeft > 120 )
             {
                 if ( engine.InstructionsHandler < -2 )
                     engine.InstructionsHandler = -2;
             }
-            else if ( distLeft <= 120  )
+            else if ( distLeft <= 120 )
             {
                 if ( engine.InstructionsHandler < -1 )
-                    engine.InstructionsHandler = -1;                
+                    engine.InstructionsHandler = -1;
             }
         }
+        else
+            distLeft = 10000;
+
     }
 
     private void WatchRightCar()
@@ -179,11 +181,13 @@ public class CarWatcher : MonoBehaviour
                     engine.InstructionsHandler = 1;
             }
             else if ( distRight <= 120 )
-            {                
+            {
                 if ( engine.InstructionsHandler > 1 )
-                    engine.InstructionsHandler = 1;                
+                    engine.InstructionsHandler = 1;
             }
-        }        
+        }
+        else
+            distRight = 10000;
     }
 
 }

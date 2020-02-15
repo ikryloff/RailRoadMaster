@@ -53,7 +53,7 @@ public class SwitchManager : Singleton<SwitchManager>, IManageable
 
             if ( Input.GetMouseButtonDown (0) )
             {
-                Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+                Ray ray = mainCamera.ScreenPointToRay (Input.mousePosition);
                 RaycastHit hit;
                 if ( Physics.Raycast (ray, out hit) )
                 {

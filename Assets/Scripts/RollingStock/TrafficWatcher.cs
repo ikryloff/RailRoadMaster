@@ -21,6 +21,9 @@ public class TrafficWatcher : MonoBehaviour
     List<TrackPathUnit> listTPU;
     TrafficLight tl;
 
+    Transform leftCarT;
+    Transform rightCarT;
+
     private void Awake()
     {
         engine = GetComponent<Engine> ();
@@ -32,6 +35,8 @@ public class TrafficWatcher : MonoBehaviour
         listTPU = new List<TrackPathUnit> ();
         EventManager.onPathUpdated += GetAllTLs;
         EventManager.onSignalChanged += GetAllTLs;
+        EventManager.onPlayerUsedThrottle += GetAllTLs;
+        EventManager.onPlayerUsedThrottle += GetLastCars;
     }
 
 
@@ -49,91 +54,126 @@ public class TrafficWatcher : MonoBehaviour
         }
     }
 
+    private void GetLastCars()
+    {
+        leftCarT = engine.EngineRS.RSComposition.CarComposition.LeftCar.RSTransform;
+        rightCarT = engine.EngineRS.RSComposition.CarComposition.RightCar.RSTransform;
+    }
+
     private void WatchLeftTL()
     {
-        if ( leftTL != null && !car.GetCoupledLeft () )
+        if ( leftTL != null )
         {
-            distLeft = GetDistanceToSignal (leftTL);
-            if ( distLeft < 1500 && distLeft > 1100 )
+            if ( !car.GetCoupledLeft () )
             {
-                if ( engine.InstructionsHandler < -5 )
-                    engine.InstructionsHandler = -5;
-            }
-
-            else if ( distLeft < 1100 && distLeft > 800 )
-            {
-                if ( engine.InstructionsHandler < -4 )
-                    engine.InstructionsHandler = -4;
-            }
-
-            else if ( distLeft <= 800 && distLeft > 300 )
-            {
-                if ( engine.InstructionsHandler < -3 )
-                    engine.InstructionsHandler = -3;
-            }
-            else if ( distLeft <= 300 && distLeft > 150 )
-            {
-                if ( engine.InstructionsHandler < -2 )
-                    engine.InstructionsHandler = -2;
-            }
-            else if ( distLeft <= 150 && distLeft > 60 )
-            {
-                if ( engine.InstructionsHandler < -1 )
-                    engine.InstructionsHandler = -1;
-            }
-            else if ( distLeft <= 60 )
-            {
-                if ( engine.InstructionsHandler < 0 )
+                distLeft = GetDistanceToSignal (leftTL);
+                if ( distLeft < 1500 && distLeft > 1100 )
                 {
-                    print (engine.name + " Triggered by signal dist " + distLeft);
-                    engine.HandlerZero ();
+                    if ( engine.InstructionsHandler < -5 )
+                        engine.InstructionsHandler = -5;
+                }
+
+                else if ( distLeft < 1100 && distLeft > 800 )
+                {
+                    if ( engine.InstructionsHandler < -4 )
+                        engine.InstructionsHandler = -4;
+                }
+
+                else if ( distLeft <= 800 && distLeft > 300 )
+                {
+                    if ( engine.InstructionsHandler < -3 )
+                        engine.InstructionsHandler = -3;
+                }
+                else if ( distLeft <= 300 && distLeft > 150 )
+                {
+                    if ( engine.InstructionsHandler < -2 )
+                        engine.InstructionsHandler = -2;
+                }
+                else if ( distLeft <= 150 && distLeft > 60 )
+                {
+                    if ( engine.InstructionsHandler < -1 )
+                        engine.InstructionsHandler = -1;
+                }
+                else if ( distLeft <= 60 )
+                {
+                    if ( engine.InstructionsHandler < 0 )
+                    {
+                        print (engine.name + " Triggered by signal dist " + distLeft);
+                        engine.HandlerZero ();
+                    }
                 }
             }
+            else
+            {
+                distLeft = GetDistanceLastCarToLeftSignal (leftTL);
+                if ( distLeft <= 200 )
+                    print ("hoo Left");
+
+            }
+
         }
     }
 
     private void WatchRightTL()
     {
-        if ( rightTL != null && !car.GetCoupledRight () )
+        if ( rightTL != null )
         {
-            distRight = GetDistanceToSignal (rightTL);
-            if ( distRight < 1500 && distRight > 800 )
+            if ( !car.GetCoupledRight () )
             {
-                if ( engine.InstructionsHandler > 5 )
-                    engine.InstructionsHandler = 5;
+                distRight = GetDistanceToSignal (rightTL);
+                if ( distRight < 1500 && distRight > 800 )
+                {
+                    if ( engine.InstructionsHandler > 5 )
+                        engine.InstructionsHandler = 5;
+                }
+                else if ( distRight < 1100 && distRight > 800 )
+                {
+                    if ( engine.InstructionsHandler > 4 )
+                        engine.InstructionsHandler = 4;
+                }
+                else if ( distRight <= 800 && distRight > 300 )
+                {
+                    if ( engine.InstructionsHandler > 3 )
+                        engine.InstructionsHandler = 3;
+                }
+
+                else if ( distRight <= 300 && distRight > 150 )
+                {
+                    if ( engine.InstructionsHandler > 2 )
+                        engine.InstructionsHandler = 2;
+                }
+                else if ( distRight <= 150 && distRight > 60 )
+                {
+                    if ( engine.InstructionsHandler > 1 )
+                        engine.InstructionsHandler = 1;
+                }
+                else if ( distRight <= 60 )
+                {
+                    if ( engine.InstructionsHandler > 0 )
+                        engine.HandlerZero ();
+                }
             }
-            else if ( distRight < 1100 && distRight > 800 )
+            else
             {
-                if ( engine.InstructionsHandler > 4 )
-                    engine.InstructionsHandler = 4;
-            }
-            else if ( distRight <= 800 && distRight > 300 )
-            {
-                if ( engine.InstructionsHandler > 3 )
-                    engine.InstructionsHandler = 3;
+                distRight = GetDistanceLastCarToRightSignal (rightTL);               
             }
 
-            else if ( distRight <= 300 && distRight > 150 )
+            if ( distRight <= 300 )
             {
-                if ( engine.InstructionsHandler > 2 )
-                    engine.InstructionsHandler = 2;
+                if ( rightTL.Attention && !rightTL.IsAttention )
+                    rightTL.SetActiveAttention (true);
             }
-            else if ( distRight <= 150 && distRight > 60 )
+            else
             {
-                if ( engine.InstructionsHandler > 1 )
-                    engine.InstructionsHandler = 1;
-            }
-            else if ( distRight <= 60 )
-            {
-                if ( engine.InstructionsHandler > 0 )
-                    engine.HandlerZero ();
+                if ( rightTL.Attention && rightTL.IsAttention )
+                    rightTL.SetActiveAttention (false);
             }
         }
     }
 
     public void GetAllTLs()
     {
-       
+
         //clear list 
         listTLs.Clear ();
 
@@ -166,7 +206,7 @@ public class TrafficWatcher : MonoBehaviour
             {
                 //when train pass througth signalhe can take red signal
                 if ( tl.IsClosedByTrain )
-                    offset = 40f;
+                    offset = 70f;
                 else
                     offset = 0f;
 
@@ -189,12 +229,22 @@ public class TrafficWatcher : MonoBehaviour
                 }
             }
 
-        }        
+        }
     }
 
     private float GetDistanceToSignal( TrafficLight tl )
     {
         return Mathf.Abs (engineT.position.x - tl.GetPositionX);
+    }
+
+    private float GetDistanceLastCarToLeftSignal( TrafficLight tl )
+    {
+        return Mathf.Abs (leftCarT.position.x - tl.GetPositionX);
+    }
+
+    private float GetDistanceLastCarToRightSignal( TrafficLight tl )
+    {
+        return Mathf.Abs (rightCarT.position.x - tl.GetPositionX);
     }
 
 

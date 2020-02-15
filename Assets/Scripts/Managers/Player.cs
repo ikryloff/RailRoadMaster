@@ -118,6 +118,8 @@ public class Player : MonoBehaviour
             Viewer.SetLocoUI ();
             Viewer.SetEngine (rs.Engine);
             Viewer.SetEngineForSpeed (rs.Engine);
+            // to set camera taget
+            EventManager.ThrottleChanged ();
         }
         else
         {
@@ -131,16 +133,19 @@ public class Player : MonoBehaviour
     public void MoveForward()
     {
         PlayerEngine.HandlerForward ();
+        EventManager.ThrottleChanged ();
     }
 
     public void MoveBack()
     {
         PlayerEngine.HandlerBack ();
+        EventManager.ThrottleChanged ();
     }
 
     public void Stop()
     {
         PlayerEngine.HandlerZero ();
+        EventManager.ThrottleChanged ();
     }
 
 
