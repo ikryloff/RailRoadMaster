@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ConductorCameraController : MonoBehaviour
 {
@@ -12,7 +13,6 @@ public class ConductorCameraController : MonoBehaviour
     private float smoothSpeed = 3f;
     private float speed = 0.3f;
     float scrollSpeed = 10;
-    float d = 0;
     public RollingStock Target;
     private RSComposition composition;
     private Engine engine;
@@ -27,6 +27,7 @@ public class ConductorCameraController : MonoBehaviour
     public int ZoomLevel;
     public float XPath { get; set; }
 
+    public Toggle CameraFreeButton;
 
     public float center;
     public float OffsetX;
@@ -136,7 +137,8 @@ public class ConductorCameraController : MonoBehaviour
             FollowTarget (Time.deltaTime);
             yield return null;
         }
-        targetTransform = tempTarget;
+        CameraFreeButton.isOn = false;
+        targetTransform = tempTarget;        
     }
 
     public void SetCameraPositionOnPost( Transform post )

@@ -14,7 +14,7 @@ public class ShuntingSignal : TrafficLight {
         IsClosed = false;
         if ( TLRepeater )
             TLRepeater.RepeaterOnShunting ();
-        EventManager.OnSignalChanged ();
+        EventManager.SignalChanged ();
     }
 
     public override void LightOff()
@@ -25,7 +25,7 @@ public class ShuntingSignal : TrafficLight {
         IsClosed = true;
         if ( TLRepeater )
             TLRepeater.RepeaterOffShunting ();
-        EventManager.OnSignalChanged ();
+        EventManager.SignalChanged ();
     }
 
     protected override void Awake()

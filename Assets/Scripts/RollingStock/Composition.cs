@@ -55,24 +55,4 @@ public class Composition
         }
     }
 
-    public void Hide()
-    {
-        RollingStock rs;
-        for ( int i = 0; i < Cars.Count; i++ )
-        {
-            RSComposition car = Cars [i];
-            rs = car.RollingStock;
-            rs.OwnEngine = null;
-            Cars.Remove (car);            
-            step = 0;
-            rs.MoveByPath (step);
-            rs.BogeyLeft.MoveByPath (step);
-            rs.BogeyRight.MoveByPath (step);
-            rs.gameObject.SetActive (false);
-
-
-        }
-
-    }
-
 }

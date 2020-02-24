@@ -10,8 +10,8 @@ public class YardCameraController : MonoBehaviour
     private float smoothSpeed = 2f;
     public bool IsActive { get; set; }
     public float XPath { get; set; }
-    private float BORDER_X_RIGHT = 1400;
-    private float BORDER_X_LEFT = -450;
+    private float BORDER_X_RIGHT = 2000;
+    private float BORDER_X_LEFT = -1400;
 
     private void Awake()
     {

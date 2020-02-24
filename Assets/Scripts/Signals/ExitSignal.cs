@@ -101,7 +101,7 @@ public class ExitSignal : TrafficLight
                 LightOff ();
             }
         }
-        EventManager.OnSignalChanged ();
+        EventManager.SignalChanged ();
     }
 
 

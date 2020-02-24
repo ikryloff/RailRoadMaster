@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public Engine TempEngine;
     public Engine HitEngine;
     public RollingStock rollingStock;
+    public RollingStock tempRollingStock;
     private ConductorCameraController ccc;
     public RSViewer Viewer;
     public Camera cameraMain;
@@ -40,6 +41,9 @@ public class Player : MonoBehaviour
 
     private void RollingStockChosenListener()
     {
+        if ( IndicationManager.Instance.IsCouplerIndicate )
+            return;
+
         if ( Input.touchCount == 1 && EventSystem.current.IsPointerOverGameObject (Input.GetTouch (0).fingerId) )
             return;
 
@@ -66,6 +70,8 @@ public class Player : MonoBehaviour
                         {
                             TempEngine = PlayerEngine;
                             TempEngine.IsPlayer = false;
+                            //set outlines
+                            TempEngine.EngineRS.Model.DefaultOutline ();                            
                             PlayerEngine = HitEngine;
                             PlayerEngine.IsActive = true;
                             PlayerEngine.IsPlayer = true;
@@ -76,12 +82,22 @@ public class Player : MonoBehaviour
                             CompositionManager.Instance.UpdateCompositions ();
                         }
                         SetViewer (PlayerEngine.EngineRS);
-                        PlayerEngine.EngineRS.Model.Blink ();
+                        PlayerEngine.EngineRS.Model.HighLightEngineOutline ();
+                        if ( tempRollingStock != null )
+                        {
+                            tempRollingStock.Model.DefaultOutline ();
+                            tempRollingStock = null;
+                        }
+                        EventManager.EngineChanged ();
                     }
                     else if ( hit.collider.CompareTag ("RollingStock") )
                     {
                         rollingStock = hit.collider.GetComponent<RollingStock> ();
                         SetViewer (rollingStock);
+                        if ( tempRollingStock != null && !tempRollingStock.Equals(rollingStock) )
+                            tempRollingStock.Model.DefaultOutline ();
+                        tempRollingStock = rollingStock;
+
                     }
                 }
             }
@@ -124,9 +140,10 @@ public class Player : MonoBehaviour
         else
         {
             Viewer.SetCarUI (rs);
+            rs.Model.HighLightCarOutline ();
         }
         Viewer.SetIcon (rs);
-        rs.Model.Blink ();
+        Viewer.SetReturnPoint (rs);
 
     }
 

@@ -105,7 +105,7 @@ public class EntranceSignal : TrafficLight
             }
             IsClosed = false;
         }
-        EventManager.OnSignalChanged ();
+        EventManager.SignalChanged ();
     }
 
     private void EntranceStraightLightToClosedOn()

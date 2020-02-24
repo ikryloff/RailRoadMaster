@@ -76,7 +76,7 @@ public class IndicationManager : Singleton<IndicationManager>, IManageable
     public IEnumerator TurnCouplersCoroutin()
     {
         TurnCouplerIndicatorsOn ();
-        yield return new WaitForSecondsRealtime (5f);
+        yield return new WaitForSecondsRealtime (3f);
         TurnCouplerIndicatorsOff ();
     }
 

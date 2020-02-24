@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Bogey : MovableObject
 {
     private RollingStock rollingStock;
+    public MeshRenderer [] BogeysMeshRenderers;
     [SerializeField]
     private float offset;
     private bool isRightBogey;
@@ -17,8 +19,13 @@ public class Bogey : MovableObject
         rollingStock = GetComponentInParent<RollingStock>();
         OwnEngine = rollingStock.GetComponent<Engine>();
         bogeyPos = offset > 0 ? 1 : -1;
-        isRightBogey = bogeyPos == 1 ? true : false;       
+        isRightBogey = bogeyPos == 1 ? true : false;
+        
+    }
 
+    public void GetMeshRenderers()
+    {
+        BogeysMeshRenderers = GetComponentsInChildren<MeshRenderer> ();
     }
 
     private void Start()
@@ -35,11 +42,7 @@ public class Bogey : MovableObject
         OwnTrackCircuit.AddCars (this);
     }
 
-    private void Update()
-    {
-        ImproveBogeysPosition ();
-    }
-
+   
     
     private void ImproveBogeysPosition()
     {
@@ -48,10 +51,22 @@ public class Bogey : MovableObject
             if(OwnTransform.localPosition.x != offset )
             {
                 OwnPosition = rollingStock.OwnPosition + offset;
-
             }            
-        }
-    }   
+        }       
+    }
+
+
+    public override void MoveAndRotate()
+    {
+        Vector3 tangent;
+        OwnTransform.position = OwnTrack.trackMath.CalcPositionAndTangentByDistance (OwnPosition, out tangent);
+        ImproveBogeysPosition ();        
+        OwnTransform.rotation = Quaternion.LookRotation (tangent);
+        OwnTransform.rotation *= Quaternion.Euler (0, -90, 0);
+
+    }
+
+
 }
 
 

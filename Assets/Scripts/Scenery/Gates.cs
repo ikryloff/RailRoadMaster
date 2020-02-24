@@ -12,11 +12,7 @@ public class Gates : MonoBehaviour
         animator = GetComponent<Animator> ();
     }
 
-    private void Start()
-    {
-        OpenGates (true);
-    }
-
+   
     public void OpenGates(bool isOpen)
     {
         IsOpened = isOpen;

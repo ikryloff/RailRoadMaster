@@ -15,6 +15,7 @@
     public static EventDelegate onIndicationStateChanged;
     public static EventDelegate onTrackCircuitsStateChanged;
     public static EventDelegate onPlayerUsedThrottle;
+    public static EventDelegate onPlayerChangeEngine;
 
 
 
@@ -33,6 +34,12 @@
     {
         if ( onPathChanged != null )
             onPathChanged ();
+    }
+
+    public static void EngineChanged()
+    {
+        if ( onPlayerChangeEngine != null )
+            onPlayerChangeEngine ();
     }
 
     public static void ThrottleChanged()
@@ -71,7 +78,7 @@
             onTrainSignalChanged ();
     }
 
-    public static void OnSignalChanged()
+    public static void SignalChanged()
     {
         if ( onSignalChanged != null )
             onSignalChanged ();

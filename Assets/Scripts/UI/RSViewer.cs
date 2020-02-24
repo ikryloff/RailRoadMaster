@@ -8,6 +8,7 @@ public class RSViewer : MonoBehaviour
     public ThrottleIndicator ThrottleIndicator { get; set; }
     public SpeedText SpeedText { get; set; }
     public RSCargo CargoIcon { get; set; }
+    public RSReturnDestination RSReturnDestination { get; set; }
     public RSIcon Icon;
     public GameObject CarUI;
     public GameObject LocoUI;
@@ -17,6 +18,7 @@ public class RSViewer : MonoBehaviour
     {
         Icon = GetComponentInChildren<RSIcon> ();
         CargoIcon = GetComponentInChildren<RSCargo> ();
+        RSReturnDestination = GetComponentInChildren<RSReturnDestination> ();
         rsName = GetComponentInChildren<RSNumber> ().GetComponent<TextMeshProUGUI> ();
         ThrottleIndicator = GetComponentInChildren<ThrottleIndicator> ();
         SpeedText = GetComponentInChildren<SpeedText> ();
@@ -43,6 +45,11 @@ public class RSViewer : MonoBehaviour
     public void SetIcon( RollingStock rs )
     {
         Icon.CalcAndSetIcon (rs.Number);
+    }
+
+    public void SetReturnPoint( RollingStock rs )
+    {
+        RSReturnDestination.SetIcon(rs);
     }
 
     public void SetLocoUI()

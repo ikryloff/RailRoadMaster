@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable {
+public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
+{
 
     private bool isStart = true;
     private string startRoute;
@@ -11,10 +12,10 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
     private TrafficLight startLight;
     private TrafficLight endLight;
     [SerializeField]
-    public TrafficLight[] trafficLights;
+    public TrafficLight [] trafficLights;
     private TrafficLight tempLight = null;
     [SerializeField]
-    private Route route;   
+    private Route route;
     [SerializeField]
     private Text lightText;
     [SerializeField]
@@ -22,57 +23,57 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
     [SerializeField]
     private bool cancelRouteIsOn;
     [SerializeField]
-    private List<Button> trafficlightsButtons;    
-    private Button[] tempBtns;
+    private List<Button> trafficlightsButtons;
+    private Button [] tempBtns;
     [SerializeField]
     private List<TrafficLightBtnScript> listOfScriptedTLButtons;
     [SerializeField]
     private Button cancelButton;
-   
+
 
     public Dictionary<string, TrafficLight> TLDict { get; set; }
 
 
-   
 
-    public Button GetButtonByTLName(string name)
+
+    public Button GetButtonByTLName( string name )
     {
-        foreach (var btn in ListOfScriptedTLButtons)
+        foreach ( var btn in ListOfScriptedTLButtons )
         {
-            if (btn.TrafficLight.Name == name)
-                return btn.GetComponent<Button>();
+            if ( btn.TrafficLight.Name == name )
+                return btn.GetComponent<Button> ();
         }
         return null;
-    } 
+    }
 
     public void Init()
     {
-        trafficLights = FindObjectsOfType<TrafficLight>();
-        MakeTLDictionary();
+        trafficLights = FindObjectsOfType<TrafficLight> ();
+        MakeTLDictionary ();
     }
 
-   
+
 
     public void ShowTrafficLightsButtons()
     {
-        foreach (var btn in ListOfScriptedTLButtons)
+        foreach ( var btn in ListOfScriptedTLButtons )
         {
             btn.IsInteractable = true;
         }
         cancelButton.interactable = true;
     }
 
-    private void ShowPossibleTrafficLightsButtons(TrafficLight _startLight)
+    private void ShowPossibleTrafficLightsButtons( TrafficLight _startLight )
     {
-        foreach (var btn in ListOfScriptedTLButtons)
+        foreach ( var btn in ListOfScriptedTLButtons )
         {
             btn.IsInteractable = false;
         }
-        foreach (var _endLight in trafficLights)
+        foreach ( var _endLight in trafficLights )
         {
-            if(IsPossibleLight(Constants.POSSIBLE_LIGHTS, _startLight, _endLight))
+            if ( IsPossibleLight (Constants.POSSIBLE_LIGHTS, _startLight, _endLight) )
             {
-                GetButtonByTLName(_endLight.Name).interactable = true;
+                GetButtonByTLName (_endLight.Name).interactable = true;
             }
         }
 
@@ -82,77 +83,72 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
 
     public void MakeTLDictionary()
     {
-        TLDict = new Dictionary<string, TrafficLight>();
-        foreach (TrafficLight tl in trafficLights)
+        TLDict = new Dictionary<string, TrafficLight> ();
+        foreach ( TrafficLight tl in trafficLights )
         {
-            TLDict.Add(tl.name, tl);
+            TLDict.Add (tl.name, tl);
 
         }
-        TLDict.Add("", null);
+        TLDict.Add ("", null);
     }
 
     private void Awake()
-    {                
-        tempBtns = Resources.FindObjectsOfTypeAll<Button>();
-        TrafficlightsButtons = new List<Button>();
-       
+    {
+        tempBtns = Resources.FindObjectsOfTypeAll<Button> ();
+        TrafficlightsButtons = new List<Button> ();
 
-        ListOfScriptedTLButtons = new List<TrafficLightBtnScript>();
-        for (int i = 0; i < TrafficlightsButtons.Count; i++)
+
+        ListOfScriptedTLButtons = new List<TrafficLightBtnScript> ();
+        for ( int i = 0; i < TrafficlightsButtons.Count; i++ )
         {
 
-            if (TrafficlightsButtons[i].GetComponent<TrafficLightBtnScript>() != null)
+            if ( TrafficlightsButtons [i].GetComponent<TrafficLightBtnScript> () != null )
             {
-                ListOfScriptedTLButtons.Add(TrafficlightsButtons[i].GetComponent<TrafficLightBtnScript>());
+                ListOfScriptedTLButtons.Add (TrafficlightsButtons [i].GetComponent<TrafficLightBtnScript> ());
             }
 
         }
 
-        
-
     }
 
-    
-       
-
-    // Check possible Routes By Lights
-    public bool IsPossibleLight (String[][] arr, TrafficLight first, TrafficLight second )
+       // Check possible Routes By Lights
+    public bool IsPossibleLight( String [] [] arr, TrafficLight first, TrafficLight second )
     {
         string start = first.Name;
         string end = second.Name;
-             
-        for (int i = 0; i < arr.Length; i++)
+
+        for ( int i = 0; i < arr.Length; i++ )
         {
-            if (start == arr[i][0])
+            if ( start == arr [i] [0] )
             {
-                for (int j = 1; j < arr[i].Length; j++)
+                for ( int j = 1; j < arr [i].Length; j++ )
                 {
-                    if (end == arr[i][j])
+                    if ( end == arr [i] [j] )
                         return true;
-                }                
+                }
             }
-            
+
         }
         return false;
     }
 
-   
 
-    void SetLightsNames(String start, String end = "")
+
+    void SetLightsNames( String start, String end = "" )
     {
         lightText.text = start + " -> " + end;
     }
-    
-    public TrafficLight GetTrafficLightByName(string lightName)
+
+    public TrafficLight GetTrafficLightByName( string lightName )
     {
-        foreach (TrafficLight tl in trafficLights)
+        foreach ( TrafficLight tl in trafficLights )
         {
-            if (tl.name.Equals(lightName))
-            {                
+            if ( tl.name.Equals (lightName) )
+            {
                 return tl;
-            }            
+            }
         }
-        return null;  
+        return null;
     }
 
 
@@ -193,7 +189,7 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
         set
         {
             cancelRouteIsOn = value;
-            if(value)
+            if ( value )
                 lightText.text = "Cancel..";
             else
                 lightText.text = "not cancel..";
@@ -240,13 +236,13 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
         }
     }
 
-    
 
-    public TrafficLight GetEndByName(string _endName)
+
+    public TrafficLight GetEndByName( string _endName )
     {
-        foreach (var e in trafficLights)
+        foreach ( var e in trafficLights )
         {
-            if (e.name == _endName)
+            if ( e.name == _endName )
                 return e;
         }
         return null;
@@ -254,6 +250,6 @@ public class TrafficLightsManager : Singleton<TrafficLightsManager>, IManageable
 
     public void OnStart()
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
     }
 }

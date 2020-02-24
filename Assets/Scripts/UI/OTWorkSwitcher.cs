@@ -15,7 +15,12 @@ public class OTWorkSwitcher : MonoBehaviour
 
     }
 
-
+    private void Start()
+    {
+        pumpSwitcher.IsActivated = true;
+        pumpSwitcher.ActivateOT (true);
+        OpenGates (false);
+    }
 
     public void ButtonAction()
     {
@@ -30,6 +35,7 @@ public class OTWorkSwitcher : MonoBehaviour
             OpenGates (true);
         }
         orderButton.CloseOtherPostButtons ();
+        EventManager.SignalChanged ();
     }
 
     private void OpenGates(bool isOpen)

@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class RespawnArea : MonoBehaviour {
 
-    private RSComposition rs;
-    
-    
-   
+    private RollingStock rs;
+    private CarsHolder carsHolder;
+
+    private void Awake()
+    {
+        carsHolder = FindObjectOfType<CarsHolder> ();
+    }
+
     private void OnTriggerEnter( Collider collider )
     {
-        rs = collider.GetComponent<RSComposition> ();
-        rs.CarComposition.Hide (); 
+        rs = collider.GetComponent<RollingStock> ();
+        carsHolder.SetUnactiveRS (rs.Number);
     }
     
 }

@@ -52,6 +52,18 @@ public class TrafficWatcher : MonoBehaviour
             WatchLeftTL ();
             WatchRightTL ();
         }
+        else if ( engine.IsPlayer && engine.EngineStep == 0 )
+        {
+            if ( leftTL != null )
+            {
+                UseAttention (engine, leftTL, distLeft);
+            }
+            if ( rightTL != null )
+            {
+                UseAttention (engine, rightTL, distRight);
+            }
+        }
+
     }
 
     private void GetLastCars()
@@ -98,19 +110,18 @@ public class TrafficWatcher : MonoBehaviour
                 {
                     if ( engine.InstructionsHandler < 0 )
                     {
-                        print (engine.name + " Triggered by signal dist " + distLeft);
                         engine.HandlerZero ();
                     }
                 }
             }
             else
             {
-                distLeft = GetDistanceLastCarToLeftSignal (leftTL);
-                if ( distLeft <= 200 )
-                    print ("hoo Left");
-
+                if ( engine.IsPlayer )
+                    distLeft = GetDistanceLastCarToLeftSignal (leftTL);
             }
 
+            //show attention
+            UseAttention (engine, leftTL, distLeft);
         }
     }
 
@@ -155,29 +166,62 @@ public class TrafficWatcher : MonoBehaviour
             }
             else
             {
-                distRight = GetDistanceLastCarToRightSignal (rightTL);               
+                if ( engine.IsPlayer )
+                    distRight = GetDistanceLastCarToRightSignal (rightTL);
             }
+            //show attention
+            UseAttention (engine, rightTL, distRight);
+        }
+    }
 
-            if ( distRight <= 300 )
+    public void UseAttention( Engine eng, TrafficLight tl, float dist )
+    {
+
+        if ( eng.IsPlayer )
+        {
+            if ( eng.EngineStep == 0 )
             {
-                if ( rightTL.Attention && !rightTL.IsAttention )
-                    rightTL.SetActiveAttention (true);
+                if ( tl.Attention && tl.IsAttention )
+                    tl.SetActiveAttention (false);
+                return;
+            }
+            if ( dist <= 300 )
+            {
+                if ( tl.Attention && !tl.IsAttention )
+                    tl.SetActiveAttention (true);
             }
             else
             {
-                if ( rightTL.Attention && rightTL.IsAttention )
-                    rightTL.SetActiveAttention (false);
+                if ( tl.Attention && tl.IsAttention )
+                    tl.SetActiveAttention (false);
             }
         }
+        else
+        {
+            if ( tl.Attention && tl.IsAttention )
+                tl.SetActiveAttention (false);
+        }
+
     }
 
     public void GetAllTLs()
     {
+        //clear Attentions
+        if(leftTL && !leftTL.IsClosed )
+        {
+            if ( leftTL.Attention && leftTL.IsAttention )
+                leftTL.SetActiveAttention (false);
+        }
+
+        if ( rightTL && !rightTL.IsClosed )
+        {
+            if ( rightTL.Attention && rightTL.IsAttention )
+                rightTL.SetActiveAttention (false);
+        }
+
 
         //clear list 
         listTLs.Clear ();
-
-
         if ( car.OwnPath != null )
         {
             //geting list of signals in path

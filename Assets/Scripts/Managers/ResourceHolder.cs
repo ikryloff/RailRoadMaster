@@ -25,7 +25,8 @@ public class ResourceHolder : Singleton<ResourceHolder> {
     public Material Path_Route_Mat;
     public Material Path_Switch_Locked_Mat;
     public Material Default_LP_Mat;
-    public Material Lighted_LP_Mat;
+    public Material Lighted_Car_LP_Mat;
+    public Material Lighted_Engine_LP_Mat;
 
     public Sprite FullArrow;
     public Sprite EmptyArrow;
@@ -51,4 +52,7 @@ public class ResourceHolder : Singleton<ResourceHolder> {
     public Engine TempEngine;
     public Engine StationEngine;
 
+    public Sprite Alfa_Station_Icon;
+    public Sprite Bravo_Station_Icon;
+    public Sprite Charlie_Station_Icon;
 }

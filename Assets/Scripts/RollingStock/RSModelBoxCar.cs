@@ -14,7 +14,7 @@ public class RSModelBoxCar : RSModel
     {
         for ( int i = 0; i < meshRenderers.Length; i++ )
         {
-            meshRenderers [i].material = LightedMaterial;
+            meshRenderers [i].material = LightedCarMaterial;
         }
     }
 
