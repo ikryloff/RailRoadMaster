@@ -59,8 +59,6 @@ public class Player : MonoBehaviour
                 {
                     click = hit.point;
                 }
-
-                //print("hit " + hit.collider.name);
                 if ( hit.collider != null )
                 {
                     if ( hit.collider.CompareTag ("Engine") )

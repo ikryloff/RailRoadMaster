@@ -34,7 +34,6 @@ public class EntranceSignal : TrafficLight
     private void Start()
     {
         LightOff ();
-        IsClosed = true;
         EventManager.onTrainSignalChanged += UpdateSignals;
     }
 

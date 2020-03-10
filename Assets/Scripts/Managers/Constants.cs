@@ -25,6 +25,9 @@ public class Constants
     public static int TC_OVER = 1;
     public static int TC_USED = 2;
 
+    public static int RS_OFFSET = 80;
+    public static float RS_CAR_OFFSET = 70;
+
     public static string ANIM_TURN = "TurnSwitch";
     public static string ANIM_TURN_OPP = "TurnSwitchOpposite";
 

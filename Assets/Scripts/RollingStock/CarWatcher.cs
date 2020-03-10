@@ -143,7 +143,7 @@ public class CarWatcher : MonoBehaviour
                 if ( engine.InstructionsHandler < -2 )
                     engine.InstructionsHandler = -2;
             }
-            else if ( distLeft <= 120 )
+            else if ( distLeft <= 120  )
             {
                 if ( engine.InstructionsHandler < -1 )
                     engine.InstructionsHandler = -1;
@@ -180,7 +180,7 @@ public class CarWatcher : MonoBehaviour
                 if ( engine.InstructionsHandler > 1 )
                     engine.InstructionsHandler = 1;
             }
-            else if ( distRight <= 120 )
+            else if ( distRight <= 120)
             {
                 if ( engine.InstructionsHandler > 1 )
                     engine.InstructionsHandler = 1;

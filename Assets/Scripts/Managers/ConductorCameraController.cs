@@ -132,7 +132,7 @@ public class ConductorCameraController : MonoBehaviour
 
     IEnumerator FollowProcess( Transform _targ )
     {
-        while ( Vector3.Distance (GroupCamera.position, targetTransform.position + GetViewPosition (ZoomLevel)) > 30 )
+        while ( Vector3.Distance (GroupCamera.position, targetTransform.position + GetViewPosition (ZoomLevel)) > 50 )
         {
             FollowTarget (Time.deltaTime);
             yield return null;
@@ -172,7 +172,13 @@ public class ConductorCameraController : MonoBehaviour
 
     private void FollowTarget( float dt )
     {
-        desiredPosition = targetTransform.position + GetViewPosition (ZoomLevel);
+        
+        desiredPosition = targetTransform.position + GetViewPosition (ZoomLevel);        
+        desiredPosition.x = Mathf.Clamp (desiredPosition.x, BORDER_X_LEFT + ZoomLevel * 100, BORDER_X_RIGHT - ZoomLevel * 200);
+        desiredPosition.z = Mathf.Clamp (desiredPosition.z, BORDER_Z_BOTTOM - ZoomLevel * 105, BORDER_Z_TOP - ZoomLevel * 300);
+        desiredPosition.y = Mathf.Clamp (desiredPosition.y, OFFSET_Y * ZoomLevel, OFFSET_Y * ZoomLevel);
+        if ( targetTransform.position.x < -1800 || targetTransform.position.x > 2600 )
+            CameraFreeButton.isOn = false;
         smoothedPosition = Vector3.Lerp (GroupCamera.position, desiredPosition, smoothSpeed * dt);
         GroupCamera.position = smoothedPosition;
     }

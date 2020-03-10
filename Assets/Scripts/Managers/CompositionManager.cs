@@ -98,7 +98,7 @@ public class CompositionManager : Singleton<CompositionManager>, IManageable
         composition.RightCar = composition.Cars.Last ().RollingStock;
         // set engine to all cars of composition
         composition.SetEngineToAllCars ();
-        print ("ID:" + CompositionID + "  Cars: " + composition.Quantity);
+        print ("ID:" + CompositionID + "  Cars: " + composition.Quantity + " Left Car " + composition.LeftCar.Number);
         //increase composition ID
         CompositionID++;
     }

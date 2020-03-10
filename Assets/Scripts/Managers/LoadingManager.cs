@@ -13,9 +13,7 @@ public class LoadingManager : MonoBehaviour
         circuitSignals = FindObjectOfType<TrackCircuitSignals> ();
         carsHolder = FindObjectOfType<CarsHolder> ();
         scenario = FindObjectOfType<Scenario> ();
-
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
+        
         
         IndicationManager.Instance.Init ();
 
@@ -56,6 +54,8 @@ public class LoadingManager : MonoBehaviour
         carsHolder.OnStart ();
 
         scenario.OnStart ();
+
+        UIManager.Instance.OnStart ();
 
     }
 

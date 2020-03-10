@@ -15,7 +15,10 @@ public abstract class MovableObject : MonoBehaviour
     public Transform OwnTransform { get; set; }
     // Moving distance per frame
     public float Translation { get; set; }
-    
+
+    float trackPos;
+
+
     private float smooth = 0.5f;
     private float TOLERANCE = 0.5f;
 
@@ -25,25 +28,20 @@ public abstract class MovableObject : MonoBehaviour
 
         if ( OwnTrack )
         {
-            Translation = step;           
-            //Set presense to OwnTC
-            OwnTrackCircuit.AddCars(this);           
+            Translation = step;
+
             if ( step > 0 && OwnPosition > OwnTrack.PathLenght - step )
             {
-                StepNextTrackPath (step);                
-                //Set off presense from old OwnTC
-                OwnTrackCircuit.RemoveCars (this);
+                StepNextTrackPath (step);
             }
             else if ( step < 0 && OwnPosition < -step )
-            {                
+            {
                 StepPrevTrackPath (step);
-                //Set off presense from old OwnTC
-                OwnTrackCircuit.RemoveCars (this);
             }
             else
             {
                 // Moving                    
-                OwnPosition += step;                
+                OwnPosition += step;
             }
             // Run of Movable Object
             OwnRun += step;
@@ -51,15 +49,65 @@ public abstract class MovableObject : MonoBehaviour
             OwnTrackCircuit = OwnTrack.TrackCircuit;
             // bogeys and RS rotate in different ways
             MoveAndRotate ();
-        }        
+        }
     }
 
-    private void StepNextTrackPath(float _step)
+    public void CalcCompositionPosition( MovableObject _car, float _offset )
+    {
+        trackPos = _car.OwnPosition + _offset;
+        tmpTrack = OwnTrack;
+        if ( trackPos <= 0 )
+        {
+            //Set off presense from old OwnTC
+            OwnTrack = TrackPath.Instance.GetPrevTrack (_car.OwnTrack, _car.OwnPath);
+            if ( OwnTrack )
+            {
+                OwnPosition = OwnTrack.PathLenght + trackPos;
+                OwnTrackCircuit = OwnTrack.TrackCircuit;
+            }
+            else
+            {
+                OwnTrack = tmpTrack;
+                OwnPosition = 0;
+                OwnEngine.EngineStep = 0;
+            }
+        }
+        else if ( trackPos >= _car.OwnTrack.PathLenght )
+        {
+            //Set off presense from old OwnTC
+            OwnTrack = TrackPath.Instance.GetNextTrack (_car.OwnTrack, _car.OwnPath);
+            if ( OwnTrack )
+            {
+                OwnPosition = trackPos - _car.OwnTrack.PathLenght;
+                OwnTrackCircuit = OwnTrack.TrackCircuit;
+            }
+            else
+            {
+                OwnTrack = tmpTrack;
+                OwnPosition = tmpTrack.PathLenght;
+                OwnEngine.EngineStep = 0;
+            }
+        }
+        else
+        {
+            if ( !OwnTrack.Equals (_car.OwnTrack) )
+            {
+                OwnTrack = _car.OwnTrack;
+                OwnTrackCircuit = OwnTrack.TrackCircuit;
+            }
+            OwnPosition = trackPos;
+        }
+        OwnRun = _car.OwnRun + _offset;
+        Translation = _car.Translation;
+        MoveAndRotate ();
+    }
+
+    private void StepNextTrackPath( float _step )
     {
         tmpTrack = OwnTrack;
         OwnTrack = TrackPath.Instance.GetNextTrack (OwnTrack, OwnPath);
-        if(OwnTrack)
-            OwnPosition = _step/2;
+        if ( OwnTrack )
+            OwnPosition = _step / 2;
         else
         {
             OwnTrack = tmpTrack;
@@ -85,10 +133,6 @@ public abstract class MovableObject : MonoBehaviour
 
     public virtual void MoveAndRotate()
     {
-        Vector3 tangent;
-        OwnTransform.position = OwnTrack.trackMath.CalcPositionAndTangentByDistance (OwnPosition, out tangent);
-        OwnTransform.rotation = Quaternion.LookRotation (tangent);
-        OwnTransform.rotation *= Quaternion.Euler (0, -90, 0);
     }
 
 

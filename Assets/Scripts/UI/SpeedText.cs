@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 public class SpeedText : MonoBehaviour
@@ -32,17 +30,18 @@ public class SpeedText : MonoBehaviour
     }
 
 
-    public void SetText(int _speed)
+    public void SetText( int _speed )
     {
-        if(timer > DELAY )
+        if ( timer > DELAY )
         {
             _speed = _speed < 0 ? -_speed : _speed;
-            speed.text = nums [_speed];
+            if ( _speed >= 0 && _speed < nums.Length )
+                speed.text = nums [_speed];
             timer = 0;
         }
         timer += Time.deltaTime;
-        
+
     }
 
-        
+
 }

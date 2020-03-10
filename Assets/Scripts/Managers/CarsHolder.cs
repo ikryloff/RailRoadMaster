@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CarsHolder : MonoBehaviour, IManageable
 {
@@ -17,7 +16,7 @@ public class CarsHolder : MonoBehaviour, IManageable
         Connections = FindObjectsOfType<RSConnection> ();
     }
 
-    
+
 
     public void OnStart()
     {
@@ -26,7 +25,7 @@ public class CarsHolder : MonoBehaviour, IManageable
         SetCarsPosition (2140, "PathTr9", 200);
         SetCarsPosition (6135, "PathTr3", 60, new int [] { 7522, 7508, 7143, 7445, 7267 });
         SetCarsPosition (114, "PathTrI_N", 200, new int [] { 115, 116 });
-        
+
     }
 
     public void OnUpdate()
@@ -121,7 +120,6 @@ public class CarsHolder : MonoBehaviour, IManageable
 
     private void ReleaseStartTracks( RollingStock _rs, TrackCircuit _tc )
     {
-        _tc.RemoveCars (_rs);
         _tc.RemoveCars (_rs.BogeyLeft);
         _tc.RemoveCars (_rs.BogeyRight);
     }
@@ -135,7 +133,7 @@ public class CarsHolder : MonoBehaviour, IManageable
         }
     }
 
-    public void UnablePassEngine(int rsNum )
+    public void UnablePassEngine( int rsNum )
     {
         Engine eng = GetCar (rsNum).Engine;
         eng.EngineRS.IsEngine = false;
@@ -144,11 +142,15 @@ public class CarsHolder : MonoBehaviour, IManageable
         eng.gameObject.tag = "RollingStock";
     }
 
-    public void SetUnactiveRS(int rsNum )
+    public void SetUnactiveRS( int rsNum )
     {
+        GetCar (rsNum).BogeyLeft.OwnTrackCircuit = null; 
+        GetCar (rsNum).BogeyRight.OwnTrackCircuit = null; 
+        GetCar (rsNum).BogeyLeft.ProvidePresence(); 
+        GetCar (rsNum).BogeyRight.ProvidePresence (); 
         rsGO = GetCar (rsNum).gameObject;
-        rsGO.SetActive(false);
-        
+        rsGO.SetActive (false);
+
         CompositionManager.Instance.UpdateCompositions ();
 
     }

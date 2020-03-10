@@ -1,25 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
-public class GameManager : Singleton<GameManager> {
+public class GameManager : Singleton<GameManager>
+{
 
     private bool isGameOn = true;
     private bool isPaused = false;
     private RoutePanelManager routePanel;
-    
+
 
     private void Awake()
     {
+        QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
         EventManager.onGameOver += GameOver;
-        routePanel = FindObjectOfType<RoutePanelManager> ();        
-        
+        routePanel = FindObjectOfType<RoutePanelManager> ();
+
     }
 
     private void Update()
-    {        
+    {
         if ( Input.GetKeyDown (KeyCode.P) )
         {
             Pause ();
@@ -31,7 +30,7 @@ public class GameManager : Singleton<GameManager> {
             GameOverOn ();
         }
 
-       
+
         if ( Input.GetKeyDown (KeyCode.T) )
         {
             routePanel.CallOffRouteByNumber (613);
@@ -59,7 +58,7 @@ public class GameManager : Singleton<GameManager> {
         {
             EventManager.PauseOn ();
             isPaused = true;
-            Time.timeScale = 0f;
+            Time.timeScale = 20f;
         }
         else
         {
@@ -86,7 +85,7 @@ public class GameManager : Singleton<GameManager> {
     {
         isGameOn = false;
         PauseOn ();
-        
+
     }
     public void GameContinue()
     {
@@ -99,7 +98,7 @@ public class GameManager : Singleton<GameManager> {
         Application.Quit ();
     }
 
-    
+
 
 
 }

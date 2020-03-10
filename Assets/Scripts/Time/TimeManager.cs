@@ -1,7 +1,5 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TimeManager : Singleton<TimeManager>
 {
@@ -11,20 +9,18 @@ public class TimeManager : Singleton<TimeManager>
     private float timerSpeed = 1f;
     private float elapsed;
     public int [] TimeValue;
-   
-    private int minutes;
-    private int hours;
 
     public void OnStart()
     {
         timeText.text = "00 : 00";
         TimeValue = new int [2];
+        EventManager.HourPassed ();
     }
 
     public void OnUpdate()
     {
         elapsed += Time.deltaTime;
-        if(elapsed >= timerSpeed )
+        if ( elapsed >= timerSpeed )
         {
             elapsed = 0f;
             CountTime ();
@@ -33,16 +29,17 @@ public class TimeManager : Singleton<TimeManager>
 
     private void CountTime()
     {
-        minutes++;
-        if ( minutes > 59 )
+        TimeValue [1]++;
+        if ( TimeValue [1] > 59 )
         {
-            hours++;
-            minutes = 0;
-            if ( hours > 24 )
-                hours = 0;
+            TimeValue [0]++;
+            TimeValue [1] = 0;
+            if ( TimeValue [0] > 23 )
+                TimeValue [0] = 0;
+            EventManager.HourPassed ();
         }
-        TimeValue [0] = hours;
-        TimeValue [1] = minutes;
-        timeText.text = Constants.NUMBERS[ TimeValue [0]]+ " : " + Constants.NUMBERS[TimeValue [1]]; 
+        //TimeValue [0] = hours;
+        //TimeValue [1] = minutes;
+        timeText.text = Constants.NUMBERS [TimeValue [0]] + " : " + Constants.NUMBERS [TimeValue [1]];
     }
 }

@@ -3,6 +3,7 @@
 public class RSComposition : MonoBehaviour, IManageable
 {
     public int CompositionNumber { get; set; }
+    public int Number { get; set; }
     public RSConnection RSConnection { get; set; }
     public RollingStock RollingStock { get; private set; }
     public bool IsMainCar { get; set; }
@@ -14,6 +15,7 @@ public class RSComposition : MonoBehaviour, IManageable
         RSConnection = GetComponent<RSConnection> ();
         RSConnection.RSComposition = this;
         RollingStock = gameObject.GetComponent<RollingStock> ();
+        Number = RollingStock.Number;
         
     }
 

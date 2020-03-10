@@ -13,7 +13,8 @@ public class RSConnection : MonoBehaviour, IManageable
     public RollingStock TempCar { get; private set; }
     public bool IsConnectedRight { get; set; }
     public RSComposition RSComposition { get; set; }
-    private float rSOffset = 80f;
+    //Delete
+    public float RSOffset = 80f;
     private Coupler coupler;
     public bool JustUncoupled;
     private float tempDist;
@@ -37,7 +38,6 @@ public class RSConnection : MonoBehaviour, IManageable
     }
     public void OnUpdate()
     {
-        ImproveRSPositionWithConnection ();
         CheckUncouplingListener ();
     }
 
@@ -97,17 +97,4 @@ public class RSConnection : MonoBehaviour, IManageable
         CouplerPointLeft.IsAbleToConnect = false;
     }
 
-    void ImproveRSPositionWithConnection()
-    {
-        if ( RightCar && RightCar.RollingStock.OwnTrack.Equals (RollingStock.OwnTrack) )
-        {
-            if ( Mathf.Abs (RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset) > 0.5 )
-            {
-                //print ("Improved  " + (RightCar.RollingStock.OwnPosition - RollingStock.OwnPosition - rSOffset));                
-                RightCar.RollingStock.OwnPosition = Mathf.Lerp(RightCar.RollingStock.OwnPosition, RollingStock.OwnPosition + rSOffset, smooth);              
-
-            }
-
-        }
-    }
 }

@@ -16,6 +16,7 @@
     public static EventDelegate onTrackCircuitsStateChanged;
     public static EventDelegate onPlayerUsedThrottle;
     public static EventDelegate onPlayerChangeEngine;
+    public static EventDelegate onHourPassed;
 
 
 
@@ -34,6 +35,12 @@
     {
         if ( onPathChanged != null )
             onPathChanged ();
+    }
+
+    public static void HourPassed()
+    {
+        if ( onHourPassed != null )
+            onHourPassed ();
     }
 
     public static void EngineChanged()

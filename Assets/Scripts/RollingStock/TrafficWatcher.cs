@@ -35,6 +35,7 @@ public class TrafficWatcher : MonoBehaviour
         listTPU = new List<TrackPathUnit> ();
         EventManager.onPathUpdated += GetAllTLs;
         EventManager.onSignalChanged += GetAllTLs;
+        EventManager.onTrainSignalChanged += GetAllTLs;
         EventManager.onPlayerUsedThrottle += GetAllTLs;
         EventManager.onPlayerUsedThrottle += GetLastCars;
     }
@@ -248,7 +249,7 @@ public class TrafficWatcher : MonoBehaviour
             tl = listTLs [i];
             if ( tl.IsClosed )
             {
-                //when train pass througth signalhe can take red signal
+                //when train pass througth signal he can take red signal
                 if ( tl.IsClosedByTrain )
                     offset = 70f;
                 else

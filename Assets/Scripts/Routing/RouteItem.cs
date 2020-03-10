@@ -75,6 +75,7 @@ public class RouteItem : MonoBehaviour
             RouteLights [1].Trigger.enabled = true;
         Unit.IsInUse = false;
         Route.Instance.DestroyRoute (RouteNumber);
+        
 
     }
 
@@ -133,7 +134,17 @@ public class RouteItem : MonoBehaviour
 
     public bool CheckTrainRoute()
     {
-        return TrackCircuits.All (t => !t.IsInRoute && !t.HasCarPresence);
+        if(TrackCircuits.All (t => !t.IsInRoute && !t.HasCarPresence) )
+        {
+            print ("Checked - Not Danger");
+            return true;
+
+        }
+        else
+        {
+            print ("Checked - Danger");
+            return false;
+        }
     }
 
     public bool CheckShuntingRoute()

@@ -55,4 +55,6 @@ public class ResourceHolder : Singleton<ResourceHolder> {
     public Sprite Alfa_Station_Icon;
     public Sprite Bravo_Station_Icon;
     public Sprite Charlie_Station_Icon;
+
+    public Sprite Square_Icon;
 }

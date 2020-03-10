@@ -47,7 +47,6 @@ public class RollingStock : MovableObject, IManageable
         }
         
         OwnPosition = rsPosition;
-        OwnRun = 0;
         RSConnection = GetComponent<RSConnection> ();
         RSConnection.Init ();
         RSComposition = GetComponent<RSComposition> ();
@@ -56,7 +55,6 @@ public class RollingStock : MovableObject, IManageable
         // set bogeys to RS
         SetBogeys ();
         OwnTrackCircuit = OwnTrack.TrackCircuit;
-        OwnTrackCircuit.AddCars (this);
         Model = GetComponentInChildren<RSModel> ();
         RSTransform = GetComponent<Transform>();
     }
