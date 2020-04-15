@@ -47,9 +47,9 @@ public class Switch : MonoBehaviour, IManageable {
         {
             if (direction == SwitchDir.Straight)
                 SetDirectionStraight();
-            if (direction == SwitchDir.Turn)
+            else if (direction == SwitchDir.Turn)
                 SetDirectionTurn();
-            if (direction == SwitchDir.Change)
+            else if (direction == SwitchDir.Change)
                 ChangeSwitchDirection();            
         }
         else Debug.Log("Locked");

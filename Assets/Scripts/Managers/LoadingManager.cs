@@ -3,7 +3,9 @@ public class LoadingManager : MonoBehaviour
 {
 
     private TrackCircuitSignals circuitSignals;
+    private SwitchManager switchManager;
     private CarsHolder carsHolder;
+    private TrainManager trainManager;
     private Scenario scenario;
     private CompositionManager cm;
     
@@ -12,6 +14,8 @@ public class LoadingManager : MonoBehaviour
     {
         circuitSignals = FindObjectOfType<TrackCircuitSignals> ();
         carsHolder = FindObjectOfType<CarsHolder> ();
+        trainManager = FindObjectOfType<TrainManager> ();
+        switchManager = FindObjectOfType<SwitchManager> ();
         scenario = FindObjectOfType<Scenario> ();
         
         
@@ -21,17 +25,20 @@ public class LoadingManager : MonoBehaviour
 
         TrackCircuitManager.Instance.Init ();
 
-        SwitchManager.Instance.Init ();
+        switchManager.Init ();
 
         TrafficLightsManager.Instance.Init ();
 
         RouteDictionary.Instance.Init ();
 
+        carsHolder.Init ();
+
         CompositionManager.Instance.Init ();
+
+        trainManager.OnAwake ();
 
         CouplerManager.Instance.Init ();
 
-        carsHolder.Init ();
 
         scenario.OnAwake ();
 
@@ -43,6 +50,8 @@ public class LoadingManager : MonoBehaviour
 
         TrackPath.Instance.OnStart ();
 
+        carsHolder.OnStart ();
+
         CompositionManager.Instance.OnStart ();
 
         circuitSignals.OnStart ();
@@ -51,7 +60,7 @@ public class LoadingManager : MonoBehaviour
 
         IndicationManager.Instance.OnStart ();
 
-        carsHolder.OnStart ();
+        trainManager.OnStart ();
 
         scenario.OnStart ();
 

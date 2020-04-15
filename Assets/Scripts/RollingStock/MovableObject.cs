@@ -9,7 +9,7 @@ public abstract class MovableObject : MonoBehaviour
     public TrackCircuit OwnTrackCircuit { get; set; }
     public float OwnPosition { get; set; }
     public float OwnRun { get; set; }
-    public List<TrackPathUnit> OwnPath { get; set; }
+    public TrackPathUnit [] OwnPath { get; set; }
     public TrackPathUnit OwnTrack { get; set; }
     public TrackPathUnit tmpTrack { get; set; }
     public Transform OwnTransform { get; set; }

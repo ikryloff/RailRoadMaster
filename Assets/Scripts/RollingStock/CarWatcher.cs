@@ -8,10 +8,13 @@ public class CarWatcher : MonoBehaviour
     private Engine engine;
     private Transform engineT;
     private RSConnection rSConnection;
-    private RollingStock [] listRS;
-    private RollingStock [] ownListRS;
-    private RollingStock tempRS;
+    private Composition [] ownListComps;
+    private Composition [] listComps;
+    private Composition tempComp;
+    private RollingStock tempLeftRS;
+    private RollingStock tempRightRS;
     private RollingStock engineRS;
+    private RSComposition rsComposition;
     private RollingStock leftCar;
     private RollingStock rightCar;
     private float tempDistLeft;
@@ -27,19 +30,21 @@ public class CarWatcher : MonoBehaviour
         rSConnection = GetComponent<RSConnection> ();
         engineT = GetComponent<Transform> ();
         engineRS = GetComponent<RollingStock> ();
+        rsComposition = GetComponent<RSComposition> ();
     }
 
     private void Start()
     {
-        listRS = CompositionManager.Instance.RollingStocks;
-        ownListRS = new RollingStock [listRS.Length];
+        ownListComps = new Composition [CompositionManager.Instance.Compositions.Length];
+        listComps = CompositionManager.Instance.Compositions;
         EventManager.onPathUpdated += GetOwnListRS;
         EventManager.onPlayerUsedThrottle += GetOwnListRS;
     }
 
     private void Update()
     {
-        WatchCars ();
+        if(!rsComposition.CarComposition.IsOutside)
+            WatchCars ();
     }
 
     private void WatchCars()
@@ -55,45 +60,64 @@ public class CarWatcher : MonoBehaviour
 
     public void GetOwnListRS()
     {
-        ClearOwnListRS ();
-        leftCar = null;
-        rightCar = null;
+        if ( rsComposition.CarComposition.IsOutside )
+            return;
+        ClearOwnListRS ();        
         count = 0;
-        for ( int i = 0; i < listRS.Length; i++ )
+        for ( int i = 0; i < listComps.Length; i++ )
         {
-            tempRS = listRS [i];
-            if (tempRS.gameObject.activeSelf && engineRS.OwnPath != null && engineRS.OwnPath.Contains(tempRS.OwnTrack) && !tempRS.Equals(engineRS))
-            {               
-                ownListRS[count] =  tempRS;
-                count++;
+            tempComp = listComps [i];
+            if ( tempComp == null)
+                continue;
+            if ( !tempComp.IsActive )
+                continue;
+            if ( tempComp.IsOutside )
+                continue;
+            if ( tempComp == rsComposition.CarComposition )
+                continue;
+            for ( int j = engineRS.FirstTrackIndex; j <= engineRS.LastTrackIndex; j++ )
+            {
+                if (engineRS.OwnPath[j] == tempComp.MainCar.OwnTrack )
+                {
+                    ownListComps [count] = tempComp;
+                    count++;
+                }
             }
+            
         }
 
+        leftCar = null;
+        rightCar = null;
         tempDistLeft = 100000;
         tempDistRight = 100000;
 
-        tempRS = null;
+        tempLeftRS = null;
+        tempRightRS = null;
 
-        for ( int i = 0; i < ownListRS.Length; i++ )
+        for ( int i = 0; i < ownListComps.Length; i++ )
         {
-            tempRS = ownListRS [i];
-            if ( tempRS == null )
+            tempComp = ownListComps [i];
+            if ( tempComp == null )
                 return;
-            if ( !engineRS.GetCoupledLeft() && engineT.position.x > tempRS.GetPositionX() )
+            tempLeftRS = tempComp.RightCar;
+            tempRightRS = tempComp.LeftCar;
+
+            // look for left car
+            if ( !engineRS.GetCoupledLeft() && engineT.position.x > tempLeftRS.GetPositionX() )
             {
-                if ( GetDistanceToCar (tempRS) < tempDistLeft )
+                if ( GetDistanceToCar (tempLeftRS) < tempDistLeft )
                 {
-                    tempDistLeft = GetDistanceToCar (tempRS);
-                    leftCar = tempRS;
+                    tempDistLeft = GetDistanceToCar (tempLeftRS);
+                    leftCar = tempLeftRS;
                 }
 
             }
-            else if ( !engineRS.GetCoupledRight () && engineT.position.x < tempRS.GetPositionX () )
+            else if ( !engineRS.GetCoupledRight () && engineT.position.x < tempRightRS.GetPositionX () )
             {
-                if ( GetDistanceToCar (tempRS) < tempDistRight )
+                if ( GetDistanceToCar (tempRightRS) < tempDistRight )
                 {
-                    tempDistRight = GetDistanceToCar (tempRS);
-                    rightCar = tempRS;
+                    tempDistRight = GetDistanceToCar (tempRightRS);
+                    rightCar = tempRightRS;
                 }
             }
         }
@@ -101,12 +125,12 @@ public class CarWatcher : MonoBehaviour
 
     private void ClearOwnListRS()
     {
-        for ( int i = 0; i < ownListRS.Length; i++ )
+        for ( int i = 0; i < ownListComps.Length; i++ )
         {
-            if ( ownListRS [i] == null )
+            if ( ownListComps [i] == null )
                 return;
             else
-                ownListRS [i] = null;
+                ownListComps [i] = null;
         }
     }
 

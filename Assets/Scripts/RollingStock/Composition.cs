@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class Composition
+public class Composition : MonoBehaviour
 {
 
     public int Number { get; set; }
@@ -8,67 +9,62 @@ public class Composition
     public int Quantity { get; set; }
 
     public Engine CompEngine { get; set; }
-    
+    public bool IsActive { get; set; }
+    public bool IsOutside { get; set; }
 
-    public List<RSComposition> Cars { get; set; }
+
+    public RollingStock [] Cars { get; set; }
     public RollingStock LeftCar { get; set; }
     public RollingStock RightCar { get; set; }
 
     public RollingStock MainCar { get; set; }
-    public RollingStock TempCar { get; set; }
+    public RollingStock CompCar { get; set; }
     private float step;
 
-    public Composition( int number )
-    {
-        Cars = new List<RSComposition> ();
-        Number = number;
-    }
-    public void SetEngineToAllCars()
-    {
-        for ( int i = 0; i < Cars.Count; i++ )
-        {
-            Cars [i].RollingStock.SetEngineToRS (CompEngine);
-        }
-    }
-
+   
     public void Move()
     {
+        if ( IsOutside )
+            return;
         if ( CompEngine )
             step = CompEngine.EngineStep;
         else
             step = 0;
 
-        for ( int i = 0; i < Cars.Count; i++ )
+        for ( int i = 0; i < Quantity; i++ )
         {
+            CompCar = Cars [i];
             if ( i == 0 )
             {
-                TempCar = Cars [i].RollingStock;
-                TempCar.MoveByPath (step);
+                CompCar.MoveByPath (step);
+                CompCar.BogeyLeft.CalcCompositionPosition (CompCar, CompCar.BogeyLeft.Offset);
+                CompCar.BogeyRight.CalcCompositionPosition (CompCar, CompCar.BogeyRight.Offset);
 
-                TempCar.BogeyLeft.CalcCompositionPosition (TempCar, TempCar.BogeyLeft.Offset);
-                TempCar.BogeyRight.CalcCompositionPosition (TempCar, TempCar.BogeyRight.Offset);
-                //Cars [i].RollingStock.BogeyLeft.MoveByPath (step);
-                //Cars [i].RollingStock.BogeyRight.MoveByPath (step);
             }
             else
             {
-                TempCar = Cars [i].RollingStock;
-                TempCar.CalcCompositionPosition (Cars [i - 1].RollingStock, Constants.RS_OFFSET);
-                TempCar.BogeyLeft.CalcCompositionPosition (TempCar, TempCar.BogeyLeft.Offset);
-                TempCar.BogeyRight.CalcCompositionPosition (TempCar, TempCar.BogeyRight.Offset);
+                CompCar.CalcCompositionPosition (Cars [i - 1], Constants.RS_OFFSET);
+                CompCar.BogeyLeft.CalcCompositionPosition (CompCar, CompCar.BogeyLeft.Offset);
+                CompCar.BogeyRight.CalcCompositionPosition (CompCar, CompCar.BogeyRight.Offset);
             }
         }
     }
 
     public void Instantiate()
     {
-        foreach ( RSComposition car in Cars )
+
+        for ( int i = 0; i < Cars.Length; i++ )
         {
-            step = 0;
-            car.RollingStock.MoveByPath (step);
-            car.RollingStock.BogeyLeft.MoveByPath (step);
-            car.RollingStock.BogeyRight.MoveByPath (step);
+            if ( Cars [i] != null )
+            {
+                step = 0;
+                Cars [i].MoveByPath (step);
+                Cars [i].BogeyLeft.MoveByPath (step);
+                Cars [i].BogeyRight.MoveByPath (step);
+            }
+                
         }
+
     }
-     
+
 }

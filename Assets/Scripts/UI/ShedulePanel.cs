@@ -1,13 +1,12 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class HelpPanel : MonoBehaviour
+public class ShedulePanel : MonoBehaviour
 {
     UIShedulePointer [] pointers;
 
     private void Awake()
     {
-        pointers = FindObjectsOfType<UIShedulePointer>();
+        pointers = FindObjectsOfType<UIShedulePointer> ();
         MakePontersArray ();
     }
 
@@ -18,16 +17,16 @@ public class HelpPanel : MonoBehaviour
         {
             for ( int j = 0; j < pointers.Length - 1; j++ )
             {
-                if( pointers [j + 1].PointerNumber < pointers [j].PointerNumber )
+                if ( pointers [j + 1].PointerNumber < pointers [j].PointerNumber )
                 {
                     temp = pointers [j];
                     pointers [j] = pointers [j + 1];
                     pointers [j + 1] = temp;
                 }
-                    
+
             }
-        }        
+        }
     }
 
-    
+
 }

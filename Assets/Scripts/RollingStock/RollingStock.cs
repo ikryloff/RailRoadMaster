@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class RollingStock : MovableObject, IManageable
+public class RollingStock : MovableObject
 {
     public float PositionInPath { get; set; }
 
+
     [SerializeField]
     private TrackPathUnit thisRSTrack;
+    public int FirstTrackIndex;
+    public int LastTrackIndex;
     public int Number;
+    public int BackSidePosition;
     public Engine Engine { get; set; }
 
     //Components
@@ -16,7 +20,6 @@ public class RollingStock : MovableObject, IManageable
     public CarProperties CarProperties { get; set; }
 
     [SerializeField]
-    private float rsPosition;
     public bool IsEngine { get; set; }
     public bool isDirectionChanged;
     public float movingSpeed;
@@ -26,7 +29,6 @@ public class RollingStock : MovableObject, IManageable
     public Bogey BogeyRight { get; set; }
     private Transform bogeyLeftTransform;
     private Transform bogeyRightTransform;
-    public Transform RSTransform { get; set; }
 
     public RSModel Model;
 
@@ -35,40 +37,25 @@ public class RollingStock : MovableObject, IManageable
 
     public void Init()
     {
-        EventManager.onPathChanged += UpdatePath;
-        OwnTransform = gameObject.GetComponent<Transform> ();
-        OwnTrack = thisRSTrack;
-        thisRSTrack = null;
-        Engine = GetComponent<Engine> ();        
+        OwnTransform = GetComponent<Transform>();        
+        Engine = GetComponent<Engine> ();       
+        Model = GetComponentInChildren<RSModel> ();
+        RSConnection = GetComponent<RSConnection> ();
+        RSComposition = GetComponent<RSComposition> ();
+        CarProperties = GetComponent<CarProperties> ();
+        
         if ( Engine )
         {
             OwnEngine = Engine;
             IsEngine = true;
         }
         
-        OwnPosition = rsPosition;
-        RSConnection = GetComponent<RSConnection> ();
         RSConnection.Init ();
-        RSComposition = GetComponent<RSComposition> ();
         RSComposition.Init ();
-        CarProperties = GetComponent<CarProperties> ();
         // set bogeys to RS
         SetBogeys ();
-        OwnTrackCircuit = OwnTrack.TrackCircuit;
-        Model = GetComponentInChildren<RSModel> ();
-        RSTransform = GetComponent<Transform>();
     }
 
-    public void OnStart()
-    {
-        UpdatePath ();
-
-    }
-
-    public void UpdatePath()
-    {
-        TrackPath.Instance.GetTrackPath (this);
-    }
 
 
     public float GetPositionInPath()
@@ -108,11 +95,13 @@ public class RollingStock : MovableObject, IManageable
         OwnTransform.rotation *= Quaternion.Euler (0, -90, 0);
     }
 
-    public void SetPathToRS( List<TrackPathUnit> path )
+    public void SetPathToRS( TrackPathUnit[] path , int fTrack, int lTrack)
     {
         OwnPath = path;
         BogeyLeft.OwnPath = path;
         BogeyRight.OwnPath = path;
+        FirstTrackIndex = fTrack;
+        LastTrackIndex = lTrack;
     }
 
     public void ResetBogeys()

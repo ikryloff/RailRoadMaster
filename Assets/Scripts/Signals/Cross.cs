@@ -35,6 +35,8 @@ public class Cross : TrafficLight
             IsClosed = true;
 
         ReloadTrigger ();
+
+        EventManager.SignalChanged();
     }
 
     private void ReloadTrigger()

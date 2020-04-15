@@ -6,13 +6,11 @@ using UnityEngine.UI;
 public class ConductorCameraController : MonoBehaviour
 {
     public Transform GroupCamera;
-    private Camera condCamera;
     private float MAP_SPEED = 10;
     private Vector3 desiredPosition;
     Vector3 smoothedPosition;
     private float smoothSpeed = 3f;
     private float speed = 0.3f;
-    float scrollSpeed = 10;
     public RollingStock Target;
     private RSComposition composition;
     private Engine engine;
@@ -25,7 +23,7 @@ public class ConductorCameraController : MonoBehaviour
     public bool IsActive { get; set; }
     public bool IsPostView { get; set; }
     public int ZoomLevel;
-    public float XPath { get; set; }
+    public float XPath { get; set; }    
 
     public Toggle CameraFreeButton;
 
@@ -45,7 +43,7 @@ public class ConductorCameraController : MonoBehaviour
 
     private void Awake()
     {
-        condCamera = GetComponent<Camera> ();
+
         GroupCamera = transform.parent.GetComponent<Transform> ();
         tempOffset = new float [3];
         EventManager.onPlayerUsedThrottle += SetCameraPosition;
@@ -87,6 +85,11 @@ public class ConductorCameraController : MonoBehaviour
     {
         IsFreeCamera = !IsFreeCamera;
 
+    }
+
+    public int GetZoomLevel()
+    {
+        return ZoomLevel;
     }
 
     private void UpdateCamera()
@@ -138,7 +141,8 @@ public class ConductorCameraController : MonoBehaviour
             yield return null;
         }
         CameraFreeButton.isOn = false;
-        targetTransform = tempTarget;        
+        targetTransform = tempTarget;
+        EventManager.FollowProcessFinished ();
     }
 
     public void SetCameraPositionOnPost( Transform post )

@@ -9,8 +9,10 @@ public class UISheduleItem : MonoBehaviour
     public UIShedule Shedule { get; set; }
     public TextMeshProUGUI TimeText;
     public RectTransform RectTransform;
-    private UIHalfHourFirst halfHourFirst;
-    private UIHalfHourSecond halfHourSecond;
+    public UIHalfHourFirst HalfHourFirst;
+    public UIHalfHourSecond HalfHourSecond;
+    public UISheduleFirstTrainNumber firstTrainNumber;
+    public UISheduleSecondTrainNumber secondTrainNumber;
     private float HEIGHT = -150f;
 
     public void OnAwake()
@@ -25,10 +27,15 @@ public class UISheduleItem : MonoBehaviour
         TimeText = GetComponentInChildren<UIOverTime> ().GetComponentInChildren<TextMeshProUGUI> ();
         SetText (ItemNumber);
 
-        halfHourFirst = GetComponentInChildren<UIHalfHourFirst> ();
-        halfHourFirst.OnAwake ();
-        halfHourSecond = GetComponentInChildren<UIHalfHourSecond> ();
-        halfHourSecond.OnAwake ();
+        firstTrainNumber = pointer.GetComponentInChildren<UISheduleFirstTrainNumber> ();
+        firstTrainNumber.OnAwake ();
+        secondTrainNumber = pointer.GetComponentInChildren<UISheduleSecondTrainNumber> ();
+        secondTrainNumber.OnAwake ();
+
+        HalfHourFirst = GetComponentInChildren<UIHalfHourFirst> ();
+        HalfHourFirst.OnAwake ();
+        HalfHourSecond = GetComponentInChildren<UIHalfHourSecond> ();
+        HalfHourSecond.OnAwake ();
     }
 
     private void SetText( int itemNumber )

@@ -34,7 +34,6 @@ public class OTWorkSwitcher : MonoBehaviour
             pumpSwitcher.ActivateOT (false);
             OpenGates (true);
         }
-        orderButton.CloseOtherPostButtons ();
         EventManager.SignalChanged ();
     }
 

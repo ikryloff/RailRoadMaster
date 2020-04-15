@@ -9,7 +9,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
     public Switch SwitchTrack { get; set; }
     public Route route;
     public RollingStock engineRS;
-    public List<MovableObject> Cars { get; set; }
+    public List<Bogey> Bogeys { get; set; }
     public bool IsInRoute { get; set; }
     public bool IsInUse { get; set; }
     public bool IsInPath { get; set; }
@@ -24,7 +24,7 @@ public class TrackCircuit : MonoBehaviour, IManageable
 
     public void Init()
     {
-        Cars = new List<MovableObject> ();
+        Bogeys = new List<Bogey> ();
         paths = transform.GetComponentsInChildren<TrackPathUnit> ();
         Indicators = transform.GetComponentsInChildren<IndicatorPath> ();
         GetTCIndicatorPathUnits ();
@@ -85,22 +85,22 @@ public class TrackCircuit : MonoBehaviour, IManageable
         }
     }
 
-    public void AddCars( MovableObject car )
+    public void AddCars( Bogey car )
     {
-        if ( !Cars.Contains (car) )
+        if ( !Bogeys.Contains (car) )
         {
-            Cars.Add (car);
+            Bogeys.Add (car);
             UpdateCarPresence ();
         }
 
     }
 
 
-    public void RemoveCars( MovableObject car )
+    public void RemoveCars( Bogey car )
     {
-        if ( Cars.Contains (car) )
+        if ( Bogeys.Contains (car) )
         {
-            Cars.Remove (car);
+            Bogeys.Remove (car);
             UpdateCarPresence ();
         }
     }
@@ -121,12 +121,12 @@ public class TrackCircuit : MonoBehaviour, IManageable
 
     public void UpdateCarPresence()
     {
-        if ( Cars.Count == 0 && HasCarPresence )
+        if ( Bogeys.Count == 0 && HasCarPresence )
         {
             CarPresenceOff ();
         }
 
-        else if ( Cars.Count > 0 && !HasCarPresence )
+        else if ( Bogeys.Count > 0 && !HasCarPresence )
         {
             CarPresenceOn ();
         }

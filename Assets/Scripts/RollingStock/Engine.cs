@@ -9,7 +9,7 @@ public class Engine : MonoBehaviour
     public RollingStock EngineRS { get; private set; }
     public TrafficWatcher TWatcher { get; private set; }
     public EngineInertia Inertia { get; private set; }
-    public EngineAI AI { get; private set; }
+    public EngineAI EngineAI { get; private set; }
     public bool Brakes;
     //it can move itself
     public bool IsActive;
@@ -40,11 +40,12 @@ public class Engine : MonoBehaviour
         EventManager.offPause += PauseMovingOff;
 
         EngineRS = GetComponent<RollingStock> ();
-        AI = GetComponent<EngineAI> ();
+        EngineAI = GetComponent<EngineAI> ();
         Inertia = GetComponent<EngineInertia> ();
         engineLightning = GetComponent<EngineLightning> ();
         TWatcher = GetComponent<TrafficWatcher> ();
         Brakes = true;
+        IsActive = false;
     }
 
     void Start()
@@ -61,12 +62,18 @@ public class Engine : MonoBehaviour
             CalcMaxSpeed ();
             MoveEngine ();            
         }
-        if ( Inertia.enabled )
-            Inertia.OnUpdate ();
         if ( TWatcher.enabled )
             TWatcher.OnUpdate ();
         
     }
+
+    public void AbsoluteStop()
+    {
+        InstructionsHandler = 0;
+        engineLightning.NoLight ();
+        Acceleration = 0;
+    }
+
     public void HandlerZero()
     {
         InstructionsHandler = 0;

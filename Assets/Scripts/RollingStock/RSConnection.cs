@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class RSConnection : MonoBehaviour, IManageable
+public class RSConnection : MonoBehaviour
 {
     public RSConnection RightCar;
     public RSConnection LeftCar { get; set; }
@@ -28,17 +28,21 @@ public class RSConnection : MonoBehaviour, IManageable
         SetCouplers ();
     }
 
-    public void OnStart()
-    {
-        if ( RightCar )
-        {
-            MakeConnection (RightCar);
-        }
+   
 
-    }
     public void OnUpdate()
     {
         CheckUncouplingListener ();
+    }
+
+    public void InitConnection( RSConnection otherCar )
+    {
+        IsConnectedRight = true;
+        RightCar = otherCar;
+        RightCar.LeftCar = this;
+        // this coupler is in connection
+        CouplerRight.MakeCouplerConnection ();
+        CouplerPointRight.MakePointConnection (otherCar);        
     }
 
     public void MakeConnection( RSConnection otherCar )
@@ -49,14 +53,15 @@ public class RSConnection : MonoBehaviour, IManageable
         // this coupler is in connection
         CouplerRight.MakeCouplerConnection ();
         CouplerPointRight.MakePointConnection (otherCar);
-        //Global Update all compositions
-        CompositionManager.Instance.UpdateCompositions ();
-        //stops Engine after coupling
+        // make new comp from two
+        CompositionManager.Instance.UpdateCompositionsAfterCoupling (RollingStock, RightCar.RollingStock);
+        //for coupler indication
         EventManager.CarsCoupled ();
     }
 
     public void DestroyConnection()
     {
+        CompositionManager.Instance.UpdateCompositionsAfterUncoupling (RightCar.RollingStock);
         IsConnectedRight = false;
         JustUncoupled = true;
         TempCar = RightCar.RollingStock;
@@ -64,10 +69,20 @@ public class RSConnection : MonoBehaviour, IManageable
         RightCar.LeftCar = null;
         RightCar = null;
         CouplerRight.DestroyCouplerConnection ();
-        CouplerPointRight.DestroyPointConnection ();
-        //Global Update all compositions
-        CompositionManager.Instance.UpdateCompositions ();
+        CouplerPointRight.DestroyPointConnection ();        
     }
+
+    public void RemoveConnection()
+    {
+        IsConnectedRight = false;
+        TempCar = RightCar.RollingStock;
+        RightCar.LeftCar = null;
+        RightCar = null;
+        CouplerRight.DestroyCouplerConnection ();
+        CouplerPointRight.DestroyPointConnection ();
+    }
+
+
 
 
     private void CheckUncouplingListener()

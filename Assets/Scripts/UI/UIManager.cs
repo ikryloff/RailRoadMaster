@@ -1,17 +1,17 @@
-﻿using UnityEngine;
-
-public class UIManager : Singleton<UIManager>
+﻿public class UIManager : Singleton<UIManager>
 {
 
     private CommunicationPanelManager communicationPanel;
     private RoutePanelManager routePanel;
-    private HelpPanel helpPanel;
+    private UIShedule shedule;
+    private ShedulePanel shedulePanel;
 
     private void Awake()
     {
         communicationPanel = FindObjectOfType<CommunicationPanelManager> ();
         routePanel = FindObjectOfType<RoutePanelManager> ();
-        helpPanel = FindObjectOfType<HelpPanel> ();
+        shedule = FindObjectOfType<UIShedule> ();
+        shedulePanel = FindObjectOfType<ShedulePanel> ();
     }
 
     public void OnStart()
@@ -23,19 +23,25 @@ public class UIManager : Singleton<UIManager>
     {
         routePanel.Show (false);
         communicationPanel.Show (true);
-        helpPanel.gameObject.SetActive (false);
+        shedulePanel.gameObject.SetActive (false);
         ModeSwitch.Instance.SwitchToConductorMode ();
+        GameManager.Instance.PauseOff ();
     }
 
     public void RouteMode()
     {
         routePanel.Show (true);
         communicationPanel.Show (false);
+        ModeSwitch.Instance.SwitchToYardMode ();
+        GameManager.Instance.PauseOn ();
     }
 
-    public void HelpMode()
+    public void SheduleMode()
     {
         communicationPanel.Show (false);
-        helpPanel.gameObject.SetActive (true);
+        shedulePanel.gameObject.SetActive (true);
+        shedule.FocusPosition ();
+        ModeSwitch.Instance.SwitchToSheduleMode ();
+        GameManager.Instance.PauseOn ();
     }
 }

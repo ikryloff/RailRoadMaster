@@ -2,8 +2,8 @@
 
 public class RSComposition : MonoBehaviour, IManageable
 {
-    public int CompositionNumber { get; set; }
     public int Number { get; set; }
+    public int NumInComposition { get; set; }
     public RSConnection RSConnection { get; set; }
     public RollingStock RollingStock { get; private set; }
     public bool IsMainCar { get; set; }
@@ -11,7 +11,6 @@ public class RSComposition : MonoBehaviour, IManageable
 
     public void Init()
     {
-        EventManager.onCompositionChanged += UpdateCarComposition;
         RSConnection = GetComponent<RSConnection> ();
         RSConnection.RSComposition = this;
         RollingStock = gameObject.GetComponent<RollingStock> ();
@@ -21,17 +20,13 @@ public class RSComposition : MonoBehaviour, IManageable
 
     public void OnStart() {  }
 	
-    // Get this car position in path   
-    public void UpdateCarComposition()
+    public bool GetIsMainCar()
     {
-        
-        // if car not connected from right
-        if (gameObject.activeSelf && !RSConnection.IsConnectedRight )
-        {
-            IsMainCar = true;
-            print ("UpdateCarComposition " + RollingStock.name);
-            CompositionManager.UpdateCarComposition (RollingStock);
-        }
-        else IsMainCar = false;
-    } 
+        return (!RSConnection.LeftCar);
+    }
+
+    public int GetCompositionNumber()
+    {
+        return (CarComposition.Number);
+    }
 }

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class CouplerManager : Singleton<CouplerManager>, IManageable
 {
@@ -7,12 +6,11 @@ public class CouplerManager : Singleton<CouplerManager>, IManageable
     private Texture2D cursor;
     private CouplerLever coupler;
     private CompositionManager cm;
-    public GameObject[] couplerPictures;
+    public GameObject [] couplerPictures;
     public Coupler [] couplers;
-    private Camera mainCamera;
-    private CouplerObject[] couplerObjects;
+    private CouplerObject [] couplerObjects;
 
-  
+
     public void Init()
     {
         cm = FindObjectOfType<CompositionManager> ();
@@ -26,7 +24,6 @@ public class CouplerManager : Singleton<CouplerManager>, IManageable
 
     public void OnStart()
     {
-        mainCamera = FindObjectOfType<ConductorCameraController> ().GetComponent<Camera>();
         foreach ( Coupler item in couplers )
         {
             item.SetLevers ();
@@ -35,12 +32,9 @@ public class CouplerManager : Singleton<CouplerManager>, IManageable
 
     public void OnUpdate()
     {
-        UncoupleListener ();
         CouplerObjectRotation ();
     }
-
-
-
+       
     private void CouplerObjectRotation()
     {
         for ( int i = 0; i < couplerObjects.Length; i++ )
@@ -48,27 +42,9 @@ public class CouplerManager : Singleton<CouplerManager>, IManageable
             couplerObjects [i].OnUpdate ();
         }
     }
-    private void UncoupleListener()
+    public void UncoupleListener(Collider collider)
     {
-        if ( !EventSystem.current.IsPointerOverGameObject () )
-        {
-            Vector3 click = Vector3.one;
-
-            if ( Input.GetMouseButtonDown (0) )
-            {
-                Ray ray = mainCamera.ScreenPointToRay (Input.mousePosition);
-                RaycastHit hit;
-                if ( Physics.Raycast (ray, out hit) )
-                {
-                    click = hit.point;
-                }
-
-                if ( hit.collider != null && hit.collider.tag == "ActiveCoupler" )
-                {
-                    coupler = hit.collider.GetComponent<CouplerLever>();
-                    coupler.Uncouple ();
-                }
-            }
-        }       
+        coupler = collider.GetComponent<CouplerLever> ();
+        coupler.Uncouple ();
     }
 }

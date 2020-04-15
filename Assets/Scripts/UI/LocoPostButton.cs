@@ -10,12 +10,10 @@ public class LocoPostButton : PostOrderButton
         if ( !IsActivated )
         {
             CommonCamera.SetCameraPositionOnPost (CommonCamera.LocoPostFocusPoint);
-            SetButtonsActive (true);
             IsActivated = true;
         }
         else
         {
-            SetButtonsActive (false);
             IsActivated = false;
         }
     }

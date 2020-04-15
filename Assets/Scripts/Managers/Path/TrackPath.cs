@@ -1,15 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public class TrackPath : Singleton<TrackPath>, IManageable
 {
-
+    
+    int count;
+    int countLeft;
+    int countRight;
     public TrackPathUnit [] TrackList { get; private set; }
 
     public static int PathMade = 0;
 
     public float pathLength;
-    private TrackPathUnit currentTrack;
+   
+    TrackPathUnit tempLeft;
+    TrackPathUnit tempRight;
 
     public void Init()
     {
@@ -18,56 +24,63 @@ public class TrackPath : Singleton<TrackPath>, IManageable
         SetClosePaths ();
     }
 
-
     public void GetTrackPath( RollingStock car )
     {
-        StartCoroutine (GetTrackPathCoroutine (car));
-    }
-
-    IEnumerator GetTrackPathCoroutine( RollingStock car )
-    {
+        PathMade++;
+        ClearPath (car);
         // if we change swithces in indication mode
         if ( IndicationManager.Instance.IsPathIndicate )
         {
             IndicationManager.Instance.TurnPathIndicationOff ();
             IndicationManager.Instance.IsPathIndicate = true;
         }
-            
-        PathMade++;
+
         SetEachPathClosePaths ();
         TrackPathUnit currentTrack = car.OwnTrack;
-        List<TrackPathUnit> pathPrevious = new List<TrackPathUnit> ();
-        List<TrackPathUnit> pathOwn = new List<TrackPathUnit> ();
-        TrackPathUnit tempLeft = currentTrack.LeftTrackPathUnit;
-        TrackPathUnit tempRight = currentTrack.RightTrackPathUnit;
-        pathPrevious = car.OwnPath;
-        pathOwn.Add (currentTrack);
+        tempLeft = currentTrack.LeftTrackPathUnit;
+        tempRight = currentTrack.RightTrackPathUnit;
+
+        count = Constants.PATHS_NUM / 2;
+        countLeft = count;
+        countRight = count;
+        TrackPathUnit [] pathOwn = new TrackPathUnit [Constants.PATHS_NUM];
+        pathOwn [count] =  currentTrack;
 
         while ( tempLeft != null || tempRight != null )
         {
             if ( tempLeft != null )
             {
-                pathOwn.Insert (0, tempLeft);
+                pathOwn[countLeft - 1]  =  tempLeft;
+                countLeft--;
                 tempLeft = tempLeft.LeftTrackPathUnit;
             }
             if ( tempRight != null )
             {
-                pathOwn.Add (tempRight);
+                pathOwn [countRight + 1] = tempRight;
+                countRight++;
                 tempRight = tempRight.RightTrackPathUnit;
-            }
-
-            yield return null;
+            }            
         }
-        car.SetPathToRS (pathOwn);
+        car.SetPathToRS (pathOwn, countLeft, countRight);
         PathMade--;
         // if all paths of all compositions are made
         if ( PathMade == 0 )
         {
-            print ("PathMade");
-            EventManager.PathUpdated ();                    
+            print ("PathMade");           
+            EventManager.PathUpdated ();
         }
     }
 
+    private void ClearPath( RollingStock car )
+    {
+        if ( car.OwnPath != null )  
+        {
+            for ( int i = car.FirstTrackIndex; i <= car.LastTrackIndex; i++ )
+            {
+                car.OwnPath [i] = null;
+            }
+        }
+    }
 
 
     private void TrackPathUnitInit()
@@ -89,12 +102,12 @@ public class TrackPath : Singleton<TrackPath>, IManageable
     }
 
 
-    public TrackPathUnit GetNextTrack( TrackPathUnit _current, List<TrackPathUnit> _path )
+    public TrackPathUnit GetNextTrack( TrackPathUnit _current, TrackPathUnit [] _path )
     {
         return _current.RightTrackPathUnit;
     }
 
-    public TrackPathUnit GetPrevTrack( TrackPathUnit _current, List<TrackPathUnit> _path )
+    public TrackPathUnit GetPrevTrack( TrackPathUnit _current, TrackPathUnit [] _path )
     {
         return _current.LeftTrackPathUnit;
     }
@@ -136,8 +149,9 @@ public class TrackPath : Singleton<TrackPath>, IManageable
     // For each TPU set left and right TPunit wich is Active at the moment
     public void SetEachPathClosePaths()
     {
-        foreach ( TrackPathUnit track in TrackList )
+        for ( int i = 0; i < TrackList.Length; i++ )
         {
+            TrackPathUnit track = TrackList [i];
             track.SetOwnClosePaths ();
         }
     }

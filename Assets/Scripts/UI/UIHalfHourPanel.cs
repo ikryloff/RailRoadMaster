@@ -2,14 +2,15 @@
 
 public class UIHalfHourPanel : MonoBehaviour
 {
-    UIAlfaPanel alfaPanel;
-    UIBravoPanel bravoPanel;
-    UICharliePanel charliePanel;
+    public UIAlfaPanel AlfaPanel;
+    public UIBravoPanel BravoPanel;
+    public UICharliePanel CharliePanel;
+    public bool IsFull;
 
     public void OnAwake()
     {
-        alfaPanel = GetComponentInChildren<UIAlfaPanel> ();
-        bravoPanel = GetComponentInChildren<UIBravoPanel> ();
-        charliePanel = GetComponentInChildren<UICharliePanel> ();        
+        AlfaPanel = GetComponentInChildren<UIAlfaPanel> ();
+        BravoPanel = GetComponentInChildren<UIBravoPanel> ();
+        CharliePanel = GetComponentInChildren<UICharliePanel> ();        
     }
 }

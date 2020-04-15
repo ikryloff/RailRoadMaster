@@ -68,21 +68,26 @@ public class ExitSignal : TrafficLight
             else
                 print ("no depend signal");
         }
-        EventManager.OnTrainSignalChanged ();
+        EventManager.TrainSignalChanged ();
     }
 
     public override void LightOff()
     {
         IsClosed = true;
+        LampsOff ();
+        EventManager.TrainSignalChanged ();
+        if ( TLRepeater )
+            TLRepeater.RepeaterOffTrain ();
+    }
+
+    private void LampsOff()
+    {
         StopSignalFlashing (yellowSignalFlashing);
         LampSwitchOn (red, RedSignal);
         LampSwitchOff (white, WhiteSignal);
         LampSwitchOff (green, GreenSignal);
         LampSwitchOff (topYellow, TopYellowSignal);
         LampSwitchOff (botYellow, BottomYellowSignal);
-        EventManager.OnTrainSignalChanged ();
-        if ( TLRepeater )
-            TLRepeater.RepeaterOffTrain ();
     }
 
     protected void UpdateSignals()
@@ -100,14 +105,13 @@ public class ExitSignal : TrafficLight
             {
                 LightOff ();
             }
-        }
-        EventManager.SignalChanged ();
+        }        
     }
 
 
     private void ShuntingLightOn()
     {
-        LightOff ();
+        LampsOff ();
         LampSwitchOn (white, WhiteSignal);
         LampSwitchOff (red, RedSignal);
         IsClosed = false;
@@ -119,7 +123,7 @@ public class ExitSignal : TrafficLight
 
     private void ExitStraightLightOn()
     {
-        LightOff ();
+        LampsOff ();
 
         LampSwitchOn (green, GreenSignal);
 

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EngineInertia : MonoBehaviour
 {
@@ -25,11 +24,7 @@ public class EngineInertia : MonoBehaviour
         BreakeForce = engineBreakeForce;
         tempCompQuantity = composition.CarComposition.Quantity;
     }
-
-    public void OnUpdate()
-    {
-        StopEngineAfterCoupling ();
-    }
+    
 
     public float GetBreakeForce()
     {
@@ -42,14 +37,6 @@ public class EngineInertia : MonoBehaviour
         return compCarsQuantity;
     }
 
-    private void StopEngineAfterCoupling()
-    {
-        if(composition.CarComposition.Quantity != tempCompQuantity )
-        {
-            engine.InstructionsHandler = 0;
-            tempCompQuantity = composition.CarComposition.Quantity;
-        }
-       
-    }
+    
 
 }

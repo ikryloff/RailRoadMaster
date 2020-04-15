@@ -30,75 +30,45 @@ public class Player : MonoBehaviour
     {
         ccc.Target = PlayerEngine.EngineRS;
         SetViewer (PlayerEngine.EngineRS);
-        EventManager.onCompositionChanged += SetPlayerEngineInCompositionAfterCoupling;
     }
 
-    private void Update()
+    
+    public void RollingStockListener(Collider collider)
     {
-        RollingStockChosenListener ();
-    }
-
-
-    private void RollingStockChosenListener()
-    {
-        if ( IndicationManager.Instance.IsCouplerIndicate )
-            return;
-
-        if ( Input.touchCount == 1 && EventSystem.current.IsPointerOverGameObject (Input.GetTouch (0).fingerId) )
-            return;
-
-        if ( !EventSystem.current.IsPointerOverGameObject () )
+        if ( collider.CompareTag ("Engine") )
         {
-            Vector3 click = Vector3.one;
-
-            if ( Input.GetMouseButtonDown (0) )
+            HitEngine = collider.GetComponent<Engine> ();
+            if ( !HitEngine.IsPlayer )
             {
-                Ray ray = cameraMain.ScreenPointToRay (Input.mousePosition);
-                RaycastHit hit;
-                if ( Physics.Raycast (ray, out hit) )
-                {
-                    click = hit.point;
-                }
-                if ( hit.collider != null )
-                {
-                    if ( hit.collider.CompareTag ("Engine") )
-                    {
-                        HitEngine = hit.collider.GetComponent<Engine> ();
-                        if ( !HitEngine.IsPlayer )
-                        {
-                            TempEngine = PlayerEngine;
-                            TempEngine.IsPlayer = false;
-                            //set outlines
-                            TempEngine.EngineRS.Model.DefaultOutline ();                            
-                            PlayerEngine = HitEngine;
-                            PlayerEngine.IsActive = true;
-                            PlayerEngine.IsPlayer = true;
-                            ccc.Target = PlayerEngine.EngineRS;
-                            ccc.UpdateCameraTarget ();
-                            IndicationManager.Instance.engine = PlayerEngine;
-                            SetPlayerEngineInComposition ();
-                            CompositionManager.Instance.UpdateCompositions ();
-                        }
-                        SetViewer (PlayerEngine.EngineRS);
-                        PlayerEngine.EngineRS.Model.HighLightEngineOutline ();
-                        if ( tempRollingStock != null )
-                        {
-                            tempRollingStock.Model.DefaultOutline ();
-                            tempRollingStock = null;
-                        }
-                        EventManager.EngineChanged ();
-                    }
-                    else if ( hit.collider.CompareTag ("RollingStock") )
-                    {
-                        rollingStock = hit.collider.GetComponent<RollingStock> ();
-                        SetViewer (rollingStock);
-                        if ( tempRollingStock != null && !tempRollingStock.Equals(rollingStock) )
-                            tempRollingStock.Model.DefaultOutline ();
-                        tempRollingStock = rollingStock;
-
-                    }
-                }
+                TempEngine = PlayerEngine;
+                TempEngine.IsPlayer = false;
+                //set outlines
+                TempEngine.EngineRS.Model.DefaultOutline ();
+                PlayerEngine = HitEngine;
+                PlayerEngine.IsActive = true;
+                PlayerEngine.IsPlayer = true;
+                ccc.Target = PlayerEngine.EngineRS;
+                ccc.UpdateCameraTarget ();
+                IndicationManager.Instance.engine = PlayerEngine;
+                SetPlayerEngineInComposition ();
             }
+            SetViewer (PlayerEngine.EngineRS);
+            PlayerEngine.EngineRS.Model.HighLightEngineOutline ();
+            if ( tempRollingStock != null )
+            {
+                tempRollingStock.Model.DefaultOutline ();
+                tempRollingStock = null;
+            }
+            EventManager.EngineChanged ();
+        }
+        else if ( collider.CompareTag ("RollingStock") )
+        {
+            rollingStock = collider.GetComponent<RollingStock> ();
+            SetViewer (rollingStock);
+            if ( tempRollingStock != null && !tempRollingStock.Equals (rollingStock) )
+                tempRollingStock.Model.DefaultOutline ();
+            tempRollingStock = rollingStock;
+
         }
     }
 
@@ -109,20 +79,14 @@ public class Player : MonoBehaviour
             PlayerEngine.Acceleration = TempEngine.Acceleration;
             PlayerEngine.InstructionsHandler = TempEngine.InstructionsHandler;
             TempEngine.IsActive = false;
-            PlayerEngine.EngineRS.RSComposition.CarComposition.CompEngine = PlayerEngine;
-            PlayerEngine.EngineRS.RSComposition.CarComposition.SetEngineToAllCars ();
+            //reset old engine acceleration
+            TempEngine.AbsoluteStop ();
+            TempEngine.EngineRS.RSComposition.CarComposition.CompEngine = PlayerEngine;
         }
-    }
-
-    public void SetPlayerEngineInCompositionAfterCoupling()
-    {
-        if ( PlayerEngine.EngineRS.RSComposition.CarComposition.Equals (TempEngine.EngineRS.RSComposition.CarComposition) )
-        {
-            TempEngine.IsActive = false;
+        else
             PlayerEngine.EngineRS.RSComposition.CarComposition.CompEngine = PlayerEngine;
-            PlayerEngine.EngineRS.RSComposition.CarComposition.SetEngineToAllCars ();
-        }
     }
+      
 
     private void SetViewer( RollingStock rs )
     {
@@ -148,13 +112,15 @@ public class Player : MonoBehaviour
     public void MoveForward()
     {
         PlayerEngine.HandlerForward ();
-        EventManager.ThrottleChanged ();
+        if(PlayerEngine.InstructionsHandler <= 1)
+            EventManager.ThrottleChanged ();
     }
 
     public void MoveBack()
     {
         PlayerEngine.HandlerBack ();
-        EventManager.ThrottleChanged ();
+        if ( PlayerEngine.InstructionsHandler >= -1 )
+            EventManager.ThrottleChanged ();
     }
 
     public void Stop()

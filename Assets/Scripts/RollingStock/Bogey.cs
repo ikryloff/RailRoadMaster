@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class Bogey : MovableObject
 {
-    private RollingStock rollingStock;
+    public RollingStock RollingStock { get; private set; }
     public MeshRenderer [] BogeysMeshRenderers;
     [SerializeField]
     private float offset;
-    private bool isRightBogey;
+    public bool IsRightBogey;
     private TrackCircuit tempTC;
 
     
@@ -25,10 +25,10 @@ public class Bogey : MovableObject
     private void Awake()
     {
         OwnTransform = gameObject.GetComponent<Transform>();
-        rollingStock = GetComponentInParent<RollingStock>();
-        OwnEngine = rollingStock.GetComponent<Engine>();
+        RollingStock = GetComponentInParent<RollingStock>();
+        OwnEngine = RollingStock.GetComponent<Engine>();
         bogeyPos = Offset > 0 ? 1 : -1;
-        isRightBogey = bogeyPos == 1 ? true : false;
+        IsRightBogey = bogeyPos == 1 ? true : false;
         
     }
 
@@ -44,9 +44,9 @@ public class Bogey : MovableObject
 
     public void ResetBogey()
     {
-        OwnPosition = rollingStock.OwnPosition + Offset;
-        OwnTrack = rollingStock.OwnTrack;
-        OwnPath = rollingStock.OwnPath;
+        OwnPosition = RollingStock.OwnPosition + Offset;
+        OwnTrack = RollingStock.OwnTrack;
+        OwnPath = RollingStock.OwnPath;
         OwnTrackCircuit = OwnTrack.TrackCircuit;
         tempTC = OwnTrackCircuit;
         OwnTrackCircuit.AddCars (this);
@@ -66,9 +66,12 @@ public class Bogey : MovableObject
 
     public void ProvidePresence()
     {
-        if ( tempTC.Equals (OwnTrackCircuit) )
-            return;
-        tempTC.RemoveCars (this);
+        if ( tempTC )
+        {
+            if ( tempTC.Equals (OwnTrackCircuit) )
+                return;
+            tempTC.RemoveCars (this);
+        }        
         if(OwnTrackCircuit)
             OwnTrackCircuit.AddCars (this);
         tempTC = OwnTrackCircuit;

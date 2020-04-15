@@ -24,12 +24,30 @@ public class Constants
     public static int TC_DEFAULT = 0;
     public static int TC_OVER = 1;
     public static int TC_USED = 2;
+    public static  int PATHS_NUM = 30;
+    public static  int MAX_CARS = 30;
+    public static  int MAX_COMPS = 50;
 
     public static int RS_OFFSET = 80;
     public static float RS_CAR_OFFSET = 70;
 
     public static string ANIM_TURN = "TurnSwitch";
     public static string ANIM_TURN_OPP = "TurnSwitchOpposite";
+
+    // TrackPath
+    public static string TRACK_I_RIGHT = "PathTrI_N";
+    public static string TRACK_I_LEFT = "PathTrI_CH";
+    public static string TRACK_BACKSIDE = "PathBackTr";
+
+    //Resp
+    public static int RESP_LEFT_TRAINS = 2000;
+    public static int RESP_RIGHT_TRAINS = 1000;
+    public static int RESP_LEFT_PLAYER = 1000;
+    public static int RESP_RIGHT_PLAYER = 2000;
+
+
+    //Engine
+    public static int MAX_THROTTLE = 6;
 
     public static string [] [] POSSIBLE_LIGHTS = new []
     {

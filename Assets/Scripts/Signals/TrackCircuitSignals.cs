@@ -27,7 +27,7 @@ public class TrackCircuitSignals : MonoBehaviour, IManageable
             SetTrackLightsToTC (tc, "NI", "CHI");
 
         else if ( tc.name.Equals ("Track_12_17_19") )
-            SetTrackLightsToTC (tc, "M5", "FY_Enter");
+            SetTrackLightsToTC (tc, "M5", null);
 
         else if ( tc.name.Equals ("Track_2") )
             SetTrackLightsToTC (tc, "N2", "CH2");
@@ -75,7 +75,7 @@ public class TrackCircuitSignals : MonoBehaviour, IManageable
             SetTrackLightsToTC (tc, "End14", "Cross14");
 
         else if ( tc.name.Equals ("Switch_19") )
-            SetTrackLightsToTC (tc, "FY_Exit", null);
+            SetTrackLightsToTC (tc, null, null);
 
     }
 

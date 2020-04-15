@@ -1,38 +1,38 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class CommunicationPanelManager : MonoBehaviour, IHideable
 {
-    [SerializeField]
-    private GameObject actionList;    
+
     [SerializeField]
     private GameObject engineerList;
     [SerializeField]
     private GameObject zoomPanel;
     [SerializeField]
-    private GameObject helpPanel;
+    private GameObject help;
+    [SerializeField]
+    private GameObject yardMaster;
+    [SerializeField]
+    private GameObject conductor;
+    [SerializeField]
+    private GameObject freightMaster;
     [SerializeField]
     private GameObject RSpanel;
-    [SerializeField]
-    private GameObject RCpanel;
+
 
 
 
 
     public void Show( bool isVisible )
     {
-        actionList.SetActive (isVisible);
         engineerList.SetActive (isVisible);
         zoomPanel.SetActive (isVisible);
-        helpPanel.SetActive (isVisible);
+        help.SetActive (isVisible);
+        yardMaster.SetActive (isVisible);
+        conductor.SetActive (isVisible);
+        freightMaster.SetActive (isVisible);
         RSpanel.SetActive (isVisible);
-        RCpanel.SetActive (isVisible);
     }
-    
+
 
 
 }

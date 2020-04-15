@@ -11,7 +11,8 @@ public class ModeSwitch : Singleton<ModeSwitch>
     private YardCameraController ycc;
     private SceneryManager sceneryManager;
     public Mode GameMode { get; set; }
-    public enum Mode { Conductor, Yard };
+    public enum Mode { Conductor, Yard, Shedule };
+    public static float CameraXPosition;
 
     private void Awake()
     {
@@ -33,8 +34,10 @@ public class ModeSwitch : Singleton<ModeSwitch>
         ycc.IsActive = false;
         ccc.IsActive = true;
         IndicationManager.Instance.TurnPathIndicationOff ();
+        if(GameMode == Mode.Yard )
+            CameraXPosition = ycc.XPath;
+        ccc.SetPosition (CameraXPosition);
         GameMode = Mode.Conductor;
-        ccc.SetPosition (ycc.XPath);
         sceneryManager.Show (false);
     }
 
@@ -45,20 +48,18 @@ public class ModeSwitch : Singleton<ModeSwitch>
         conductorCamera.enabled = false;
         yardCamera.enabled = true;
         ycc.ShowPaths ();
-        UIManager.Instance.RouteMode();
+        if(GameMode == Mode.Conductor)
+            CameraXPosition = ccc.XPath;
+        ycc.SetPosition (CameraXPosition);
         GameMode = Mode.Yard;
-        ycc.SetPosition (ccc.XPath);
         sceneryManager.Show (true);
     }
 
-    public void ToggleModes()
+    public void SwitchToSheduleMode()
     {
-        if ( ccc.IsActive )
-        {
-            SwitchToYardMode ();
-        }
-        else
-            SwitchToConductorMode ();
-
+        CameraXPosition = ccc.XPath;
+        GameMode = Mode.Shedule;
     }
+
+    
 }

@@ -32,10 +32,20 @@ public class ResourceHolder : Singleton<ResourceHolder> {
     public Sprite EmptyArrow;
     public Sprite Stop;
     public Sprite Engine_icon;
+    public Sprite Engine_left_icon;
     public Sprite Gondola_icon;
     public Sprite BoxCar_icon;
     public Sprite Oilcar_icon;
     public Sprite PassCar_icon;
+
+    public Sprite TrainFF;
+    public Sprite TrainFB;
+    public Sprite TrainForward;
+    public Sprite TrainBackward;
+    public Sprite TrainStop;
+    public Sprite TrainBreak;
+    public Sprite TrainMake;
+    public Sprite PassStopTrain;
 
     public Sprite Empty_Car_Icon;
     public Sprite WithOil_Car_Icon;
@@ -57,4 +67,5 @@ public class ResourceHolder : Singleton<ResourceHolder> {
     public Sprite Charlie_Station_Icon;
 
     public Sprite Square_Icon;
+
 }

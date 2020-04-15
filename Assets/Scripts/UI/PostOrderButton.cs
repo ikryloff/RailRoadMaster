@@ -4,52 +4,51 @@ using UnityEngine.UI;
 public class PostOrderButton : MonoBehaviour
 {
     public GameObject postWorkButtObject;
-    private PostOrderButton [] postButts;
+    private PostOrderButton [] postOrderButts;
     public ConductorCameraController CommonCamera;
     public Toggle CameraFreeButton;
     public bool IsActivated;
+    private Button [] postButts;
 
 
     private void Awake()
     {
-        postButts = FindObjectsOfType<PostOrderButton> ();
-        Button [] actors = GetComponentsInChildren<Button> ();        
-        foreach ( Button item in actors )
-        {
-            if ( item.CompareTag ("PostWorkButton") )
-            {
-                postWorkButtObject = item.gameObject;
-            }
-        }
+       
         CommonCamera = FindObjectOfType<ConductorCameraController> ();
         GetComponent<Button> ().onClick.AddListener (ButtonAction);
+        EventManager.onFollowProcessFinished += SetAllPostButtonsActive;
     }
 
     public virtual void ButtonAction()
     {
         if ( !IsActivated )
-            CloseOtherPostButtons ();
+        {
+            SetOtherPostButtonsUnactive ();
+        }
         CameraFreeButton.isOn = true;
     }
 
-    public void CloseOtherPostButtons()
+   
+    public void SetOtherPostButtonsUnactive()
     {
         for ( int i = 0; i < postButts.Length; i++ )
         {
-            if ( postButts [i].IsActivated && postButts [i] != this )
-                postButts [i].SetButtonsActive (false);
+            if ( postButts [i].IsInteractable() && postOrderButts [i] != this )
+                postButts [i].interactable = false;
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void SetAllPostButtonsActive()
     {
-        SetButtonsActive (false);
+        if ( IsActivated )
+        {
+            for ( int i = 0; i < postButts.Length; i++ )
+            {
+                postButts [i].interactable = true;
+            }
+        }
     }
 
-    public void SetButtonsActive( bool _isActive )
-    {
-        postWorkButtObject.SetActive (_isActive);
-        IsActivated = false;
-    }
+   
+  
 }

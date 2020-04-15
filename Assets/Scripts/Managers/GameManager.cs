@@ -31,9 +31,15 @@ public class GameManager : Singleton<GameManager>
         }
 
 
-        if ( Input.GetKeyDown (KeyCode.T) )
+        if ( Input.GetKeyDown (KeyCode.Z) )
         {
-            routePanel.CallOffRouteByNumber (613);
+            Time.timeScale = 20f;
+
+        }
+
+        if ( Input.GetKeyDown (KeyCode.X) )
+        {
+            Time.timeScale = 1f;
 
         }
 
@@ -56,15 +62,11 @@ public class GameManager : Singleton<GameManager>
     {
         if ( !isPaused )
         {
-            EventManager.PauseOn ();
-            isPaused = true;
-            Time.timeScale = 20f;
+            PauseOn ();
         }
         else
         {
-            EventManager.PauseOff ();
-            isPaused = false;
-            Time.timeScale = 1f;
+            PauseOff ();
         }
     }
 
@@ -72,12 +74,14 @@ public class GameManager : Singleton<GameManager>
     {
         EventManager.PauseOn ();
         isPaused = true;
+        TimeManager.Instance.koef = 0;
     }
 
     public void PauseOff()
     {
         EventManager.PauseOff ();
         isPaused = false;
+        TimeManager.Instance.koef = 1;
     }
 
 

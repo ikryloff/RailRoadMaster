@@ -29,6 +29,7 @@ public class EntranceSignal : TrafficLight
         botYellow = BottomYellowSignal.GetComponent<MeshRenderer> ();
 
         yellowSignalFlashing = GetComponent<Animator> ();
+
     }
 
     private void Start()
@@ -42,34 +43,24 @@ public class EntranceSignal : TrafficLight
         // saving for Update lights 
         depSignal = route.DependsOnSignal;
         isStraight = route.IsStraight;
-
-        if ( route.DependsOnSignal != null )
-        {
-            if ( route.DependsOnSignal.IsClosed )
-            {
-                if ( route.IsStraight )
-                    EntranceStraightLightToClosedOn ();
-                else
-                    EntranceTurnLightToClosedOn ();
-            }
-            else
-            {
-                if ( route.IsStraight )
-                    EntranceStraightLightToOpenedOn ();
-                else
-                    EntranceTurnLightToOpenedOn ();
-            }
-
-            IsClosed = false;
-        }
-        else
-            print ("no depend signal");
-        EventManager.OnTrainSignalChanged ();
+        IsClosed = false;
+        UpdateSignals ();
+        //repeater
         if ( TLRepeater )
             TLRepeater.RepeaterOnTrain ();
+        EventManager.TrainSignalChanged ();
     }
 
     public override void LightOff()
+    {
+        LampsOff ();
+        IsClosed = true;
+        EventManager.TrainSignalChanged ();
+        if ( TLRepeater )
+            TLRepeater.RepeaterOffTrain ();        
+    }
+
+    private void LampsOff()
     {
         StopSignalFlashing (yellowSignalFlashing);
         LampSwitchOn (red, RedSignal);
@@ -77,39 +68,44 @@ public class EntranceSignal : TrafficLight
         LampSwitchOff (green, GreenSignal);
         LampSwitchOff (topYellow, TopYellowSignal);
         LampSwitchOff (botYellow, BottomYellowSignal);
-        IsClosed = true;
-
-        EventManager.OnTrainSignalChanged ();
-        if ( TLRepeater )
-            TLRepeater.RepeaterOffTrain ();        
-    }
+    } 
 
     protected void UpdateSignals()
     {
-        if ( !IsClosed )
+        if ( depSignal )
         {
-            if ( depSignal.IsClosed )
+            if ( !IsClosed )
             {
-                if ( isStraight )
-                    EntranceStraightLightToClosedOn ();
-                else
-                    EntranceTurnLightToClosedOn ();
+                if ( depSignal.IsClosed )
+                {
+                    if ( isStraight )
+                        EntranceStraightLightToClosedOn ();
+                    else
+                        EntranceTurnLightToClosedOn ();
+                }
+                else if ( !depSignal.IsClosed )
+                {
+                    if ( isStraight )
+                        EntranceStraightLightToOpenedOn ();
+                    else
+                        EntranceTurnLightToOpenedOn ();
+                }
+                IsClosed = false;
+
+                if ( TLRepeater )
+                    TLRepeater.RepeaterOnTrain ();
             }
             else
             {
-                if ( isStraight )
-                    EntranceStraightLightToOpenedOn ();
-                else
-                    EntranceTurnLightToOpenedOn ();
+                if ( TLRepeater )
+                    TLRepeater.RepeaterOffTrain ();
             }
-            IsClosed = false;
         }
-        EventManager.SignalChanged ();
     }
 
     private void EntranceStraightLightToClosedOn()
     {
-        LightOff ();
+        LampsOff ();
         LampSwitchOn (topYellow, TopYellowSignal);
         LampSwitchOff (red, RedSignal);
        
@@ -117,7 +113,7 @@ public class EntranceSignal : TrafficLight
 
     private void EntranceTurnLightToClosedOn()
     {
-        LightOff ();
+        LampsOff ();
         LampSwitchOn (topYellow, TopYellowSignal);
         LampSwitchOn (botYellow, BottomYellowSignal);
         LampSwitchOff (red, RedSignal);
@@ -125,7 +121,8 @@ public class EntranceSignal : TrafficLight
 
     private void EntranceStraightLightToOpenedOn()
     {
-        LightOff ();
+        print (name + " here");
+        LampsOff ();
         LampSwitchOn (green, GreenSignal);
         LampSwitchOff (red, RedSignal);
     }

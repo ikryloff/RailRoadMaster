@@ -1,4 +1,6 @@
-﻿public class EventManager : Singleton<EventManager>
+﻿using System;
+
+public class EventManager : Singleton<EventManager>
 {
 
     public delegate void EventDelegate();
@@ -14,9 +16,13 @@
     public static EventDelegate onGameOver;
     public static EventDelegate onIndicationStateChanged;
     public static EventDelegate onTrackCircuitsStateChanged;
+
+    
     public static EventDelegate onPlayerUsedThrottle;
     public static EventDelegate onPlayerChangeEngine;
     public static EventDelegate onHourPassed;
+    public static EventDelegate onMinutePassed;
+    public static EventDelegate onFollowProcessFinished;
 
 
 
@@ -31,6 +37,12 @@
             onGameOver ();
     }
 
+    public static void FollowProcessFinished()
+    {
+        if ( onFollowProcessFinished != null )
+            onFollowProcessFinished ();
+    }
+
     public static void PathChanged()
     {
         if ( onPathChanged != null )
@@ -41,6 +53,12 @@
     {
         if ( onHourPassed != null )
             onHourPassed ();
+    }
+
+    public static void MinutePassed()
+    {
+        if ( onMinutePassed != null )
+            onMinutePassed ();
     }
 
     public static void EngineChanged()
@@ -79,7 +97,7 @@
             onCarsCoupled ();
     }
 
-    public static void OnTrainSignalChanged()
+    public static void TrainSignalChanged()
     {
         if ( onTrainSignalChanged != null )
             onTrainSignalChanged ();

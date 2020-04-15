@@ -9,21 +9,24 @@ public class TimeManager : Singleton<TimeManager>
     private float timerSpeed = 1f;
     private float elapsed;
     public int [] TimeValue;
+    public int koef;
 
     public void OnStart()
     {
         timeText.text = "00 : 00";
         TimeValue = new int [2];
+        TimeValue[0] = 0;
+        TimeValue[1] = 0;
         EventManager.HourPassed ();
     }
 
     public void OnUpdate()
     {
-        elapsed += Time.deltaTime;
+        elapsed += Time.deltaTime * koef;
         if ( elapsed >= timerSpeed )
         {
             elapsed = 0f;
-            CountTime ();
+            CountTime ();            
         }
     }
 
@@ -38,8 +41,7 @@ public class TimeManager : Singleton<TimeManager>
                 TimeValue [0] = 0;
             EventManager.HourPassed ();
         }
-        //TimeValue [0] = hours;
-        //TimeValue [1] = minutes;
+        EventManager.MinutePassed ();
         timeText.text = Constants.NUMBERS [TimeValue [0]] + " : " + Constants.NUMBERS [TimeValue [1]];
     }
 }
